@@ -32,6 +32,9 @@ class Tensor:
 
     def __pow__(self, a):
         return power(self, a)
+    
+    def __repr__(self):
+        return self.real.__repr__()
 
     __radd__ = __add__
     __rsub__ = __sub__
