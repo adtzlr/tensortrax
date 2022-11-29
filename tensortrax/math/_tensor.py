@@ -126,18 +126,21 @@ def gradient(fun, n_jobs=cpu_count()):
         t = Tensor(x)
         indices = range(t.size)
 
+        fx = np.zeros(t.trax)
         dfdx = np.zeros((t.size, *t.trax))
         δx = np.eye(t.size)
 
         def kernel(a, x, δx, *args, **kwargs):
             t = Tensor(x, δx=δx[a], Δx=δx[a])
-            dfdx[a] = δ(fun(t, *args, **kwargs))
+            func = fun(t, *args, **kwargs)
+            fx[:] = f(func)
+            dfdx[a] = δ(func)
 
         Parallel(n_jobs=n_jobs, backend="threading")(
             delayed(kernel)(a, x, δx, *args, **kwargs) for a in indices
         )
 
-        return np.array(dfdx).reshape(*t.shape, *t.trax)
+        return np.array(dfdx).reshape(*t.shape, *t.trax), fx
 
     return evaluate_gradient
 
