@@ -1,29 +1,25 @@
+"""
+ _                            
+| |                          ████████╗██████╗  █████╗ ██╗  ██╗
+| |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+ \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+"""
+
 import numpy as np
 
 
-def transpose(A):
-    return np.einsum("ij...->ji...", A)
-
-
-def transpose_major(A):
-    return np.einsum("ijrs...->rsij...", A)
-
-
-def dya(A, B, trax=2):
-    a = "abcdef"[: len(A.shape[:-trax])]
-    b = "rstuvw"[: len(B.shape[:-trax])]
-    return np.einsum(f"{a}...,{b}...->{a}{b}...", A, B)
-
-
-def dot(A, B):
-    return np.einsum("ik...,kj...->ij...", A, B)
-
-
-def ddot(A, B):
-    return np.einsum("ij...,ij...->...", A, B)
+def eye(A):
+    "Identity (Eye) of a Tensor."
+    B = np.zeros_like(A)
+    B[np.diag_indices(B.shape[0])] = 1
+    return B
 
 
 def det(A):
+    "Determinant of a 2x2 or 3x3 Array."
     if A.shape[0] == 3:
         detA = (
             A[0, 0] * A[1, 1] * A[2, 2]
@@ -41,6 +37,7 @@ def det(A):
 
 
 def inv(A):
+    "Inverse of a 2x2 or 3x3 Array."
 
     detAinvA = np.zeros_like(A)
     detA = det(A)

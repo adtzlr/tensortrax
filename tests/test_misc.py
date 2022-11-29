@@ -1,28 +1,34 @@
-import tensortrax as ttr
-from tensortrax import dot, ddot, transpose, det, inv
+import tensortrax as tr
+import tensortrax.math as tm
 import numpy as np
+
+
+def neo_hooke(F):
+    C = F.T() @ F
+    I1 = tm.trace(C)
+    J = tm.det(F)
+    return J ** (-2 / 3) * I1 - 3
+
+
+def ogden(F, mu=1, alpha=2):
+    C = F.T() @ F
+    J = tm.det(F)
+    λ = tm.sqrt(tm.eigvalsh(J ** (-2 / 3) * C))
+    return sum(1 / alpha * (λ**alpha - 1))
 
 
 def test_tensor():
 
     np.random.seed(125161)
-    d = np.tile(np.eye(3).reshape(3, 3, 1), (1, 1, 8000)).reshape(3, 3, 8, 1000)
-    f = d + np.random.rand(3, 3, 8, 1000) / 10
+    dudX = np.random.rand(3, 3, 8, 50) / 10
+    F = tm._eye(dudX) + dudX
 
-    I = ttr.Constant(d)
-    F = ttr.Tensor(f)
-    C = dot(transpose(F), F)
+    for fun in [neo_hooke, ogden]:
+        d2WdF2, dWdF, W = tr.hessian(neo_hooke)(F)
 
-    I1 = ddot(F, F)
-    J = det(F)
-
-    W = (J ** (-2 / 3) * I1 - 3) / 2
-    S = det(F) ** (-2 / 3) * (I - I1 / 3 * inv(C))
-    P = dot(F, S).real
-    A = dot(F, S).dual
-
-    assert np.allclose(W.dual, P.real)
-    assert A.shape == (3, 3, 3, 3, 8, 1000)
+        assert W.shape == (8, 50)
+        assert dWdF.shape == (3, 3, 8, 50)
+        assert d2WdF2.shape == (3, 3, 3, 3, 8, 50)
 
 
 if __name__ == "__main__":
