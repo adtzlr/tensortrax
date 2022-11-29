@@ -14,10 +14,15 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 # Features
 - Designed to operate on input arrays with trailing axes
-- Essential vector/tensor dual-number math, including limited support for `einsum` (restricted to max. two operands)
-- Forward Mode Automatic Differentiation (AD)
+- Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. two operands)
+- Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian on given input arrays
+- Straight-forward definition of custom functions in variational-calculus notation
+
+# Not Features
+- No wrapper for NumPy (like Autograd, JAX)
+- No arbitrary-order gradients
 
 # Usage
 Let's define a scalar-valued function which operates on a tensor.
@@ -33,7 +38,7 @@ def neo_hooke(F):
     return J ** (-2 / 3) * I1 - 3
 ```
 
-The hessian w.r.t. the function argument is evaluated by Forward Mode Automatic Differentiation (AD).
+The hessian of the scalar-valued function w.r.t. the function argument is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
 
 ```python
 import numpy as np
