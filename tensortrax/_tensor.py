@@ -199,21 +199,4 @@ def transpose(A):
 
 
 def matmul(A, B):
-    _matmul = lambda A, B: np.einsum("ik...,kj...->ij...", A, B)
-
-    if isinstance(A, Tensor):
-        if not isinstance(B, Tensor):
-            raise NotImplementedError("Multiply by Array is not supported.")
-        else:
-            x = _matmul(f(A), f(B))
-            δx = _matmul(δ(A), f(B)) + _matmul(f(A), δ(B))
-            Δx = _matmul(Δ(A), f(B)) + _matmul(f(A), Δ(B))
-            Δδx = (
-                _matmul(Δ(A), δ(B))
-                + _matmul(δ(A), Δ(B))
-                + _matmul(Δδ(A), f(B))
-                + _matmul(f(A), Δδ(B))
-            )
-            return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
-    else:
-        return _matmul(A, B)
+    return einsum("ik...,kj...->ij...", A, B)
