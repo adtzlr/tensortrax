@@ -56,9 +56,7 @@ class Tensor:
         """
 
         self.x = np.asarray(x)
-        self.δx = np.asarray(δx)
-        self.Δx = np.asarray(Δx)
-        self.Δδx = np.asarray(Δδx)
+
         self.ntrax = ntrax
         self.shape = x.shape[:len(x.shape) - ntrax]
         self.trax = x.shape[len(x.shape) - ntrax:]
@@ -71,6 +69,8 @@ class Tensor:
     def _init_and_reshape(self, value):
         if value is None:
             value = np.zeros(self.shape)
+        else:
+            value = np.asarray(value)
         if len(value.shape) != len(self.x.shape):
             value = value.reshape([*self.shape, *np.ones(self.ntrax, dtype=int)])
         return value
