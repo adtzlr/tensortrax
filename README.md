@@ -49,7 +49,7 @@ F = np.random.rand(3, 3, 8, 50) / 10
 for a in range(3):
     F[a, a] += 1
 
-W = tr.function(fun)(F)
-dWdF, W = tr.gradient(fun)(F)
-d2WdF2, dWdF, W = tr.hessian(fun)(F)
+# W = tr.function(fun, ntrax=2)(F)
+# dWdF, W = tr.gradient(fun, ntrax=2)(F)
+d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 ```
