@@ -85,9 +85,9 @@ class Tensor:
             Δδx = Δδ(A) + Δδ(B)
         else:
             x = f(A) + B
-            δx = δ(A) + B
-            Δx = Δ(A) + B
-            Δδx = Δδ(A) + B
+            δx = δ(A)
+            Δx = Δ(A)
+            Δδx = Δδ(A)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
 
     def __sub__(self, B):
@@ -99,9 +99,9 @@ class Tensor:
             Δδx = Δδ(A) - Δδ(B)
         else:
             x = f(A) - B
-            δx = δ(A) - B
-            Δx = Δ(A) - B
-            Δδx = Δδ(A) - B
+            δx = δ(A)
+            Δx = Δ(A)
+            Δδx = Δδ(A)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
 
     def __mul__(self, B):
@@ -171,7 +171,7 @@ def einsum2(subscripts, *operands):
 
 
 def einsum1(subscripts, *operands):
-    "Einsum with two operands."
+    "Einsum with one operand."
     A = operands[0]
     if isinstance(A, Tensor):
         x = _einsum(subscripts, f(A))
