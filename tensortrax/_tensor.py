@@ -154,8 +154,12 @@ def einsum2(subscripts, *operands):
             x = _einsum(f(A), f(B))
             δx = _einsum(δ(A), f(B)) + _einsum(f(A), δ(B))
             Δx = _einsum(Δ(A), f(B)) + _einsum(f(A), Δ(B))
-            Δδx = (_einsum(Δδ(A), f(B)) + _einsum(f(A), Δδ(B))
-                 + _einsum(δ(A), Δ(B)) + _einsum(Δ(A), δ(B)))
+            Δδx = (
+                _einsum(Δδ(A), f(B))
+                + _einsum(f(A), Δδ(B))
+                + _einsum(δ(A), Δ(B))
+                + _einsum(Δ(A), δ(B))
+            )
         else:
             x = _einsum(f(A), B)
             δx = _einsum(δ(A), B)
