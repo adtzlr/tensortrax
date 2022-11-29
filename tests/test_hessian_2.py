@@ -12,7 +12,6 @@ def fun(F):
 
 def test_gradient_hessian():
 
-    np.random.seed(125161)
     dudX = np.arange(9).reshape(3, 3) / 10
     F = tm._eye(dudX) + dudX
 

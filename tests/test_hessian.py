@@ -19,8 +19,7 @@ def ogden(F, mu=1, alpha=2):
 
 def test_gradient_hessian():
 
-    np.random.seed(125161)
-    dudX = np.random.rand(3, 3, 8, 50) / 10
+    dudX = np.arange(9).reshape(3, 3) / 10
     F = tm._eye(dudX) + dudX
 
     for fun in [neo_hooke, ogden]:
