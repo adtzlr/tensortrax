@@ -109,29 +109,29 @@ def eigvalsh(A):
     )
 
 
-def function(fun):
+def function(fun, ntrax=2):
     "Evaluate a scalar-valued function."
 
     def evaluate_function(x, *args, **kwargs):
-        return fun(Tensor(x), *args, **kwargs).x
+        return fun(Tensor(x, ntrax=ntrax), *args, **kwargs).x
 
     return evaluate_function
 
 
-def gradient(fun, n_jobs=cpu_count()):
+def gradient(fun, ntrax=2, n_jobs=cpu_count()):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(x, *args, **kwargs):
 
-        t = Tensor(x)
+        t = Tensor(x, ntrax=ntrax)
         indices = range(t.size)
 
-        fx = np.zeros(t.trax)
+        fx = np.zeros((1, *t.trax))
         dfdx = np.zeros((t.size, *t.trax))
         δx = np.eye(t.size)
 
         def kernel(a, x, δx, *args, **kwargs):
-            t = Tensor(x, δx=δx[a], Δx=δx[a])
+            t = Tensor(x, δx=δx[a], Δx=δx[a], ntrax=ntrax)
             func = fun(t, *args, **kwargs)
             fx[:] = f(func)
             dfdx[a] = δ(func)
@@ -140,26 +140,26 @@ def gradient(fun, n_jobs=cpu_count()):
             delayed(kernel)(a, x, δx, *args, **kwargs) for a in indices
         )
 
-        return np.array(dfdx).reshape(*t.shape, *t.trax), fx
+        return np.array(dfdx).reshape(*t.shape, *t.trax), fx[0]
 
     return evaluate_gradient
 
 
-def hessian(fun, n_jobs=cpu_count()):
+def hessian(fun, ntrax=2, n_jobs=cpu_count()):
     "Evaluate the hessian of a scalar-valued function."
 
     def evaluate_hessian(x, *args, **kwargs):
 
-        t = Tensor(x)
+        t = Tensor(x, ntrax=ntrax)
         indices = np.array(np.triu_indices(t.size)).T
 
-        fx = np.zeros(t.trax)
+        fx = np.zeros((1, *t.trax))
         dfdx = np.zeros((t.size, *t.trax))
         d2fdx2 = np.zeros((t.size, t.size, *t.trax))
         δx = Δx = np.eye(t.size)
 
         def kernel(a, b, x, δx, *args, **kwargs):
-            t = Tensor(x, δx=δx[a], Δx=Δx[b])
+            t = Tensor(x, δx=δx[a], Δx=Δx[b], ntrax=ntrax)
             func = fun(t, *args, **kwargs)
             fx[:] = f(func)
             dfdx[a] = δ(func)
@@ -172,7 +172,7 @@ def hessian(fun, n_jobs=cpu_count()):
         return (
             np.array(d2fdx2).reshape(*t.shape, *t.shape, *t.trax),
             np.array(dfdx).reshape(*t.shape, *t.trax),
-            fx,
+            fx[0],
         )
 
     return evaluate_hessian
