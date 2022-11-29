@@ -9,7 +9,6 @@
 """
 
 import numpy as np
-from numpy import einsum as _einsum
 
 from ._helpers import f, δ, Δ, Δδ
 
@@ -149,38 +148,36 @@ class Tensor:
 def einsum2(subscripts, *operands):
     "Einsum with two operands."
     A, B = operands
+    _einsum = lambda *operands: np.einsum(subscripts, *operands)
     if isinstance(A, Tensor):
         if isinstance(B, Tensor):
-            x = _einsum(subscripts, f(A), f(B))
-            δx = _einsum(subscripts, δ(A), f(B)) + np.einsum(subscripts, f(A), δ(B))
-            Δx = _einsum(subscripts, Δ(A), f(B)) + np.einsum(subscripts, f(A), Δ(B))
-            Δδx = (
-                _einsum(subscripts, Δδ(A), f(B))
-                + _einsum(subscripts, f(A), Δδ(B))
-                + _einsum(subscripts, δ(A), Δ(B))
-                + _einsum(subscripts, Δ(A), δ(B))
-            )
+            x = _einsum(f(A), f(B))
+            δx = _einsum(δ(A), f(B)) + _einsum(f(A), δ(B))
+            Δx = _einsum(Δ(A), f(B)) + _einsum(f(A), Δ(B))
+            Δδx = (_einsum(Δδ(A), f(B)) + _einsum(f(A), Δδ(B))
+                 + _einsum(δ(A), Δ(B)) + _einsum(Δ(A), δ(B)))
         else:
-            x = _einsum(subscripts, f(A), B)
-            δx = _einsum(subscripts, δ(A), B)
-            Δx = _einsum(subscripts, Δ(A), B)
-            Δδx = _einsum(subscripts, Δδ(A), B)
+            x = _einsum(f(A), B)
+            δx = _einsum(δ(A), B)
+            Δx = _einsum(Δ(A), B)
+            Δδx = _einsum(Δδ(A), B)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
     else:
-        return _einsum(subscripts, *operands)
+        return _einsum(*operands)
 
 
 def einsum1(subscripts, *operands):
     "Einsum with one operand."
     A = operands[0]
+    _einsum = lambda *operands: np.einsum(subscripts, *operands)
     if isinstance(A, Tensor):
-        x = _einsum(subscripts, f(A))
-        δx = _einsum(subscripts, δ(A))
-        Δx = _einsum(subscripts, Δ(A))
-        Δδx = _einsum(subscripts, Δδ(A))
+        x = _einsum(f(A))
+        δx = _einsum(δ(A))
+        Δx = _einsum(Δ(A))
+        Δδx = _einsum(Δδ(A))
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
     else:
-        return _einsum(subscripts, *operands)
+        return _einsum(*operands)
 
 
 def einsum(subscripts, *operands):
