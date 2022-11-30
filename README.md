@@ -61,8 +61,9 @@ The calculus of variation deals with variations, i.e. small changes in functions
 
 ```math
 \psi = \psi(\boldsymbol{E})
+```
 
-
+```math
 \delta \psi = \delta \psi(\boldsymbol{E}, \delta \boldsymbol{E})
 ```
 
@@ -70,7 +71,9 @@ Let's take the trace as an example. The variation of the trace of a tensor produ
 
 ```math
 \psi = trace(\boldsymbol{F}^T \boldsymbol{F}) = \boldsymbol{F} : \boldsymbol{F}
+```
 
+```math
 \delta \psi = \delta \boldsymbol{F} : \boldsymbol{F} + \boldsymbol{F} : \delta \boldsymbol{F} = 2 \ \boldsymbol{F} : \delta \boldsymbol{F}
 ```
 
@@ -78,7 +81,9 @@ The $P_{ij}$-component of the jacobian $\boldsymbol{P}$ is now numerically evalu
 
 ```math
 \delta \boldsymbol{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+```
 
+```math
 \delta_{(12)} \psi = \frac{\partial \psi}{\partial F_{12} = 2 \ \boldsymbol{F} : \delta \boldsymbol{F}_{(12)} = 2 \ \boldsymbol{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 ```
 
@@ -92,8 +97,12 @@ Once again, each component $\mathbb{A}_{ijkl}$ of the fourth-order hessian $\mat
 
 ```math
 \delta \boldsymbol{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+```
 
+```math
 \Delta \boldsymbol{F}_{(23)} = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}
+```
 
+```math
 \Delta_{(23}) \delta_{(12}) \psi = \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + \Delta \boldsymbol{F}_{(23)} : \delta \boldsymbol{F}_{(12)} = 2 \ \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
 ```
