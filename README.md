@@ -104,5 +104,5 @@ Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically
 ```
 
 ```math
-\Delta_{(23)} \delta_{(12)} \psi = \Delta_{(12)} \delta_{(23)} \psi = \frac{\partial^2 \psi}{\partial F_{12}\ \partial F_{23}} = \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + \Delta \boldsymbol{F}_{(23)} : \delta \boldsymbol{F}_{(12)} = 2 \ \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
+\Delta_{(23)} \delta_{(12)} \psi = \Delta_{(12)} \delta_{(23)} \psi = \frac{\partial^2 \psi}{\partial F_{12}\ \partial F_{23}} = 2 \ \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
 ```
