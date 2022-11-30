@@ -104,7 +104,7 @@ def eigvalsh(A):
     )
 
 
-def function(fun, ntrax=2):
+def function(fun, ntrax=2, njobs=cpu_count()):
     "Evaluate a scalar-valued function."
 
     def evaluate_function(x, *args, **kwargs):
@@ -113,7 +113,7 @@ def function(fun, ntrax=2):
     return evaluate_function
 
 
-def gradient(fun, ntrax=2, n_jobs=cpu_count()):
+def gradient(fun, ntrax=2, njobs=cpu_count()):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(x, *args, **kwargs):
@@ -131,7 +131,7 @@ def gradient(fun, ntrax=2, n_jobs=cpu_count()):
             fx[:] = f(func)
             dfdx[a] = δ(func)
 
-        Parallel(n_jobs=n_jobs, backend="threading")(
+        Parallel(n_jobs=njobs, backend="threading")(
             delayed(kernel)(a, x, δx, *args, **kwargs) for a in indices
         )
 
@@ -140,7 +140,7 @@ def gradient(fun, ntrax=2, n_jobs=cpu_count()):
     return evaluate_gradient
 
 
-def hessian(fun, ntrax=2, n_jobs=cpu_count()):
+def hessian(fun, ntrax=2, njobs=cpu_count()):
     "Evaluate the hessian of a scalar-valued function."
 
     def evaluate_hessian(x, *args, **kwargs):
@@ -160,7 +160,7 @@ def hessian(fun, ntrax=2, n_jobs=cpu_count()):
             dfdx[a] = δ(func)
             d2fdx2[a, b] = d2fdx2[b, a] = Δδ(func)
 
-        Parallel(n_jobs=n_jobs, backend="threading")(
+        Parallel(n_jobs=njobs, backend="threading")(
             delayed(kernel)(a, b, x, δx, *args, **kwargs) for a, b in indices
         )
 
