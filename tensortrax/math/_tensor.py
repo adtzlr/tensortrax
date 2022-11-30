@@ -58,7 +58,7 @@ def det(A):
         Δx = x * ddot(B, Δ(A))
 
         ΔB = -matmul(matmul(B, transpose(Δ(A))), B)
-        Δδx = Δx * δx + x * ddot(ΔB, δ(A)) + x * ddot(B, Δδ(A))
+        Δδx = Δx * δx / x + x * ddot(ΔB, δ(A)) + x * ddot(B, Δδ(A))
         return Tensor(
             x=x,
             δx=δx,
