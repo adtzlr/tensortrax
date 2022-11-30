@@ -70,7 +70,7 @@ The calculus of variation deals with variations, i.e. small changes in functions
 Let's take the trace as an example. The variation of the trace of a tensor product is evaluated as the trace of the variation (small-change) of the tensor.
 
 ```math
-\psi = trace(\boldsymbol{F}^T \boldsymbol{F}) = \boldsymbol{F} : \boldsymbol{F}
+\psi = tr(\boldsymbol{F}^T \boldsymbol{F}) = \boldsymbol{F} : \boldsymbol{F}
 ```
 
 ```math
