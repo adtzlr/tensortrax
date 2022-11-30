@@ -17,7 +17,7 @@ def ogden(F, mu=1, alpha=2):
     return tm.sum(1 / alpha * (λ**alpha - 1))
 
 
-def test_gradient_hessian():
+def test_function_gradient_hessian():
 
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
 
@@ -35,5 +35,18 @@ def test_gradient_hessian():
         assert np.allclose(dwdf, dWdF)
 
 
+def test_repeated_eigvals():
+
+    F = (np.eye(3).ravel()).reshape(3, 3, 1, 1)
+
+    for fun in [ogden]:
+        d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
+
+        assert not np.any(np.isnan(W))
+        assert not np.any(np.isnan(dWdF))
+        assert not np.any(np.isnan(d2WdF2))
+
+
 if __name__ == "__main__":
-    test_gradient_hessian()
+    test_function_gradient_hessian()
+    test_repeated_eigvals()

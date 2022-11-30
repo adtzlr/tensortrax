@@ -6,5 +6,6 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 title: "tensortrax: Math on (Hyper-Dual) Tensors with Trailing Axes."
 type: software
+doi: 10.5281/zenodo.7384105
 url: https://github.com/adtzlr/tensortrax
 license: GPL-3.0
