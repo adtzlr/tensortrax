@@ -73,29 +73,25 @@ def eigvalsh(A):
     "Eigenvalues of a symmetric Tensor."
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
-    M = einsum("ia...,ja...->aij...", N, N)
+    N = transpose(N)
+    M = einsum("ai...,aj...->aij...", N, N)
 
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    I = _eye(f(A))
+    # I = _eye(f(A))
     Γ = [(1, 2), (2, 0), (0, 1)]
 
-    δM = []
+    δN = []
     for α in range(3):
-
-        δMα = []
+        δNα = []
         for γ in Γ[α]:
+            Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
+            δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
+            δNα.append(1 / (λ[α] - λ[γ]) * N[γ] * δAαγ)
+        δN.append(sum(δNα, axis=0))
 
-            u = f(A) - λ[α] * I
-            v = λ[γ] - λ[α]
-
-            δu = δ(A) - δλ[α] * I
-            δv = δλ[γ] - δλ[α]
-
-            δMα.append((δu * v - u * δv) / v**2)
-
-        δM.append(matmul(*δMα))
+    δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
 
     Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
         "aij...,ij...->a...", M, Δδ(A)
