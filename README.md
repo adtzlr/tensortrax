@@ -118,16 +118,19 @@ Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) va
 from tensortrax import Tensor, f, δ, Δ, Δδ
 from tensortrax.math import trace
 
-T = Tensor(x=F, δx=np.eye(9)[1], Δx=np.eye(9)[5])
-I1 = trace(F.T() @ F)
+x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
+F = Tensor(x=x, δx=np.eye(9)[1], Δx=np.eye(9)[5])
+I1_C = trace(F.T() @ F)
 
-I1(T), δ(I1), Δ(I1), Δδ(I1)
+ψ      =  f(I1_C)
+P_12   =  δ(I1_C) # (= Δ(I1_C))
+A_1223 = Δδ(I1_C)
 ```
 
 To obtain full gradients and hessians, `tensortrax` provides helpers which handle the multiple function calls.
 
 ```python
-# input data with 2 trailing axes
-gradient(I1, ntrax=2)(F)
-hessian(I1, ntrax=2)(F)
+# input data with 0 trailing axes
+gradient(I1, ntrax=0)(F)
+hessian(I1, ntrax=0)(F)
 ```
