@@ -93,7 +93,7 @@ The second order derivative, i.e. the partial derivative of another partial deri
 \Delta \delta \psi = \delta \boldsymbol{F} : \Delta \boldsymbol{F} + \Delta \boldsymbol{F} : \delta \boldsymbol{F} = 2 \ \delta \boldsymbol{F} : \Delta \boldsymbol{F} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
 ```
 
-Once again, each component $\mathbb{A}_{ijkl}$ of the fourth-order hessian $\mathbb{A}$ is numerically evaluated as shown for the component $\mathbb{A}_{1223}$.
+Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically evaluated as shown for the component $A_{1223}$.
 
 ```math
 \delta \boldsymbol{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
