@@ -33,7 +33,7 @@ Let's define a scalar-valued function which operates on a tensor.
 import tensortrax as tr
 import tensortrax.math as tm
 
-def neo_hooke(F):
+def fun(F):
     C = F.T() @ F
     I1 = tm.trace(C)
     J = tm.det(F)
