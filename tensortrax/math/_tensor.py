@@ -80,7 +80,7 @@ def eigvalsh(A):
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
     Γ = [(1, 2), (2, 0), (0, 1)]
-
+    
     δN = []
     for α in range(3):
         δNα = []
@@ -89,12 +89,22 @@ def eigvalsh(A):
             δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
             δNα.append(1 / (λ[α] - λ[γ]) * N[γ] * δAαγ)
         δN.append(sum(δNα, axis=0))
+    
+    for α in range(3):
+        not_valid = np.any(np.isnan(δN[α]), axis=0)
+        δNγ = []
+        for γ in Γ[α]:
+            δNγ.append(δN[γ][..., not_valid])
+        δN[α][..., not_valid] = array.cross(*δNγ)
 
     δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
 
     Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
         "aij...,ij...->a...", M, Δδ(A)
     )
+    
+    λ_equal = np.isclose(sum(λ, axis=0), 3)
+    Δδλ[..., λ_equal] = 2 / 3 * np.trace(Δδ(A))[λ_equal]
 
     return Tensor(
         x=λ,
