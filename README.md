@@ -112,7 +112,7 @@ Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically
 ```
 
 # Numeric calculus of variation in `tensortrax`
-Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) variational arrays. To obtain the above mentioned $1223$ - component of the hessian, a tensor has to be created with the appropriate small-changes of the tensor components (dual arrays).
+Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) variational arrays. To obtain the above mentioned $12$ - component of the gradient and the $1223$ - component of the hessian, a tensor has to be created with the appropriate small-changes of the tensor components (dual arrays).
 
 ```python
 from tensortrax import Tensor, f, δ, Δ, Δδ
@@ -121,7 +121,11 @@ from tensortrax.math import trace
 x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
 F = Tensor(x=x, δx=np.eye(9)[1], Δx=np.eye(9)[5])
 I1_C = trace(F.T() @ F)
+```
 
+The function as well as the gradient and hessian components are accessible as:
+
+```python
 ψ      =  f(I1_C)
 P_12   =  δ(I1_C) # (= Δ(I1_C))
 A_1223 = Δδ(I1_C)
