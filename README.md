@@ -62,6 +62,7 @@ The calculus of variation deals with variations, i.e. small changes in functions
 ```math
 \psi = \psi(\boldsymbol{E})
 
+
 \delta \psi = \delta \psi(\boldsymbol{E}, \delta \boldsymbol{E})
 ```
 
