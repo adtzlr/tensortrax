@@ -22,9 +22,9 @@ def test_gradient_hessian():
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
 
     for fun in [neo_hooke, ogden]:
-        ww = tr.function(fun)(F)
-        dwdf, w = tr.gradient(fun)(F)
-        d2WdF2, dWdF, W = tr.hessian(fun)(F)
+        ww = tr.function(fun, ntrax=2)(F)
+        dwdf, w = tr.gradient(fun, ntrax=2)(F)
+        d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 
         assert W.shape == (1, 1)
         assert dWdF.shape == (3, 3, 1, 1)
