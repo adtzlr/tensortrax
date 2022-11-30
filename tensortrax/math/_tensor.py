@@ -12,7 +12,7 @@ from joblib import delayed, Parallel, cpu_count
 import numpy as np
 
 from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from ._array import det as _det, inv as _inv, eye as _eye
+from ._array import det as _det, inv as _inv
 
 
 dot = matmul
@@ -79,7 +79,6 @@ def eigvalsh(A):
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    # I = _eye(f(A))
     Γ = [(1, 2), (2, 0), (0, 1)]
 
     δN = []
