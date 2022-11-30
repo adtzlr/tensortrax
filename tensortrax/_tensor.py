@@ -60,7 +60,7 @@ class Tensor:
         self.ntrax = ntrax
         self.shape = x.shape[: len(x.shape) - ntrax]
         self.trax = x.shape[len(x.shape) - ntrax :]
-        self.size = np.product(self.shape)
+        self.size = np.product(self.shape, dtype=int)
 
         self.δx = self._init_and_reshape(δx)
         self.Δx = self._init_and_reshape(Δx)
