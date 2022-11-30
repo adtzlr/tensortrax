@@ -104,7 +104,7 @@ def eigvalsh(A):
     )
     
     λ_equal = np.isclose(sum(λ, axis=0), 3)
-    Δδλ[..., λ_equal] = np.trace(Δδ(A))[λ_equal]# * 2 / 3
+    Δδλ[..., λ_equal] = np.trace(Δδ(A))[λ_equal] / 3
 
     return Tensor(
         x=λ,

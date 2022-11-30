@@ -1,0 +1,58 @@
+[project]
+name = "tensortrax"
+version = "0.0.1"
+description = "Math on (Hyper-Dual) Tensors with Trailing Axes"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+keywords = [
+  "python", 
+  "constitution",
+  "ad",
+  "automatic-differentiation",
+  "scientific-computing",
+  "tensor",
+  "calculus-of-variations",
+  "hyper-dual-numbers",
+  "hyper-dual-tensors",
+  "trailing-axes",
+]
+
+authors = [
+  {email = "a.dutzler@gmail.com"},
+  {name = "Andreas Dutzler"}
+]
+
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Programming Language :: Python",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Utilities"
+]
+
+dependencies = [
+  "numpy",
+  "joblib",
+]
+
+[project.optional-dependencies]
+
+[project.urls]
+homepage = "https://github.com/adtzlr/tensortrax"
+code = "https://github.com/adtzlr/tensortrax"
+issues = "https://github.com/adtzlr/tensortrax/issues"
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"

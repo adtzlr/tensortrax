@@ -21,7 +21,7 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 - Straight-forward definition of custom functions in variational-calculus notation
 
 # Not Features
-- No wrapper for NumPy (like Autograd, JAX)
+- Not imitating NumPy (like [Autograd](https://github.com/HIPS/autograd))
 - No arbitrary-order gradients
 
 # Usage
