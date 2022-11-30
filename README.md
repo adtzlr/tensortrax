@@ -57,7 +57,7 @@ d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 ```
 
 # Theory
-The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change of a function is evaluated by applying small changes on the tensor components (the jacobian).
+The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change of a function is evaluated by applying small changes on the tensor components.
 
 ```math
 \psi = \psi(\boldsymbol{E})
