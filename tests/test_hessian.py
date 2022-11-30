@@ -17,7 +17,7 @@ def ogden(F, mu=1, alpha=2):
     return tm.sum(1 / alpha * (λ**alpha - 1))
 
 
-def test_gradient_hessian():
+def test_hessian():
 
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
 
@@ -36,4 +36,4 @@ def test_gradient_hessian():
 
 
 if __name__ == "__main__":
-    test_gradient_hessian()
+    test_hessian()
