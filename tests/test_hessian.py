@@ -19,17 +19,16 @@ def ogden(F, mu=1, alpha=2):
 
 def test_gradient_hessian():
 
-    dudX = np.arange(9).reshape(3, 3) / 10
-    F = tm._eye(dudX) + dudX
+    F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
 
     for fun in [neo_hooke, ogden]:
         ww = tr.function(fun)(F)
         dwdf, w = tr.gradient(fun)(F)
         d2WdF2, dWdF, W = tr.hessian(fun)(F)
 
-        assert W.shape == (8, 50)
-        assert dWdF.shape == (3, 3, 8, 50)
-        assert d2WdF2.shape == (3, 3, 3, 3, 8, 50)
+        assert W.shape == (1, 1)
+        assert dWdF.shape == (3, 3, 1, 1)
+        assert d2WdF2.shape == (3, 3, 3, 3, 1, 1)
 
         assert np.allclose(w, ww)
         assert np.allclose(w, W)
