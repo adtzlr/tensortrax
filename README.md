@@ -118,8 +118,20 @@ Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) va
 from tensortrax import Tensor, f, δ, Δ, Δδ
 from tensortrax.math import trace
 
+δF_12 = np.array([
+    [0, 1, 0], 
+    [0, 0, 0], 
+    [0, 0, 0],
+], dtype=float)
+
+ΔF_23 = np.array([
+    [0, 0, 0], 
+    [0, 0, 1], 
+    [0, 0, 0],
+], dtype=float)
+
 x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
-F = Tensor(x=x, δx=np.eye(9)[1], Δx=np.eye(9)[5], Δδx=None)
+F = Tensor(x=x, δx=δF_12, Δx=ΔF_23, Δδx=None)
 I1_C = trace(F.T() @ F)
 ```
 
