@@ -147,6 +147,6 @@ To obtain full gradients and hessians in one function call, `tensortrax` provide
 
 ```python
 # input data with 0 trailing axes
-gradient(I1, ntrax=0)(F)
-hessian(I1, ntrax=0)(F)
+gradient(I1_C, ntrax=0)(F)
+hessian(I1_C, ntrax=0)(F)
 ```
