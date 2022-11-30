@@ -84,7 +84,7 @@ The $P_{ij}$ - component of the jacobian $\boldsymbol{P}$ is now numerically eva
 ```
 
 ```math
-\delta_{(12)} \psi = \frac{\partial \psi}{\partial F_{12} = 2 \ \boldsymbol{F} : \delta \boldsymbol{F}_{(12)} = 2 \ \boldsymbol{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+\delta_{(12)} \psi = \frac{\partial \psi}{\partial F_{12}} = 2 \ \boldsymbol{F} : \delta \boldsymbol{F}_{(12)} = 2 \ \boldsymbol{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 ```
 
 The second order derivative, i.e. the partial derivative of another partial derivative is evaluated by a further small-change (for a linear map, this is equal to the linearization).
