@@ -12,6 +12,8 @@
 
 Math on (Hyper-Dual) Tensors with Trailing Axes.
 
+[![PyPI version shields.io](https://img.shields.io/pypi/v/matadi.svg)](https://pypi.python.org/pypi/tensortrax/) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) ![Made with love in Graz (Austria)](https://img.shields.io/badge/Made%20with%20%E2%9D%A4%EF%B8%8F%20in-Graz%20(Austria)-0c674a) [![codecov](https://codecov.io/github/adtzlr/tensortrax/branch/main/graph/badge.svg?token=7DTH0HKYO9)](https://codecov.io/github/adtzlr/tensortrax)
+
 # Features
 - Designed to operate on input arrays with trailing axes
 - Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. two operands)
