@@ -77,7 +77,7 @@ Let's take the trace as an example. The variation of the trace of a tensor produ
 \delta \psi = \delta \boldsymbol{F} : \boldsymbol{F} + \boldsymbol{F} : \delta \boldsymbol{F} = 2 \ \boldsymbol{F} : \delta \boldsymbol{F}
 ```
 
-The $P_{ij}$ - component of the jacobian $\boldsymbol{P}$ is now numerically evaluated by setting the respective variational component $\delta P_{ij}$ of the tensor to one and all other components to zero. In total, $i \cdot j$ function calls are necessary to assemble the full jacobian. For example, the $12$-component is evaluated as follows:
+The $P_{ij}$ - component of the jacobian $\boldsymbol{P}$ is now numerically evaluated by setting the respective variational component $\delta P_{ij}$ of the tensor to one and all other components to zero. In total, $i \cdot j$ function calls are necessary to assemble the full jacobian. For example, the $12$ - component is evaluated as follows:
 
 ```math
 \delta \boldsymbol{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
@@ -93,7 +93,7 @@ The second order derivative, i.e. the partial derivative of another partial deri
 \Delta \delta \psi = \delta \boldsymbol{F} : \Delta \boldsymbol{F} + \Delta \boldsymbol{F} : \delta \boldsymbol{F} = 2 \ \delta \boldsymbol{F} : \Delta \boldsymbol{F} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
 ```
 
-Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically evaluated as shown for the component $A_{1223}$.
+Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically evaluated. In total, $i \cdot j \cdot k \cdot l$ function calls are necessary to assemble the full hessian (without considering symmetry). For example, the $1223$ - component is evaluated as follows:
 
 ```math
 \delta \boldsymbol{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
