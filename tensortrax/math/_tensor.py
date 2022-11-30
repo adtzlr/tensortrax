@@ -12,7 +12,7 @@ from joblib import delayed, Parallel, cpu_count
 import numpy as np
 
 from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from ._array import det as _det, inv as _inv
+from . import _array as array
 
 
 dot = matmul
@@ -52,8 +52,8 @@ def sqrt(A):
 def det(A):
     "Determinant of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
-        x = _det(f(A))
-        B = transpose(_inv(f(A)))
+        x = array.det(f(A))
+        B = transpose(array.inv(f(A)))
         δx = x * ddot(B, δ(A))
         Δx = x * ddot(B, Δ(A))
 
@@ -66,7 +66,7 @@ def det(A):
             Δδx=Δδx,
         )
     else:
-        return _det(A)
+        return array.det(A)
 
 
 def eigvalsh(A):
