@@ -119,7 +119,7 @@ from tensortrax import Tensor, f, δ, Δ, Δδ
 from tensortrax.math import trace
 
 x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
-F = Tensor(x=x, δx=np.eye(9)[1], Δx=np.eye(9)[5])
+F = Tensor(x=x, δx=np.eye(9)[1], Δx=np.eye(9)[5], Δδx=None)
 I1_C = trace(F.T() @ F)
 ```
 
