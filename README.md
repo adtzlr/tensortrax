@@ -57,7 +57,7 @@ d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 ```
 
 # Theory
-The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change of a function is evaluated by applying small changes on the tensor components.
+The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
 
 ```math
 \psi = \psi(\boldsymbol{E})
@@ -67,7 +67,7 @@ The calculus of variation deals with variations, i.e. small changes in functions
 \delta \psi = \delta \psi(\boldsymbol{E}, \delta \boldsymbol{E})
 ```
 
-Let's take the trace as an example. The variation of the trace of a tensor product is evaluated as the trace of the variation (small-change) of the tensor.
+Let's take the trace of a tensor product as an example. The variation is evaluated as follows:
 
 ```math
 \psi = tr(\boldsymbol{F}^T \boldsymbol{F}) = \boldsymbol{F} : \boldsymbol{F}
@@ -109,4 +109,25 @@ Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically
 
 ```math
 \Delta_{(23)} \delta_{(12)} \psi = \Delta_{(12)} \delta_{(23)} \psi = \frac{\partial^2 \psi}{\partial F_{12}\ \partial F_{23}} = 2 \ \delta \boldsymbol{F}_{(12)} : \Delta \boldsymbol{F}_{(23)} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
+```
+
+# Numeric calculus of variation in `tensortrax`
+Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) variational arrays. To obtain the above mentioned $1223$ - component of the hessian, a tensor has to be created with the appropriate small-changes of the tensor components (dual arrays).
+
+```python
+from tensortrax import Tensor, f, δ, Δ, Δδ
+from tensortrax.math import trace
+
+T = Tensor(x=F, δx=np.eye(9)[1], Δx=np.eye(9)[5])
+I1 = trace(F.T() @ F)
+
+I1(T), δ(I1), Δ(I1), Δδ(I1)
+```
+
+To obtain full gradients and hessians, `tensortrax` provides helpers which handle the function calls.
+
+```python
+# input data with 2 trailing axes
+gradient(I1, ntrax=2)(F)
+hessian(I1, ntrax=2)(F)
 ```
