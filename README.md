@@ -90,7 +90,7 @@ The $P_{ij}$ - component of the jacobian $\boldsymbol{P}$ is now numerically eva
 The second order derivative, i.e. the partial derivative of another partial derivative is evaluated by a further small-change (for a linear map, this is equal to the linearization).
 
 ```math
-\Delta \delta \psi = \delta \boldsymbol{F} : \Delta \boldsymbol{F} + \Delta \boldsymbol{F} : \delta \boldsymbol{F} = 2 \ \delta \boldsymbol{F} : \Delta \boldsymbol{F} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
+\Delta \delta \psi = 2 \ \delta \boldsymbol{F} : \Delta \boldsymbol{F} + 2 \ \boldsymbol{F} : \Delta \delta \boldsymbol{F}
 ```
 
 Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically evaluated. In total, $i \cdot j \cdot k \cdot l$ function calls are necessary to assemble the full hessian (without considering symmetry). For example, the $1223$ - component is evaluated as follows:
