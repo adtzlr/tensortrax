@@ -60,39 +60,39 @@ d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change of a function is evaluated by taking the partial derivatives of the function w.r.t. the tensor components (the jacobian) and contracted by the variation (small change) of the function argument.
 
 ```math
-\psi &= \psi(\bm{E})
+\psi = \psi(\bm{E})
 
-\delta \psi &= \delta \psi(\bm{E}, \delta \bm{E})
+\delta \psi = \delta \psi(\bm{E}, \delta \bm{E})
 ```
 
 Let's take the trace as an example. The variation of the trace of a tensor product is evaluated as the trace of the variation (small-change) of the tensor.
 
 ```math
-\psi &= trace(\bm{F}^T \bm{F}) = \bm{F} : \bm{F}
+\psi = trace(\bm{F}^T \bm{F}) = \bm{F} : \bm{F}
 
-\delta \psi &= \delta \bm{F} : \bm{F} + \bm{F} : \delta \bm{F} = 2 \ \bm{F} : \delta \bm{F}
+\delta \psi = \delta \bm{F} : \bm{F} + \bm{F} : \delta \bm{F} = 2 \ \bm{F} : \delta \bm{F}
 ```
 
 The $P_{ij}$-component of the jacobian $\bm{P}$ is now numerically evaluated by setting the respective variation component of the tensor to one and all other components to zero. In total, $i \cdot j$ function calls are necessary to assemble the full jacobian. For example, the $11$-component is evaluated as follows:
 
 ```math
-\delta \bm{F}_{(12)} &= \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+\delta \bm{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 
-\delta_{(12)} \psi &= \frac{\partial \psi}{\partial F_{12} = 2 \ \bm{F} : \delta \bm{F}_{(12)} = 2 \ \bm{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+\delta_{(12)} \psi = \frac{\partial \psi}{\partial F_{12} = 2 \ \bm{F} : \delta \bm{F}_{(12)} = 2 \ \bm{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 ```
 
 The second order derivative, i.e. the partial derivative of another partial derivative is evaluated by a further small-change (for a linear map, this is equal to the linearization).
 
 ```math
-\Delta \delta \psi &= \delta \bm{F} : \Delta \bm{F} + \Delta \bm{F} : \delta \bm{F} = 2 \ \delta \bm{F} : \Delta \bm{F} + 2 \ \bm{F} : \Delta \delta \bm{F}
+\Delta \delta \psi = \delta \bm{F} : \Delta \bm{F} + \Delta \bm{F} : \delta \bm{F} = 2 \ \delta \bm{F} : \Delta \bm{F} + 2 \ \bm{F} : \Delta \delta \bm{F}
 ```
 
 Once again, each component $\mathbb{A}_{ijkl}$ of the fourth-order hessian $\mathbb{A}$ is numerically evaluated as shown for the component $\mathbb{A}_{1223}$.
 
 ```math
-\delta \bm{F}_{(12)} &= \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+\delta \bm{F}_{(12)} = \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 
-\Delta \bm{F}_{(23)} &= \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}
+\Delta \bm{F}_{(23)} = \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}
 
-\Delta_{(23}) \delta_{(12}) \psi &= \delta \bm{F}_{(12)} : \Delta \bm{F}_{(23)} + \Delta \bm{F}_{(23)} : \delta \bm{F}_{(12)} = 2 \ \delta \bm{F}_{(12)} : \Delta \bm{F}_{(23)} + 2 \ \bm{F} : \Delta \delta \bm{F}
+\Delta_{(23}) \delta_{(12}) \psi = \delta \bm{F}_{(12)} : \Delta \bm{F}_{(23)} + \Delta \bm{F}_{(23)} : \delta \bm{F}_{(12)} = 2 \ \delta \bm{F}_{(12)} : \Delta \bm{F}_{(23)} + 2 \ \bm{F} : \Delta \delta \bm{F}
 ```
