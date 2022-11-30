@@ -124,7 +124,7 @@ I1 = trace(F.T() @ F)
 I1(T), δ(I1), Δ(I1), Δδ(I1)
 ```
 
-To obtain full gradients and hessians, `tensortrax` provides helpers which handle the function calls.
+To obtain full gradients and hessians, `tensortrax` provides helpers which handle the multiple function calls.
 
 ```python
 # input data with 2 trailing axes
