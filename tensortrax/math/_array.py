@@ -18,6 +18,13 @@ def eye(A):
     return B
 
 
+def cross(a, b):
+    "Cross product of two vectors a and b."
+    return np.einsum(
+        "...i->i...", np.cross(np.einsum("i...->...i", a), np.einsum("i...->...i", b))
+    )
+
+
 def det(A):
     "Determinant of a 2x2 or 3x3 Array."
     if A.shape[0] == 3:
