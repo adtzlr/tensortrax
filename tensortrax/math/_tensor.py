@@ -97,8 +97,8 @@ def eigvalsh(A):
         "aij...,ij...->a...", M, Δδ(A)
     )
 
-    #λ_equal = np.isclose(sum(λ, axis=0), 3)
-    #Δδλ[..., λ_equal] = np.trace(Δδ(A))[λ_equal] / 3
+    # λ_equal = np.isclose(sum(λ, axis=0), 3)
+    # Δδλ[..., λ_equal] = np.trace(Δδ(A))[λ_equal] / 3
 
     return Tensor(
         x=λ,
@@ -175,3 +175,21 @@ def hessian(fun, ntrax=2, njobs=cpu_count()):
         )
 
     return evaluate_hessian
+
+
+def gradient_vector_product(fun, ntrax=2, njobs=cpu_count()):
+    "Evaluate the gradient-vector-product of a function."
+
+    def evaluate_gradient_vector_product(x, δx, *args, **kwargs):
+        return fun(Tensor(x, δx, ntrax=ntrax), *args, **kwargs).δx
+
+    return evaluate_gradient_vector_product
+
+
+def hessian_vector_product(fun, ntrax=2, njobs=cpu_count()):
+    "Evaluate the gradient-vector-product of a function."
+
+    def evaluate_hessian_vector_product(x, δx, Δx, *args, **kwargs):
+        return fun(Tensor(x, δx, Δx, ntrax=ntrax), *args, **kwargs).Δδx
+
+    return evaluate_hessian_vector_product

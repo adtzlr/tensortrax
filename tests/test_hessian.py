@@ -45,7 +45,7 @@ def test_repeated_eigvals():
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
     assert np.allclose(d2wdf2, d2WdF2)
-    
+
     F = (np.eye(3).ravel()).reshape(3, 3, 1, 1)
     F[2, 2] = 2
 

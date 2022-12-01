@@ -23,4 +23,6 @@ from ._tensor import (
     function,
     gradient,
     hessian,
+    gradient_vector_product,
+    hessian_vector_product,
 )
