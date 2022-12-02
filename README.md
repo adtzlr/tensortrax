@@ -21,6 +21,7 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
+- Stable gradient and hessian of eigenvalues `eigvalsh` in case of repeated equal eigenvalues
 
 # Not Features
 - Not imitating NumPy (like [Autograd](https://github.com/HIPS/autograd))
