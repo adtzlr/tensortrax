@@ -75,6 +75,9 @@ class Tensor:
             value = value.reshape([*self.shape, *np.ones(self.ntrax, dtype=int)])
         return value
 
+    def __neg__(self):
+        return Tensor(x=-self.x, δx=-self.δx, Δx=-self.Δx, Δδx=-self.Δδx)
+
     def __add__(self, B):
         A = self
         if isinstance(B, Tensor):

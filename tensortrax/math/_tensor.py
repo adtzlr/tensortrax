@@ -113,6 +113,56 @@ def eigvalsh(A):
     )
 
 
+def sin(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.sin(f(A)),
+            δx=np.cos(f(A)) * δ(A),
+            Δx=np.cos(f(A)) * Δ(A),
+            Δδx=-np.sin(f(A)) * δ(A) * Δ(A) + np.cos(f(A)) * Δδ(A),
+        )
+    else:
+        return np.sin(A)
+
+
+def cos(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.cos(f(A)),
+            δx=-np.sin(f(A)) * δ(A),
+            Δx=-np.sin(f(A)) * Δ(A),
+            Δδx=-np.cos(f(A)) * δ(A) * Δ(A) - np.sin(f(A)) * Δδ(A),
+        )
+    else:
+        return np.cos(A)
+
+
+def tan(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.tan(f(A)),
+            δx=np.cos(f(A)) ** -2 * δ(A),
+            Δx=np.cos(f(A)) ** -2 * Δ(A),
+            Δδx=2 * np.tan(f(A)) * np.cos(f(A)) ** -2 * δ(A) * Δ(A)
+            + np.cos(f(A)) ** -2 * Δδ(A),
+        )
+    else:
+        return np.tan(A)
+
+
+def tanh(A):
+    if isinstance(A, Tensor):
+        x = np.tanh(f(A))
+        return Tensor(
+            x=x,
+            δx=(1 - x**2) * δ(A),
+            Δx=(1 - x**2) * Δ(A),
+            Δδx=-2 * x * (1 - x**2) * δ(A) * Δ(A) + (1 - x**2) * Δδ(A),
+        )
+    else:
+        return np.tanh(A)
+
+
 def function(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate a scalar-valued function."
 
