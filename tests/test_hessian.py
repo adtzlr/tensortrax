@@ -17,6 +17,12 @@ def ogden(F, mu=1, alpha=2):
     return tm.sum(1 / alpha * (λ**alpha - 1))
 
 
+def trig(F):
+    C = F.T() @ F
+    I1 = tm.trace(C)
+    return tm.sin(I1) + tm.cos(I1) + tm.tan(I1) + tm.tanh(I1)
+
+
 def test_function_gradient_hessian():
 
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
@@ -33,6 +39,16 @@ def test_function_gradient_hessian():
         assert np.allclose(w, ww)
         assert np.allclose(w, W)
         assert np.allclose(dwdf, dWdF)
+
+
+def test_trig():
+
+    F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3)
+
+    for fun in [trig]:
+        ww = tr.function(fun)(F)
+        dwdf, w = tr.gradient(fun)(F)
+        d2WdF2, dWdF, W = tr.hessian(fun)(F)
 
 
 def test_repeated_eigvals():
@@ -83,3 +99,4 @@ def test_repeated_eigvals():
 if __name__ == "__main__":
     test_function_gradient_hessian()
     test_repeated_eigvals()
+    test_trig()
