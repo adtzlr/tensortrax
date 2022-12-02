@@ -60,11 +60,11 @@ d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
 
 ```math
-\psi = \psi(\boldsymbol{E})
+\psi = \psi(\boldsymbol{F})
 ```
 
 ```math
-\delta \psi = \delta \psi(\boldsymbol{E}, \delta \boldsymbol{E})
+\delta \psi = \delta \psi(\boldsymbol{F}, \delta \boldsymbol{F})
 ```
 
 Let's take the trace of a tensor product as an example. The variation is evaluated as follows:
