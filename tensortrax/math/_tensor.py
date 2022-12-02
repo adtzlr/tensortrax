@@ -88,7 +88,12 @@ def eigvalsh(A):
             Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
             δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
             λαγ = λ[α] - λ[γ]
-            λαγ[np.isclose(λ[α], λ[γ])] = np.inf
+            λ_equal = np.isclose(λ[α], λ[γ])
+            if np.any(λ_equal):
+                if len(λαγ.shape) == 0:
+                    λαγ = np.inf
+                else:
+                    λαγ[λ_equal] = np.inf
             δNα.append(1 / λαγ * N[γ] * δAαγ)
         δN.append(sum(δNα, axis=0))
 
