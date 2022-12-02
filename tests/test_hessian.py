@@ -37,10 +37,32 @@ def test_function_gradient_hessian():
 
 def test_repeated_eigvals():
 
+    F = np.eye(3)
+
+    ntrax = len(F.shape) - 2
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+
+    assert np.allclose(w, W)
+    assert np.allclose(dwdf, dWdF)
+    assert np.allclose(d2wdf2, d2WdF2)
+
+    F = np.eye(3)
+    F[2, 2] = 2
+
+    ntrax = len(F.shape) - 2
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+
+    assert np.allclose(w, W)
+    assert np.allclose(dwdf, dWdF)
+    assert np.allclose(d2wdf2, d2WdF2)
+
     F = (np.eye(3).ravel()).reshape(3, 3, 1, 1)
 
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=2)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=2)(F)
+    ntrax = len(F.shape) - 2
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
@@ -49,8 +71,9 @@ def test_repeated_eigvals():
     F = (np.eye(3).ravel()).reshape(3, 3, 1, 1)
     F[2, 2] = 2
 
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=2)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=2)(F)
+    ntrax = len(F.shape) - 2
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
