@@ -113,7 +113,7 @@ def eigvalsh(A):
     )
 
 
-def function(fun, ntrax=2, njobs=cpu_count()):
+def function(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate a scalar-valued function."
 
     def evaluate_function(x, *args, **kwargs):
@@ -122,7 +122,7 @@ def function(fun, ntrax=2, njobs=cpu_count()):
     return evaluate_function
 
 
-def gradient(fun, ntrax=2, njobs=cpu_count()):
+def gradient(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(x, *args, **kwargs):
@@ -149,7 +149,7 @@ def gradient(fun, ntrax=2, njobs=cpu_count()):
     return evaluate_gradient
 
 
-def hessian(fun, ntrax=2, njobs=cpu_count()):
+def hessian(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate the hessian of a scalar-valued function."
 
     def evaluate_hessian(x, *args, **kwargs):
@@ -182,7 +182,7 @@ def hessian(fun, ntrax=2, njobs=cpu_count()):
     return evaluate_hessian
 
 
-def gradient_vector_product(fun, ntrax=2, njobs=cpu_count()):
+def gradient_vector_product(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate the gradient-vector-product of a function."
 
     def evaluate_gradient_vector_product(x, δx, *args, **kwargs):
@@ -191,7 +191,7 @@ def gradient_vector_product(fun, ntrax=2, njobs=cpu_count()):
     return evaluate_gradient_vector_product
 
 
-def hessian_vector_product(fun, ntrax=2, njobs=cpu_count()):
+def hessian_vector_product(fun, ntrax=0, njobs=cpu_count()):
     "Evaluate the gradient-vector-product of a function."
 
     def evaluate_hessian_vector_product(x, δx, Δx, *args, **kwargs):
