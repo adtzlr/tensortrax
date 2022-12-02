@@ -10,6 +10,10 @@ r"""
 
 from ._array import det as _det, inv as _inv, eye as _eye
 from ._tensor import (
+    sin,
+    cos,
+    tan,
+    tanh,
     dot,
     ddot,
     trace,
