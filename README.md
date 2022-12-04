@@ -148,10 +148,10 @@ P_12   =  δ(I1_C) # (= Δ(I1_C))
 A_1223 = Δδ(I1_C)
 ```
 
-To obtain full gradients and hessians in one function call, `tensortrax` provides helpers which handle the multiple function calls.
+To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls.
 
 ```python
 # input data with 0 trailing axes
-gradient(I1_C, ntrax=0)(F)
-hessian(I1_C, ntrax=0)(F)
+gradient(lambda F: trace(F.T() @ F), ntrax=0)(F)
+hessian(lambda F: trace(F.T() @ F), ntrax=0)(F)
 ```
