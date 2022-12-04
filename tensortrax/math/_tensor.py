@@ -37,6 +37,7 @@ def sum(A, axis=0):
             δx=np.sum(δ(A), axis=axis),
             Δx=np.sum(Δ(A), axis=axis),
             Δδx=np.sum(Δδ(A), axis=axis),
+            ntrax=A.ntrax,
         )
     else:
         return np.sum(A, axis=axis)
@@ -64,6 +65,7 @@ def det(A):
             δx=δx,
             Δx=Δx,
             Δδx=Δδx,
+            ntrax=A.ntrax,
         )
     else:
         return array.det(A)
@@ -110,6 +112,7 @@ def eigvalsh(A):
         δx=δλ,
         Δx=Δλ,
         Δδx=Δδλ,
+        ntrax=A.ntrax,
     )
 
 
@@ -120,6 +123,7 @@ def sin(A):
             δx=np.cos(f(A)) * δ(A),
             Δx=np.cos(f(A)) * Δ(A),
             Δδx=-np.sin(f(A)) * δ(A) * Δ(A) + np.cos(f(A)) * Δδ(A),
+            ntrax=A.ntrax,
         )
     else:
         return np.sin(A)
@@ -132,6 +136,7 @@ def cos(A):
             δx=-np.sin(f(A)) * δ(A),
             Δx=-np.sin(f(A)) * Δ(A),
             Δδx=-np.cos(f(A)) * δ(A) * Δ(A) - np.sin(f(A)) * Δδ(A),
+            ntrax=A.ntrax,
         )
     else:
         return np.cos(A)
@@ -145,6 +150,7 @@ def tan(A):
             Δx=np.cos(f(A)) ** -2 * Δ(A),
             Δδx=2 * np.tan(f(A)) * np.cos(f(A)) ** -2 * δ(A) * Δ(A)
             + np.cos(f(A)) ** -2 * Δδ(A),
+            ntrax=A.ntrax,
         )
     else:
         return np.tan(A)
@@ -158,6 +164,7 @@ def tanh(A):
             δx=(1 - x**2) * δ(A),
             Δx=(1 - x**2) * Δ(A),
             Δδx=-2 * x * (1 - x**2) * δ(A) * Δ(A) + (1 - x**2) * Δδ(A),
+            ntrax=A.ntrax,
         )
     else:
         return np.tanh(A)

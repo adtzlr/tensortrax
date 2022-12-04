@@ -76,7 +76,7 @@ class Tensor:
         return value
 
     def __neg__(self):
-        return Tensor(x=-self.x, δx=-self.δx, Δx=-self.Δx, Δδx=-self.Δδx)
+        return Tensor(x=-self.x, δx=-self.δx, Δx=-self.Δx, Δδx=-self.Δδx, ntrax=self.ntrax)
 
     def __add__(self, B):
         A = self
@@ -90,7 +90,7 @@ class Tensor:
             δx = δ(A)
             Δx = Δ(A)
             Δδx = Δδ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
     def __sub__(self, B):
         A = self
@@ -104,7 +104,7 @@ class Tensor:
             δx = δ(A)
             Δx = Δ(A)
             Δδx = Δδ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
     def __mul__(self, B):
         A = self
@@ -118,7 +118,7 @@ class Tensor:
             δx = δ(A) * B
             Δx = Δ(A) * B
             Δδx = Δδ(A) * B
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
     def __truediv__(self, B):
         A = self
@@ -133,7 +133,7 @@ class Tensor:
         δx = p * f(A) ** (p - 1) * δ(A)
         Δx = p * f(A) ** (p - 1) * Δ(A)
         Δδx = p * f(A) ** (p - 1) * Δδ(A) + p * (p - 1) * f(A) ** (p - 2) * δ(A) * Δ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
     def T(self):
         return transpose(self)
@@ -168,7 +168,7 @@ def einsum2(subscripts, *operands):
             δx = _einsum(δ(A), B)
             Δx = _einsum(Δ(A), B)
             Δδx = _einsum(Δδ(A), B)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
     else:
         return _einsum(*operands)
 
@@ -182,7 +182,7 @@ def einsum1(subscripts, *operands):
         δx = _einsum(δ(A))
         Δx = _einsum(Δ(A))
         Δδx = _einsum(Δδ(A))
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx)
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
     else:
         return _einsum(*operands)
 
