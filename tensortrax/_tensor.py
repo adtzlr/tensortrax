@@ -37,7 +37,7 @@ class Tensor:
 
     """
 
-    def __init__(self, x, δx=None, Δx=None, Δδx=None, ntrax=2):
+    def __init__(self, x, δx=None, Δx=None, Δδx=None, ntrax=0):
         """Init a Hyper-Dual Tensor with trailing axes.
 
         Parameters
