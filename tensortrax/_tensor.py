@@ -146,6 +146,7 @@ class Tensor:
     __rmul__ = __mul__
     __rmatmul__ = __matmul__
     __rtruediv__ = __truediv__
+    __array_ufunc__ = None
 
 
 def einsum2(subscripts, *operands):
