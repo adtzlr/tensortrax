@@ -8,6 +8,7 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
+from string import ascii_letters
 import numpy as np
 
 from ._helpers import f, δ, Δ, Δδ
@@ -199,7 +200,9 @@ def einsum(subscripts, *operands):
 
 
 def transpose(A):
-    return einsum("ij...->ji...", A)
+    ij = ascii_letters[:len(A.shape)]
+    ji = ij[::-1]
+    return einsum(f"{ij}...->{ji}...", A)
 
 
 def matmul(A, B):
