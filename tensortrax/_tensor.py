@@ -207,6 +207,6 @@ def transpose(A):
 
 def matmul(A, B):
     ik = ascii_letters[: len(A.shape)]
-    kj = ascii_letters[len(A.shape) - 1: 2 * len(A.shape) - 1]
+    kj = ascii_letters[len(A.shape) - 1: len(A.shape) - 1 + len(B.shape)]
     ij = ik[:-1] + kj[1:]
     return einsum(f"{ik}...,{kj}...->{ij}...", A, B)
