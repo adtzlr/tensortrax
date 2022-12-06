@@ -22,6 +22,16 @@ def test_math():
     with pytest.raises(NotImplementedError):
         T / T
     
+    assert isinstance(T + F, tr.Tensor)
+    assert isinstance(F + T, tr.Tensor)
+    assert isinstance(T + T, tr.Tensor)
+    
+    assert isinstance(T - F, tr.Tensor)
+    assert isinstance(F - T, tr.Tensor)
+    assert isinstance(T - T, tr.Tensor)
+    
+    assert np.allclose(-T.x, -F)
+    
     F = np.eye(3) + np.arange(9).reshape(3, 3) / 10
     T = tr.Tensor(F)
     
