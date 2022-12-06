@@ -30,7 +30,7 @@ def test_math():
     assert isinstance(F - T, tr.Tensor)
     assert isinstance(T - T, tr.Tensor)
     
-    assert np.allclose(-T.x, -F)
+    assert np.allclose((-T).x, -F)
     
     F = np.eye(3) + np.arange(9).reshape(3, 3) / 10
     T = tr.Tensor(F)
