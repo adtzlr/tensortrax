@@ -107,6 +107,9 @@ class Tensor:
             Δx = Δ(A)
             Δδx = Δδ(A)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+    
+    def __rsub__(self, B):
+        return -self.__sub__(B)
 
     def __mul__(self, B):
         A = self
@@ -144,12 +147,12 @@ class Tensor:
 
     def __matmul__(self, B):
         return matmul(self, B)
+    
+    def __rmatmul__(self, B):
+        return matmul(B, self)
 
     __radd__ = __add__
-    __rsub__ = __sub__
     __rmul__ = __mul__
-    __rmatmul__ = __matmul__
-    __rtruediv__ = __truediv__
     __array_ufunc__ = None
 
 
