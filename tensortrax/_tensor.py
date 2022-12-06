@@ -160,25 +160,34 @@ def einsum2(subscripts, *operands):
     "Einsum with two operands."
     A, B = operands
     _einsum = lambda *operands: np.einsum(subscripts, *operands)
-    if isinstance(A, Tensor):
-        if isinstance(B, Tensor):
-            x = _einsum(f(A), f(B))
-            δx = _einsum(δ(A), f(B)) + _einsum(f(A), δ(B))
-            Δx = _einsum(Δ(A), f(B)) + _einsum(f(A), Δ(B))
-            Δδx = (
+    
+    if isinstance(A, Tensor) and isinstance(B, Tensor):
+        x = _einsum(f(A), f(B))
+        δx = _einsum(δ(A), f(B)) + _einsum(f(A), δ(B))
+        Δx = _einsum(Δ(A), f(B)) + _einsum(f(A), Δ(B))
+        Δδx = (
                 _einsum(Δδ(A), f(B))
                 + _einsum(f(A), Δδ(B))
                 + _einsum(δ(A), Δ(B))
                 + _einsum(Δ(A), δ(B))
-            )
-        else:
-            x = _einsum(f(A), B)
-            δx = _einsum(δ(A), B)
-            Δx = _einsum(Δ(A), B)
-            Δδx = _einsum(Δδ(A), B)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+        )
+
+    elif isinstance(A, Tensor) and not isinstance(B, Tensor):
+        x = _einsum(f(A), B)
+        δx = _einsum(δ(A), B)
+        Δx = _einsum(Δ(A), B)
+        Δδx = _einsum(Δδ(A), B)
+
+    elif not isinstance(A, Tensor) and isinstance(B, Tensor):
+        x = _einsum(A, f(B))
+        δx = _einsum(A, δ(B))
+        Δx = _einsum(A, Δ(B))
+        Δδx = _einsum(A, Δδ(B))
+        
     else:
         return _einsum(*operands)
+
+    return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
 
 def einsum1(subscripts, *operands):
