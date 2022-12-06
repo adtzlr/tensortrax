@@ -76,7 +76,9 @@ class Tensor:
         return value
 
     def __neg__(self):
-        return Tensor(x=-self.x, δx=-self.δx, Δx=-self.Δx, Δδx=-self.Δδx, ntrax=self.ntrax)
+        return Tensor(
+            x=-self.x, δx=-self.δx, Δx=-self.Δx, Δδx=-self.Δδx, ntrax=self.ntrax
+        )
 
     def __add__(self, B):
         A = self
@@ -125,7 +127,9 @@ class Tensor:
         if isinstance(B, Tensor):
             raise NotImplementedError("Divide by Tensor is not supported.")
         else:
-            return Tensor(x=f(A) / B, δx=δ(A) / B, Δx=Δ(A) / B, Δδx=Δδ(A) / B, ntrax=A.ntrax)
+            return Tensor(
+                x=f(A) / B, δx=δ(A) / B, Δx=Δ(A) / B, Δδx=Δδ(A) / B, ntrax=A.ntrax
+            )
 
     def __pow__(self, p):
         A = self

@@ -4,7 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 from ._tensor import Tensor
 from ._helpers import f, δ, Δ, Δδ
-from .math._tensor import (
+from ._evaluate import (
     function,
     gradient,
     hessian,

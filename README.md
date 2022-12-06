@@ -37,7 +37,7 @@ import tensortrax.math as tm
 def fun(F):
     C = F.T() @ F
     I1 = tm.trace(C)
-    J = tm.det(F)
+    J = tm.linalg.det(F)
     return J ** (-2 / 3) * I1 - 3
 ```
 

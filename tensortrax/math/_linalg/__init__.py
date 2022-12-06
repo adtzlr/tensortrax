@@ -8,18 +8,5 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from . import _linalg as linalg
-from ._math_tensor import (
-    sin,
-    cos,
-    tan,
-    tanh,
-    dot,
-    ddot,
-    trace,
-    transpose,
-    sum,
-    sqrt,
-    einsum,
-    matmul,
-)
+from ._linalg_array import det as _det, inv as _inv
+from ._linalg_tensor import det, eigvalsh

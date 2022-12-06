@@ -12,7 +12,7 @@ from joblib import delayed, Parallel, cpu_count
 import numpy as np
 
 from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from . import _array as array
+from ._linalg import _linalg_array as array
 
 
 dot = matmul
