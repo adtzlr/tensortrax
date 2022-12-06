@@ -15,6 +15,9 @@ def test_math():
     
     assert isinstance(F / T, tr.Tensor)
     assert isinstance(F * T, tr.Tensor)
+    
+    assert tm.array.cross(F, F).shape == F.shape
+    assert tm.array.eye(F).shape == F.shape
 
 
 if __name__ == "__main__":

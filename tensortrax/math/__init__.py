@@ -23,3 +23,4 @@ from ._math_tensor import (
     einsum,
     matmul,
 )
+from . import _math_array as array
