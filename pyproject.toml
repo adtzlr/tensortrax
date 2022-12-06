@@ -1,6 +1,6 @@
 [project]
 name = "tensortrax"
-version = "0.0.14"
+version = "0.0.15"
 description = "Math on (Hyper-Dual) Tensors with Trailing Axes"
 readme = "README.md"
 requires-python = ">=3.7"
