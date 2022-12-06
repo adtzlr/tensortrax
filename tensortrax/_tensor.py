@@ -171,23 +171,23 @@ def einsum2(subscripts, *operands):
                 + _einsum(δ(A), Δ(B))
                 + _einsum(Δ(A), δ(B))
         )
-
+        ntrax = A.ntrax
     elif isinstance(A, Tensor) and not isinstance(B, Tensor):
         x = _einsum(f(A), B)
         δx = _einsum(δ(A), B)
         Δx = _einsum(Δ(A), B)
         Δδx = _einsum(Δδ(A), B)
-
+        ntrax = A.ntrax
     elif not isinstance(A, Tensor) and isinstance(B, Tensor):
         x = _einsum(A, f(B))
         δx = _einsum(A, δ(B))
         Δx = _einsum(A, Δ(B))
         Δδx = _einsum(A, Δδ(B))
-        
+        ntrax = B.ntrax
     else:
         return _einsum(*operands)
 
-    return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+    return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=ntrax)
 
 
 def einsum1(subscripts, *operands):
