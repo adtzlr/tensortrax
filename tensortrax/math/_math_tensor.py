@@ -8,7 +8,6 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from joblib import delayed, Parallel, cpu_count
 import numpy as np
 
 from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
