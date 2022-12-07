@@ -20,16 +20,18 @@ def ogden(F, mu=1, alpha=2):
 def test_hvp():
 
     F = δF = ΔF = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
-    
+
     for parallel in [False, True]:
 
         for fun in [neo_hooke, ogden]:
             δfun = tr.gradient_vector_product(fun, ntrax=2, parallel=parallel)(F, δF)
-            Δδfun = tr.hessian_vector_product(fun, ntrax=2, parallel=parallel)(F, δF, ΔF)
-    
+            Δδfun = tr.hessian_vector_product(fun, ntrax=2, parallel=parallel)(
+                F, δF, ΔF
+            )
+
             assert δfun.shape == (1, 1)
             assert Δδfun.shape == (1, 1)
-    
+
             assert not np.any(np.isnan(δfun))
             assert not np.any(np.isnan(Δδfun))
 

@@ -32,11 +32,11 @@ def test_function_gradient_hessian():
             ww = tr.function(fun, ntrax=2, parallel=parallel)(F)
             dwdf, w = tr.gradient(fun, ntrax=2, parallel=parallel)(F)
             d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2, parallel=parallel)(F)
-    
+
             assert W.shape == (1, 1)
             assert dWdF.shape == (3, 3, 1, 1)
             assert d2WdF2.shape == (3, 3, 3, 3, 1, 1)
-    
+
             assert np.allclose(w, ww)
             assert np.allclose(w, W)
             assert np.allclose(dwdf, dWdF)

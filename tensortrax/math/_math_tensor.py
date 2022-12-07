@@ -101,4 +101,3 @@ def tanh(A):
         )
     else:
         return np.tanh(A)
-    

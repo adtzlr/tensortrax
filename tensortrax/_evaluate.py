@@ -40,20 +40,20 @@ def gradient(fun, ntrax=0, parallel=False):
             func = fun(t, *args, **kwargs)
             fx[:] = f(func)
             dfdx[a] = δ(func)
-        
+
         if not parallel:
             for a in indices:
                 kernel(a, x, δx, Δx, args, kwargs)
-                
+
         else:
             threads = [
                 Thread(target=kernel, args=(a, x, δx, Δx, args, kwargs))
                 for a in indices
             ]
-            
+
             for th in threads:
                 th.start()
-    
+
             for th in threads:
                 th.join()
 
@@ -81,20 +81,20 @@ def hessian(fun, ntrax=0, parallel=False):
             fx[:] = f(func)
             dfdx[a] = δ(func)
             d2fdx2[a, b] = d2fdx2[b, a] = Δδ(func)
-        
+
         if not parallel:
             for a, b in indices:
                 kernel(a, b, x, δx, Δx, args, kwargs)
-                
+
         else:
             threads = [
                 Thread(target=kernel, args=(a, b, x, δx, Δx, args, kwargs))
                 for a, b in indices
             ]
-            
+
             for th in threads:
                 th.start()
-    
+
             for th in threads:
                 th.join()
 

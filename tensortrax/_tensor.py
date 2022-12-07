@@ -107,7 +107,7 @@ class Tensor:
             Δx = Δ(A)
             Δδx = Δδ(A)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
-    
+
     def __rsub__(self, B):
         return -self.__sub__(B)
 
@@ -147,7 +147,7 @@ class Tensor:
 
     def __matmul__(self, B):
         return matmul(self, B)
-    
+
     def __rmatmul__(self, B):
         return matmul(B, self)
 
@@ -160,16 +160,16 @@ def einsum2(subscripts, *operands):
     "Einsum with two operands."
     A, B = operands
     _einsum = lambda *operands: np.einsum(subscripts, *operands)
-    
+
     if isinstance(A, Tensor) and isinstance(B, Tensor):
         x = _einsum(f(A), f(B))
         δx = _einsum(δ(A), f(B)) + _einsum(f(A), δ(B))
         Δx = _einsum(Δ(A), f(B)) + _einsum(f(A), Δ(B))
         Δδx = (
-                _einsum(Δδ(A), f(B))
-                + _einsum(f(A), Δδ(B))
-                + _einsum(δ(A), Δ(B))
-                + _einsum(Δ(A), δ(B))
+            _einsum(Δδ(A), f(B))
+            + _einsum(f(A), Δδ(B))
+            + _einsum(δ(A), Δ(B))
+            + _einsum(Δ(A), δ(B))
         )
         ntrax = A.ntrax
     elif isinstance(A, Tensor) and not isinstance(B, Tensor):
