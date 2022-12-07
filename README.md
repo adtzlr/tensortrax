@@ -158,7 +158,7 @@ hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
 # Extensions
 Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function expression, three additional (dual) variation expressions have to be defined. 
 
-> :page_with_curl: :pencil: Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to `tensortrax`.
+> **Hint**: Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to `tensortrax` :page_with_curl: :pencil2:.
 
 ```python
 import numpy as np
