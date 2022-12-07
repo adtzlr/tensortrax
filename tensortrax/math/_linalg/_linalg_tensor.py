@@ -40,6 +40,30 @@ def det(A):
         return array.det(A)
 
 
+def inv(A):
+    "Inverse of a 2x2 or 3x3 Tensor."
+    if isinstance(A, Tensor):
+        x = array.inv(f(A))
+        invA = array.inv(f(A))
+        δx = -matmul(matmul(invA, δ(A)), invA)
+        Δx = -matmul(matmul(invA, Δ(A)), invA)
+        Δδx = -(
+            matmul(matmul(Δx, δ(A)), invA)
+            + matmul(matmul(invA, δ(A)), Δx)
+            + matmul(matmul(invA, Δδ(A)), invA)
+        )
+
+        return Tensor(
+            x=x,
+            δx=δx,
+            Δx=Δx,
+            Δδx=Δδx,
+            ntrax=A.ntrax,
+        )
+    else:
+        return array.inv(A)
+
+
 def eigvalsh(A):
     "Eigenvalues of a symmetric Tensor."
 
