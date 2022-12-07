@@ -8,6 +8,7 @@ def test_math():
 
     F = np.eye(3) + np.arange(9).reshape(3, 3) / 10
     T = tr.Tensor(F)
+    print(T)
 
     C = F.T @ F
 
