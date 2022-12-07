@@ -12,7 +12,7 @@ def test_math():
     C = F.T @ F
 
     assert np.allclose(tr.f(T.T() @ F), C)
-    assert np.allclose(F.T @ tr.f(T), C)
+    assert np.allclose(tr.f(F.T @ T), C)
     assert np.allclose(tr.f(T.T() @ T), C)
 
     assert isinstance(T * F, tr.Tensor)
