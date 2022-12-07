@@ -151,6 +151,15 @@ class Tensor:
     def __rmatmul__(self, B):
         return matmul(B, self)
 
+    def __repr__(self):
+        header = "<tensortrax tensor object>"
+        metadata = [
+            f"  Shape / size of trailing axes: {self.trax} / {self.ntrax}",
+            f"  Shape / size of tensor: {self.shape} / {self.size}",
+        ]
+        data = self.x.__repr__()
+        return "\n".join([header, *metadata, "", data])
+
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
