@@ -158,8 +158,6 @@ hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
 # Extensions
 Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function expression, three additional (dual) variation expressions have to be defined. 
 
-> **Hint**: *Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to `tensortrax`* :page_with_curl: :pencil2:.
-
 ```python
 import numpy as np
 from tensortrax import Tensor, f, δ, Δ, Δδ
@@ -176,3 +174,5 @@ def sin(A):
 x = np.eye(3)
 y = sin(Tensor(x))
 ```
+
+> **Hint**: *Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to [`tensortrax/math/_math_tensor.py`](https://github.com/adtzlr/tensortrax/blob/main/tensortrax/math/_math_tensor.py)* :page_with_curl: :pencil2:.
