@@ -15,7 +15,7 @@ def test_math():
     assert np.allclose(tr.f(T.T() @ F), C)
     assert np.allclose(tr.f(F.T @ T), C)
     assert np.allclose(tr.f(T.T() @ T), C)
-    
+
     assert T[0].shape == (3,)
 
     assert isinstance(T * F, tr.Tensor)

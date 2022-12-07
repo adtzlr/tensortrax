@@ -154,3 +154,23 @@ To obtain full gradients and hessians in one function call, `tensortrax` provide
 gradient(lambda F: trace(F.T() @ F), parallel=False)(x)
 hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
 ```
+
+# User extensions
+Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function expression, three additional (dual) variation expressions have to be defined.
+
+```python
+import numpy as np
+from tensortrax import Tensor, f, δ, Δ, Δδ
+
+def sin(A):
+    return Tensor(
+        x=np.sin(f(A)),
+        δx=np.cos(f(A)) * δ(A),
+        Δx=np.cos(f(A)) * Δ(A),
+        Δδx=-np.sin(f(A)) * δ(A) * Δ(A) + np.cos(f(A)) * Δδ(A),
+        ntrax=A.ntrax,
+    )
+
+x = np.eye(3)
+y = sin(Tensor(x))
+```
