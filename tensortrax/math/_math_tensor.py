@@ -89,6 +89,32 @@ def tan(A):
         return np.tan(A)
 
 
+def sinh(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.sinh(f(A)),
+            δx=np.cosh(f(A)) * δ(A),
+            Δx=np.cosh(f(A)) * Δ(A),
+            Δδx=np.sinh(f(A)) * δ(A) * Δ(A) + np.cosh(f(A)) * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.sinh(A)
+
+
+def cosh(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.cosh(f(A)),
+            δx=np.sinh(f(A)) * δ(A),
+            Δx=np.sinh(f(A)) * Δ(A),
+            Δδx=np.cosh(f(A)) * δ(A) * Δ(A) + np.sinh(f(A)) * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.cosh(A)
+
+
 def tanh(A):
     if isinstance(A, Tensor):
         x = np.tanh(f(A))

@@ -151,6 +151,13 @@ class Tensor:
     def __rmatmul__(self, B):
         return matmul(B, self)
 
+    def __getitem__(self, items):
+        x = f(self)[items]
+        Δx = Δ(self)[items]
+        δx = δ(self)[items]
+        Δδx = Δδ(self)[items]
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=self.ntrax)
+
     def __repr__(self):
         header = "<tensortrax tensor object>"
         metadata = [

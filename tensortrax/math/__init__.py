@@ -13,6 +13,8 @@ from ._math_tensor import (
     sin,
     cos,
     tan,
+    sinh,
+    cosh,
     tanh,
     dot,
     ddot,
