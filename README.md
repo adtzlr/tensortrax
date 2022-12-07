@@ -155,8 +155,10 @@ gradient(lambda F: trace(F.T() @ F), parallel=False)(x)
 hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
 ```
 
-# User extensions
-Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function expression, three additional (dual) variation expressions have to be defined.
+# Extensions
+Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function expression, three additional (dual) variation expressions have to be defined. 
+
+> :page_with_curl: :pencil: Feel free to contribute missing math-functions to `tensortrax`!
 
 ```python
 import numpy as np
