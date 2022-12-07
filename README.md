@@ -151,7 +151,6 @@ A_1223 = Δδ(I1_C)
 To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls. Optionally, the function calls are executed in parallel (threaded).
 
 ```python
-# input data with 0 trailing axes
 gradient(lambda F: trace(F.T() @ F), parallel=False)(x)
 hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
 ```
