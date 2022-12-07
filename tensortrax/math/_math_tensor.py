@@ -127,3 +127,17 @@ def tanh(A):
         )
     else:
         return np.tanh(A)
+
+
+def exp(A):
+    if isinstance(A, Tensor):
+        x = np.exp(f(A))
+        return Tensor(
+            x=x,
+            δx=x * δ(A),
+            Δx=x * Δ(A),
+            Δδx=x * δ(A) * Δ(A) + x * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.exp(A)

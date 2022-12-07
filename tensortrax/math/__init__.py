@@ -16,6 +16,7 @@ from ._math_tensor import (
     sinh,
     cosh,
     tanh,
+    exp,
     dot,
     ddot,
     trace,
