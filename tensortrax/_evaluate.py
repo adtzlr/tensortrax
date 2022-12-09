@@ -16,6 +16,7 @@ from ._tensor import Tensor, f, δ, Δδ
 
 
 def add_tensor(args, kwargs, wrt, δx, Δx, ntrax):
+    "Modify the arguments and replace the w.r.t.-argument by a tensor."
     
     kwargs_out = copy(kwargs)
     args_out = list(args)
@@ -29,6 +30,7 @@ def add_tensor(args, kwargs, wrt, δx, Δx, ntrax):
     return args_out, kwargs_out
 
 def arg_to_tensor(args, kwargs, wrt):
+    "Return the argument which will be replaced by a tensor."
 
     if isinstance(wrt, str):
         x = kwargs[wrt]
