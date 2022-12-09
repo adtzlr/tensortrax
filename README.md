@@ -19,13 +19,16 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 - Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. three operands)
 - Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Create functions in terms of Hyper-Dual Tensors
-- Evaluate the function, the gradient (jacobian) and the hessian on given input arrays
+- Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
 - Stable gradient and hessian of eigenvalues `eigvalsh` in case of repeated equal eigenvalues
 
 # Not Features
-- Not imitating NumPy (like [Autograd](https://github.com/HIPS/autograd))
-- No arbitrary-order gradients
+- Not imitating a full-featured NumPy (e.g. like [Autograd](https://github.com/HIPS/autograd))
+- No arbitrary-order gradients (only first- and second order gradients)
+
+# Why `tensortrax`?
+Compared to other libaries which introduce a new (hyper-) dual `dtype` (treated as `dtype=object` in NumPy), `tensortrax` relies on its own `Tensor` class. This approach involves a re-definition of all essential math operations (and NumPy-functions), whereas the dtype-approach supports most operations (even NumPy) out of the box. However, in `tensortrax` NumPy operates on default data types (e.g. `dtype=float`). This allows to support functions like `np.einsum()`. Beside the differences concerning the underlying `dtype`, `tensortrax` is formulated on (tensorial) calculus of variation.
 
 # Usage
 Let's define a scalar-valued function which operates on a tensor.
