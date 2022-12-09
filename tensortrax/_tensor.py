@@ -136,10 +136,7 @@ class Tensor:
 
     def __rtruediv__(self, B):
         A = self
-        if isinstance(B, Tensor):
-            raise NotImplementedError("Divide by Tensor is not supported.")
-        else:
-            return B * A**-1
+        return B * A**-1
 
     def __pow__(self, p):
         A = self
