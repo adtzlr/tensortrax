@@ -15,7 +15,7 @@ def test_scalar():
 
     np.random.seed(54234)
     y = np.random.rand(100)
-    
+
     with pytest.raises(TypeError):
         tr.hessian(fun, wrt=[1, 2])(x, y)
 
