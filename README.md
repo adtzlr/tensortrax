@@ -34,14 +34,14 @@ Let's define a scalar-valued function which operates on a tensor.
 import tensortrax as tr
 import tensortrax.math as tm
 
-def fun(F):
+def fun(F, mu=1):
     C = F.T() @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
-    return J ** (-2 / 3) * I1 - 3
+    return mu / 2 * (J ** (-2 / 3) * I1 - 3)
 ```
 
-The hessian of the scalar-valued function w.r.t. the function argument is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
+The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
 
 ```python
 import numpy as np
@@ -52,9 +52,9 @@ F = np.random.rand(3, 3, 8, 50) / 10
 for a in range(3):
     F[a, a] += 1
 
-# W = tr.function(fun, ntrax=2)(F)
-# dWdF, W = tr.gradient(fun, ntrax=2)(F)
-d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
+# W = tr.function(fun, wrt=0, ntrax=2)(F)
+# dWdF, W = tr.gradient(fun, wrt=0, ntrax=2)(F)
+d2WdF2, dWdF, W = tr.hessian(fun, wrt="F", ntrax=2)(F=F)
 ```
 
 # Theory
@@ -120,6 +120,7 @@ Once again, each component $A_{ijkl}$ of the fourth-order hessian is numerically
 Each Tensor has four attributes: the (real) tensor array and the (hyper-dual) variational arrays. To obtain the above mentioned $12$ - component of the gradient and the $1223$ - component of the hessian, a tensor has to be created with the appropriate small-changes of the tensor components (dual arrays).
 
 ```python
+import tensortrax as tr
 from tensortrax import Tensor, f, δ, Δ, Δδ
 from tensortrax.math import trace
 
@@ -151,8 +152,15 @@ A_1223 = Δδ(I1_C)
 To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls. Optionally, the function calls are executed in parallel (threaded).
 
 ```python
-gradient(lambda F: trace(F.T() @ F), parallel=False)(x)
-hessian(lambda F: trace(F.T() @ F), parallel=False)(x)
+grad, func = tr.gradient(lambda F: trace(F.T() @ F), wrt=0, parallel=False)(x)
+hess, grad, func = tr.hessian(lambda F: trace(F.T() @ F), wrt=0, parallel=False)(x)
+```
+
+Evaluate the gradient- as well as hessian-vector-product:
+
+```python
+gvp = tr.gradient_vector_product(lambda F: trace(F.T() @ F), parallel=False)(x, δx=x)
+hvp = tr.hessian_vector_product(lambda F: trace(F.T() @ F), parallel=False)(x, δx=x, Δx=x)
 ```
 
 # Extensions

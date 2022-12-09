@@ -9,25 +9,56 @@ r"""
 """
 
 from threading import Thread
+from copy import copy
 import numpy as np
 
 from ._tensor import Tensor, f, δ, Δδ
 
 
-def function(fun, ntrax=0, parallel=False):
+def add_tensor(args, kwargs, wrt, δx, Δx, ntrax):
+    "Modify the arguments and replace the w.r.t.-argument by a tensor."
+
+    kwargs_out = copy(kwargs)
+    args_out = list(args)
+
+    if isinstance(wrt, str):
+        kwargs_out[wrt] = Tensor(x=kwargs[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
+
+    elif isinstance(wrt, int):
+        args_out[wrt] = Tensor(x=args[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
+
+    return args_out, kwargs_out
+
+
+def arg_to_tensor(args, kwargs, wrt):
+    "Return the argument which will be replaced by a tensor."
+
+    if isinstance(wrt, str):
+        x = kwargs[wrt]
+    elif isinstance(wrt, int):
+        x = args[wrt]
+    else:
+        raise TypeError(f"w.r.t. {wrt} not supported.")
+
+    return x
+
+
+def function(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate a scalar-valued function."
 
-    def evaluate_function(x, *args, **kwargs):
-        return fun(Tensor(x, ntrax=ntrax), *args, **kwargs).x
+    def evaluate_function(*args, **kwargs):
+        args, kwargs = add_tensor(args, kwargs, wrt, None, None, ntrax)
+        return fun(*args, **kwargs).x
 
     return evaluate_function
 
 
-def gradient(fun, ntrax=0, parallel=False):
+def gradient(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient of a scalar-valued function."
 
-    def evaluate_gradient(x, *args, **kwargs):
+    def evaluate_gradient(*args, **kwargs):
 
+        x = arg_to_tensor(args, kwargs, wrt)
         t = Tensor(x, ntrax=ntrax)
         indices = range(t.size)
 
@@ -35,19 +66,19 @@ def gradient(fun, ntrax=0, parallel=False):
         dfdx = np.zeros((t.size, *t.trax))
         δx = Δx = np.eye(t.size)
 
-        def kernel(a, x, δx, Δx, args, kwargs):
-            t = Tensor(x, δx=δx[a], Δx=Δx[a], ntrax=ntrax)
-            func = fun(t, *args, **kwargs)
+        def kernel(a, wrt, δx, Δx, ntrax, args, kwargs):
+            args, kwargs = add_tensor(args, kwargs, wrt, δx[a], Δx[a], ntrax)
+            func = fun(*args, **kwargs)
             fx[:] = f(func)
             dfdx[a] = δ(func)
 
         if not parallel:
             for a in indices:
-                kernel(a, x, δx, Δx, args, kwargs)
+                kernel(a, wrt, δx, Δx, ntrax, args, kwargs)
 
         else:
             threads = [
-                Thread(target=kernel, args=(a, x, δx, Δx, args, kwargs))
+                Thread(target=kernel, args=(a, wrt, δx, Δx, ntrax, args, kwargs))
                 for a in indices
             ]
 
@@ -62,11 +93,12 @@ def gradient(fun, ntrax=0, parallel=False):
     return evaluate_gradient
 
 
-def hessian(fun, ntrax=0, parallel=False):
+def hessian(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the hessian of a scalar-valued function."
 
-    def evaluate_hessian(x, *args, **kwargs):
+    def evaluate_hessian(*args, **kwargs):
 
+        x = arg_to_tensor(args, kwargs, wrt)
         t = Tensor(x, ntrax=ntrax)
         indices = np.array(np.triu_indices(t.size)).T
 
@@ -75,20 +107,20 @@ def hessian(fun, ntrax=0, parallel=False):
         d2fdx2 = np.zeros((t.size, t.size, *t.trax))
         δx = Δx = np.eye(t.size)
 
-        def kernel(a, b, x, δx, Δx, args, kwargs):
-            t = Tensor(x, δx=δx[a], Δx=Δx[b], ntrax=ntrax)
-            func = fun(t, *args, **kwargs)
+        def kernel(a, b, wrt, δx, Δx, ntrax, args, kwargs):
+            args, kwargs = add_tensor(args, kwargs, wrt, δx[a], Δx[b], ntrax)
+            func = fun(*args, **kwargs)
             fx[:] = f(func)
             dfdx[a] = δ(func)
             d2fdx2[a, b] = d2fdx2[b, a] = Δδ(func)
 
         if not parallel:
             for a, b in indices:
-                kernel(a, b, x, δx, Δx, args, kwargs)
+                kernel(a, b, wrt, δx, Δx, ntrax, args, kwargs)
 
         else:
             threads = [
-                Thread(target=kernel, args=(a, b, x, δx, Δx, args, kwargs))
+                Thread(target=kernel, args=(a, b, wrt, δx, Δx, ntrax, args, kwargs))
                 for a, b in indices
             ]
 
@@ -107,19 +139,21 @@ def hessian(fun, ntrax=0, parallel=False):
     return evaluate_hessian
 
 
-def gradient_vector_product(fun, ntrax=0, parallel=False):
+def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
-    def evaluate_gradient_vector_product(x, δx, *args, **kwargs):
-        return fun(Tensor(x, δx, ntrax=ntrax), *args, **kwargs).δx
+    def evaluate_gradient_vector_product(*args, δx, **kwargs):
+        args, kwargs = add_tensor(args, kwargs, wrt, δx, None, ntrax)
+        return fun(*args, **kwargs).δx
 
     return evaluate_gradient_vector_product
 
 
-def hessian_vector_product(fun, ntrax=0, parallel=False):
+def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
-    def evaluate_hessian_vector_product(x, δx, Δx, *args, **kwargs):
-        return fun(Tensor(x, δx, Δx, ntrax=ntrax), *args, **kwargs).Δδx
+    def evaluate_hessian_vector_product(*args, δx, Δx, **kwargs):
+        args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx, ntrax)
+        return fun(*args, **kwargs).Δδx
 
     return evaluate_hessian_vector_product
