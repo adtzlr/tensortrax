@@ -148,9 +148,9 @@ def log(A):
         x = np.log(f(A))
         return Tensor(
             x=x,
-            δx=1 / x * δ(A),
-            Δx=1 / x * Δ(A),
-            Δδx=-1 / x**2 * δ(A) * Δ(A) + 1 / x * Δδ(A),
+            δx=1 / f(A) * δ(A),
+            Δx=1 / f(A) * Δ(A),
+            Δδx=-1 / f(A) ** 2 * δ(A) * Δ(A) + 1 / f(A) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -162,9 +162,10 @@ def log10(A):
         x = np.log10(f(A))
         return Tensor(
             x=x,
-            δx=1 / (np.log(10) * x) * δ(A),
-            Δx=1 / (np.log(10) * x) * Δ(A),
-            Δδx=-1 / (np.log(10) * x**2) * δ(A) * Δ(A) + 1 / (np.log(10) * x) * Δδ(A),
+            δx=1 / (np.log(10) * f(A)) * δ(A),
+            Δx=1 / (np.log(10) * f(A)) * Δ(A),
+            Δδx=-1 / (np.log(10) * f(A) ** 2) * δ(A) * Δ(A)
+            + 1 / (np.log(10) * f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
