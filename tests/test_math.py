@@ -78,6 +78,8 @@ def test_math():
     tm.einsum("ij...,kl...,mn...->ijklmn...", F, F, T)
     tm.einsum("ij...,kl...,mn...->ijklmn...", F, T, F)
     tm.einsum("ij...,kl...,mn...->ijklmn...", F, T, T)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", T, F, F)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", T, F, T)
     tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, F)
     tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, T)
 
