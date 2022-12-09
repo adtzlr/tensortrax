@@ -23,8 +23,7 @@ def test_math():
     assert isinstance(T * T, tr.Tensor)
 
     assert isinstance(T / F, tr.Tensor)
-    with pytest.raises(TypeError):
-        F / T
+    assert isinstance(F / T, tr.Tensor)
     with pytest.raises(NotImplementedError):
         T / T
 
