@@ -38,7 +38,7 @@ def test_math():
 
     assert np.allclose((-T).x, -F)
 
-    F = np.eye(3) + np.arange(9).reshape(3, 3) / 10
+    F = np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10
     T = tr.Tensor(F)
 
     assert np.allclose(tm.linalg.det(F), tm.linalg.det(T).x)
