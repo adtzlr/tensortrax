@@ -48,7 +48,7 @@ def test_math():
     tm.linalg._det(F[:1, :1])
     tm.linalg._inv(F[:2, :2])
 
-    for fun in [tm.sin, tm.cos, tm.tan, tm.sinh, tm.cosh, tm.tanh, tm.sqrt, tm.exp]:
+    for fun in [tm.sin, tm.cos, tm.tan, tm.sinh, tm.cosh, tm.tanh, tm.sqrt, tm.exp, tm.log]:
         assert np.allclose(fun(F), fun(T).x)
 
     for fun in [tm.linalg.det]:
