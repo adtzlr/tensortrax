@@ -24,7 +24,9 @@ def test_hvp():
     for parallel in [False, True]:
 
         for fun in [neo_hooke, ogden]:
-            δfun = tr.gradient_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(F=F, δx=δF)
+            δfun = tr.gradient_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(
+                F=F, δx=δF
+            )
             Δδfun = tr.hessian_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(
                 F=F, δx=δF, Δx=ΔF
             )
