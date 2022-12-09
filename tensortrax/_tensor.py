@@ -176,6 +176,104 @@ class Tensor:
     __array_ufunc__ = None
 
 
+def einsum3(subscripts, *operands):
+    "Einsum with three operands."
+    A, B, C = operands
+    _einsum = lambda *operands: np.einsum(subscripts, *operands)
+
+    if isinstance(A, Tensor) and isinstance(B, Tensor) and isinstance(C, Tensor):
+        x = _einsum(f(A), f(B), f(C))
+        δx = (
+            _einsum(δ(A), f(B), f(C))
+            + _einsum(f(A), δ(B), f(C))
+            + _einsum(f(A), f(B), δ(C))
+        )
+        Δx = (
+            _einsum(Δ(A), f(B), f(C))
+            + _einsum(f(A), Δ(B), f(C))
+            + _einsum(f(A), f(B), Δ(C))
+        )
+        Δδx = (
+            _einsum(Δδ(A), f(B), f(C))
+            + _einsum(f(A), Δδ(B), f(C))
+            + _einsum(f(A), f(B), Δδ(C))
+            + _einsum(δ(A), Δ(B), f(C))
+            + _einsum(Δ(A), δ(B), f(C))
+            + _einsum(δ(A), f(B), Δ(C))
+            + _einsum(Δ(A), f(B), δ(C))
+            + _einsum(f(A), δ(B), Δ(C))
+            + _einsum(f(A), Δ(B), δ(C))
+        )
+        ntrax = A.ntrax
+    elif (
+        isinstance(A, Tensor)
+        and not isinstance(B, Tensor)
+        and not isinstance(C, Tensor)
+    ):
+        x = _einsum(f(A), B, C)
+        δx = _einsum(δ(A), B, C)
+        Δx = _einsum(Δ(A), B, C)
+        Δδx = _einsum(Δδ(A), B, C)
+        ntrax = A.ntrax
+    elif (
+        not isinstance(A, Tensor)
+        and isinstance(B, Tensor)
+        and not isinstance(C, Tensor)
+    ):
+        x = _einsum(A, f(B), C)
+        δx = _einsum(A, δ(B), C)
+        Δx = _einsum(A, Δ(B), C)
+        Δδx = _einsum(A, Δδ(B), C)
+        ntrax = B.ntrax
+    elif (
+        not isinstance(A, Tensor)
+        and not isinstance(B, Tensor)
+        and isinstance(C, Tensor)
+    ):
+        x = _einsum(A, B, f(C))
+        δx = _einsum(A, B, δ(C))
+        Δx = _einsum(A, B, Δ(C))
+        Δδx = _einsum(A, B, Δδ(C))
+        ntrax = C.ntrax
+    elif isinstance(A, Tensor) and isinstance(B, Tensor) and not isinstance(C, Tensor):
+        x = _einsum(f(A), f(B), C)
+        δx = _einsum(δ(A), f(B), C) + _einsum(f(A), δ(B), C)
+        Δx = _einsum(Δ(A), f(B), C) + _einsum(f(A), Δ(B), C)
+        Δδx = (
+            _einsum(Δδ(A), f(B), C)
+            + _einsum(f(A), Δδ(B), C)
+            + _einsum(δ(A), Δ(B), C)
+            + _einsum(Δ(A), δ(B), C)
+        )
+        ntrax = A.ntrax
+    elif isinstance(A, Tensor) and not isinstance(B, Tensor) and isinstance(C, Tensor):
+        x = _einsum(f(A), B, f(C))
+        δx = _einsum(δ(A), B, f(C)) + _einsum(f(A), B, δ(C))
+        Δx = _einsum(Δ(A), B, f(C)) + _einsum(f(A), B, Δ(C))
+        Δδx = (
+            _einsum(Δδ(A), B, f(C))
+            + _einsum(f(A), B, Δδ(C))
+            + _einsum(δ(A), B, Δ(C))
+            + _einsum(Δ(A), B, δ(C))
+        )
+        ntrax = A.ntrax
+    elif not isinstance(A, Tensor) and isinstance(B, Tensor) and isinstance(C, Tensor):
+        x = _einsum(A, f(B), f(C))
+        δx = _einsum(A, δ(B), f(C)) + _einsum(A, f(B), δ(C))
+        Δx = _einsum(A, Δ(B), f(C)) + _einsum(A, f(B), Δ(C))
+        Δδx = (
+            _einsum(A, Δδ(B), f(C))
+            + _einsum(A, f(B), Δδ(C))
+            + _einsum(A, δ(B), Δ(C))
+            + _einsum(A, Δ(B), δ(C))
+        )
+        ntrax = B.ntrax
+    else:
+        return _einsum(*operands)
+
+    return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=ntrax)
+
+
 def einsum2(subscripts, *operands):
     "Einsum with two operands."
     A, B = operands
@@ -225,13 +323,15 @@ def einsum1(subscripts, *operands):
 
 
 def einsum(subscripts, *operands):
-    "Einsum limited to one or two operands."
+    "Einsum limited to one, two or three operands."
     if len(operands) == 1:
         return einsum1(subscripts, *operands)
     elif len(operands) == 2:
         return einsum2(subscripts, *operands)
+    elif len(operands) == 3:
+        return einsum3(subscripts, *operands)
     else:
-        raise NotImplementedError("More than two operands are not supported.")
+        raise NotImplementedError("More than three operands are not supported.")
 
 
 def transpose(A):

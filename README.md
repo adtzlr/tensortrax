@@ -16,7 +16,7 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 # Features
 - Designed to operate on input arrays with trailing axes
-- Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. two operands)
+- Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. three operands)
 - Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian on given input arrays

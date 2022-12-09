@@ -69,8 +69,20 @@ def test_math():
     assert tm.array.cross(F, F).shape == F.shape
     assert tm.array.eye(F).shape == F.shape
 
+    tm.einsum("ij...,kl...->ijkl...", F, F)
+    tm.einsum("ij...,kl...->ijkl...", F, T)
+    tm.einsum("ij...,kl...->ijkl...", T, F)
+    tm.einsum("ij...,kl...->ijkl...", T, T)
+
+    tm.einsum("ij...,kl...,mn...->ijklmn...", F, F, F)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", F, F, T)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", F, T, F)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", F, T, T)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, F)
+    tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, T)
+
     with pytest.raises(NotImplementedError):
-        tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, T)
+        tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, T)
 
 
 if __name__ == "__main__":
