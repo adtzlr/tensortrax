@@ -34,14 +34,14 @@ Let's define a scalar-valued function which operates on a tensor.
 import tensortrax as tr
 import tensortrax.math as tm
 
-def fun(F):
+def fun(F, mu):
     C = F.T() @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
-    return J ** (-2 / 3) * I1 - 3
+    return mu / 2 * (J ** (-2 / 3) * I1 - 3)
 ```
 
-The hessian of the scalar-valued function w.r.t. the function argument is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
+The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
 
 ```python
 import numpy as np
@@ -52,9 +52,9 @@ F = np.random.rand(3, 3, 8, 50) / 10
 for a in range(3):
     F[a, a] += 1
 
-# W = tr.function(fun, ntrax=2)(F)
-# dWdF, W = tr.gradient(fun, ntrax=2)(F)
-d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2)(F)
+# W = tr.function(fun, wrt=0, ntrax=2)(F)
+# dWdF, W = tr.gradient(fun, wrt=0, ntrax=2)(F)
+d2WdF2, dWdF, W = tr.hessian(fun, wrt="F", ntrax=2)(F=F)
 ```
 
 # Theory
