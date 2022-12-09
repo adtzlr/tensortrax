@@ -17,17 +17,18 @@ from ._tensor import Tensor, f, δ, Δδ
 
 def add_tensor(args, kwargs, wrt, δx, Δx, ntrax):
     "Modify the arguments and replace the w.r.t.-argument by a tensor."
-    
+
     kwargs_out = copy(kwargs)
     args_out = list(args)
-    
+
     if isinstance(wrt, str):
         kwargs_out[wrt] = Tensor(x=kwargs[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
-        
+
     elif isinstance(wrt, int):
         args_out[wrt] = Tensor(x=args[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
-    
+
     return args_out, kwargs_out
+
 
 def arg_to_tensor(args, kwargs, wrt):
     "Return the argument which will be replaced by a tensor."
@@ -38,7 +39,7 @@ def arg_to_tensor(args, kwargs, wrt):
         x = args[wrt]
     else:
         raise TypeError(f"w.r.t. {wrt} not supported.")
-    
+
     return x
 
 
@@ -56,7 +57,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(*args, **kwargs):
-        
+
         x = arg_to_tensor(args, kwargs, wrt)
         t = Tensor(x, ntrax=ntrax)
         indices = range(t.size)
