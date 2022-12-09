@@ -24,7 +24,7 @@ def test_scalar():
     assert np.allclose(g, 2 * x / y + np.log(y))
     assert np.allclose(h, 2 / y)
 
-    h, g, f = tr.hessian(fun, wrt=1, ntrax=1)(x, y)
+    h, g, f = tr.hessian(fun, wrt="y", ntrax=1)(x=x, y=y)
 
     assert np.allclose(g, -(x**2) / y**2 + x / y)
     assert np.allclose(h, 2 * x**2 / y**3 - x / y**2)
