@@ -134,6 +134,13 @@ class Tensor:
                 x=f(A) / B, δx=δ(A) / B, Δx=Δ(A) / B, Δδx=Δδ(A) / B, ntrax=A.ntrax
             )
 
+    def __rtruediv__(self, B):
+        A = self
+        if isinstance(B, Tensor):
+            raise NotImplementedError("Divide by Tensor is not supported.")
+        else:
+            return B * A**-1
+
     def __pow__(self, p):
         A = self
         x = f(A) ** p
