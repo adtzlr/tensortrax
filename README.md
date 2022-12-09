@@ -152,15 +152,15 @@ A_1223 = Δδ(I1_C)
 To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls. Optionally, the function calls are executed in parallel (threaded).
 
 ```python
-grad, func = tr.gradient(lambda F: trace(F.T() @ F), wrt=0, parallel=False)(x)
-hess, grad, func = tr.hessian(lambda F: trace(F.T() @ F), wrt=0, parallel=False)(x)
+grad, func = tr.gradient(lambda F: trace(F.T() @ F), wrt=0, ntrax=0, parallel=False)(x)
+hess, grad, func = tr.hessian(lambda F: trace(F.T() @ F))(x)
 ```
 
-Evaluate the gradient- as well as hessian-vector-product:
+Evaluate the gradient- as well as the hessian-vector-product:
 
 ```python
-gvp = tr.gradient_vector_product(lambda F: trace(F.T() @ F), parallel=False)(x, δx=x)
-hvp = tr.hessian_vector_product(lambda F: trace(F.T() @ F), parallel=False)(x, δx=x, Δx=x)
+gvp = tr.gradient_vector_product(lambda F: trace(F.T() @ F))(x, δx=x)
+hvp = tr.hessian_vector_product(lambda F: trace(F.T() @ F))(x, δx=x, Δx=x)
 ```
 
 # Extensions
