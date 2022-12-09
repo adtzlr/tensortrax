@@ -1,6 +1,7 @@
 import tensortrax as tr
 import tensortrax.math as tm
 import numpy as np
+import pytest
 
 
 def fun(x, y):
@@ -14,6 +15,9 @@ def test_scalar():
 
     np.random.seed(54234)
     y = np.random.rand(100)
+    
+    with pytest.raises(TypeError):
+        tr.hessian(fun, wrt=[1, 2])(x, y)
 
     h, g, f = tr.hessian(fun, wrt=0, ntrax=1)(x, y)
 
