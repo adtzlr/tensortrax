@@ -155,3 +155,17 @@ def log(A):
         )
     else:
         return np.log(A)
+
+
+def log10(A):
+    if isinstance(A, Tensor):
+        x = np.log10(f(A))
+        return Tensor(
+            x=x,
+            δx=1 / (np.log(10) * x) * δ(A),
+            Δx=1 / (np.log(10) * x) * Δ(A),
+            Δδx=-1 / (np.log(10) * x**2) * δ(A) * Δ(A) + 1 / (np.log(10) * x) * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.log10(A)
