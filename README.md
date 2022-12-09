@@ -34,7 +34,7 @@ Let's define a scalar-valued function which operates on a tensor.
 import tensortrax as tr
 import tensortrax.math as tm
 
-def fun(F, mu):
+def fun(F, mu=1):
     C = F.T() @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
