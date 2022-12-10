@@ -44,7 +44,7 @@ def fun(F, mu=1):
     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
 ```
 
-The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. 
+The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. Optionally, the function calls are executed in parallel (threaded).
 
 ```python
 import numpy as np
@@ -56,8 +56,9 @@ for a in range(3):
     F[a, a] += 1
 
 # W = tr.function(fun, wrt=0, ntrax=2)(F)
-# dWdF, W = tr.gradient(fun, wrt=0, ntrax=2)(F)
-d2WdF2, dWdF, W = tr.hessian(fun, wrt="F", ntrax=2)(F=F)
+# dWdF = tr.gradient(fun, wrt=0, ntrax=2)(F)
+# d2WdF2, dWdF, W = tr.hessian(fun, wrt="F", ntrax=2, full_output=True)(F=F)
+d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
 # Theory
@@ -152,18 +153,21 @@ P_12   =  δ(I1_C) # (= Δ(I1_C))
 A_1223 = Δδ(I1_C)
 ```
 
-To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls. Optionally, the function calls are executed in parallel (threaded).
+To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls.
 
 ```python
-grad, func = tr.gradient(lambda F: trace(F.T() @ F), wrt=0, ntrax=0, parallel=False)(x)
-hess, grad, func = tr.hessian(lambda F: trace(F.T() @ F))(x)
+fun = lambda F: trace(F.T() @ F)
+
+func = tr.function(fun)(x)
+grad = tr.gradient(fun)(x)
+hess = tr.hessian(fun)(x)
 ```
 
 Evaluate the gradient- as well as the hessian-vector-product:
 
 ```python
-gvp = tr.gradient_vector_product(lambda F: trace(F.T() @ F))(x, δx=x)
-hvp = tr.hessian_vector_product(lambda F: trace(F.T() @ F))(x, δx=x, Δx=x)
+gvp = tr.gradient_vector_product(fun)(x, δx=x)
+hvp = tr.hessian_vector_product(fun)(x, δx=x, Δx=x)
 ```
 
 # Extensions

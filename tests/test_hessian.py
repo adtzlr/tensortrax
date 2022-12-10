@@ -30,8 +30,10 @@ def test_function_gradient_hessian():
     for parallel in [False, True]:
         for fun in [neo_hooke, ogden]:
             ww = tr.function(fun, ntrax=2, parallel=parallel)(F)
-            dwdf, w = tr.gradient(fun, ntrax=2, parallel=parallel)(F)
-            d2WdF2, dWdF, W = tr.hessian(fun, ntrax=2, parallel=parallel)(F)
+            dwdf, w = tr.gradient(fun, ntrax=2, parallel=parallel, full_output=True)(F)
+            d2WdF2, dWdF, W = tr.hessian(
+                fun, ntrax=2, parallel=parallel, full_output=True
+            )(F)
 
             assert W.shape == (1, 1)
             assert dWdF.shape == (3, 3, 1, 1)
@@ -48,8 +50,8 @@ def test_trig():
 
     for fun in [trig]:
         ww = tr.function(fun)(F)
-        dwdf, w = tr.gradient(fun)(F)
-        d2WdF2, dWdF, W = tr.hessian(fun)(F)
+        dwdf = tr.gradient(fun, full_output=False)(F)
+        d2WdF2 = tr.hessian(fun, full_output=False)(F)
 
 
 def test_repeated_eigvals():
@@ -57,8 +59,8 @@ def test_repeated_eigvals():
     F = np.eye(3)
 
     ntrax = len(F.shape) - 2
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax, full_output=True)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax, full_output=True)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
@@ -68,8 +70,8 @@ def test_repeated_eigvals():
     F[2, 2] = 2
 
     ntrax = len(F.shape) - 2
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax, full_output=True)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax, full_output=True)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
@@ -78,8 +80,8 @@ def test_repeated_eigvals():
     F = (np.eye(3).ravel()).reshape(3, 3, 1, 1)
 
     ntrax = len(F.shape) - 2
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax, full_output=True)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax, full_output=True)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)
@@ -89,8 +91,8 @@ def test_repeated_eigvals():
     F[2, 2] = 2
 
     ntrax = len(F.shape) - 2
-    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax)(F)
-    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax)(F)
+    d2WdF2, dWdF, W = tr.hessian(ogden, ntrax=ntrax, full_output=True)(F)
+    d2wdf2, dwdf, w = tr.hessian(neo_hooke, ntrax=ntrax, full_output=True)(F)
 
     assert np.allclose(w, W)
     assert np.allclose(dwdf, dWdF)

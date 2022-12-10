@@ -19,12 +19,12 @@ def test_scalar():
     with pytest.raises(TypeError):
         tr.hessian(fun, wrt=[1, 2])(x, y)
 
-    h, g, f = tr.hessian(fun, wrt=0, ntrax=1)(x, y)
+    h, g, f = tr.hessian(fun, wrt=0, ntrax=1, full_output=True)(x, y)
 
     assert np.allclose(g, 2 * x / y + np.log(y))
     assert np.allclose(h, 2 / y)
 
-    h, g, f = tr.hessian(fun, wrt="y", ntrax=1)(x=x, y=y)
+    h, g, f = tr.hessian(fun, wrt="y", ntrax=1, full_output=True)(x=x, y=y)
 
     assert np.allclose(g, -(x**2) / y**2 + x / y)
     assert np.allclose(h, 2 * x**2 / y**3 - x / y**2)

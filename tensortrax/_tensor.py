@@ -171,17 +171,17 @@ class Tensor:
             if self.δx[key].shape != δ(value).shape:
                 self.δx = np.tile(
                     self.δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax)
+                    (*np.ones(len(self.shape), dtype=int), *self.trax),
                 )
             if self.Δx[key].shape != Δ(value).shape:
                 self.Δx = np.tile(
                     self.Δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax)
+                    (*np.ones(len(self.shape), dtype=int), *self.trax),
                 )
             if self.Δδx[key].shape != Δδ(value).shape:
                 self.Δδx = np.tile(
                     self.Δδx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax)
+                    (*np.ones(len(self.shape), dtype=int), *self.trax),
                 )
             self.δx[key] = δ(value)
             self.Δx[key] = Δ(value)
