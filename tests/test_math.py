@@ -88,6 +88,11 @@ def test_math():
     with pytest.raises(NotImplementedError):
         tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, T)
 
+    T.ravel()
+    T[0] = F[0]
+    T[:, 0] = F[:, 0]
+    T[:, 0] = T[:, 0]
+
 
 if __name__ == "__main__":
     test_math()

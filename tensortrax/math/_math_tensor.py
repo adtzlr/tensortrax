@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
+from .._tensor import Tensor, ravel, einsum, matmul, f, δ, Δ, Δδ
 from ._linalg import _linalg_array as array
 
 
@@ -184,19 +184,3 @@ def diagonal(A, offset=0, axis1=0, axis2=1):
         )
     else:
         return np.diagonal(A, **kwargs).T
-
-
-def ravel(A, order="C"):
-    if isinstance(A, Tensor):
-        δtrax = δ(A).shape[len(A.shape) :]
-        Δtrax = Δ(A).shape[len(A.shape) :]
-        Δδtrax = Δδ(A).shape[len(A.shape) :]
-        return Tensor(
-            x=f(A).reshape(A.size, *A.trax, order=order),
-            δx=δ(A).reshape(A.size, *δtrax, order=order),
-            Δx=Δ(A).reshape(A.size, *Δtrax, order=order),
-            Δδx=Δδ(A).reshape(A.size, *Δδtrax, order=order),
-            ntrax=A.ntrax,
-        )
-    else:
-        return np.ravel(A, order=order)
