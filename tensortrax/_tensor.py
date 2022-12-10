@@ -169,16 +169,19 @@ class Tensor:
         if isinstance(value, Tensor):
             self.x[key] = f(value)
             if self.δx[key].shape != δ(value).shape:
-                self.δx = transpose(
-                    np.resize(self.δx, (*self.trax[::-1], *self.shape[::-1])).T
+                self.δx = np.tile(
+                    self.δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
+                    (*np.ones(len(self.shape), dtype=int), *self.trax)
                 )
             if self.Δx[key].shape != Δ(value).shape:
-                self.Δx = transpose(
-                    np.resize(self.Δx, (*self.trax[::-1], *self.shape[::-1])).T
+                self.Δx = np.tile(
+                    self.Δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
+                    (*np.ones(len(self.shape), dtype=int), *self.trax)
                 )
             if self.Δδx[key].shape != Δδ(value).shape:
-                self.Δδx = transpose(
-                    np.resize(self.Δδx, (*self.trax[::-1], *self.shape[::-1])).T
+                self.Δδx = np.tile(
+                    self.Δδx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
+                    (*np.ones(len(self.shape), dtype=int), *self.trax)
                 )
             self.δx[key] = δ(value)
             self.Δx[key] = Δ(value)
