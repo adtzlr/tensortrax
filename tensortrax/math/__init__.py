@@ -27,5 +27,7 @@ from ._math_tensor import (
     sqrt,
     einsum,
     matmul,
+    diagonal,
+    ravel,
 )
 from . import _math_array as array

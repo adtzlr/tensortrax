@@ -58,6 +58,8 @@ def test_math():
         tm.exp,
         tm.log,
         tm.log10,
+        tm.diagonal,
+        tm.ravel,
     ]:
         assert np.allclose(fun(F), fun(T).x)
 

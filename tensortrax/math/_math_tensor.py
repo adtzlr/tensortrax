@@ -170,3 +170,33 @@ def log10(A):
         )
     else:
         return np.log10(A)
+
+
+def diagonal(A, offset=0, axis1=0, axis2=1):
+    kwargs = dict(offset=offset, axis1=axis1, axis2=axis2)
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.diagonal(f(A), **kwargs).T,
+            δx=np.diagonal(δ(A), **kwargs).T,
+            Δx=np.diagonal(Δ(A), **kwargs).T,
+            Δδx=np.diagonal(Δδ(A), **kwargs).T,
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.diagonal(A, **kwargs).T
+
+
+def ravel(A, order="C"):
+    if isinstance(A, Tensor):
+        δtrax = δ(A).shape[len(A.shape) :]
+        Δtrax = Δ(A).shape[len(A.shape) :]
+        Δδtrax = Δδ(A).shape[len(A.shape) :]
+        return Tensor(
+            x=f(A).reshape(A.size, *A.trax, order=order),
+            δx=δ(A).reshape(A.size, *δtrax, order=order),
+            Δx=Δ(A).reshape(A.size, *Δtrax, order=order),
+            Δδx=Δδ(A).reshape(A.size, *Δδtrax, order=order),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.ravel(A, order=order)
