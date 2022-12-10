@@ -149,18 +149,33 @@ class Tensor:
     def T(self):
         return transpose(self)
 
+    def ravel(self, order="C"):
+        return ravel(self, order=order)
+
     def __matmul__(self, B):
         return matmul(self, B)
 
     def __rmatmul__(self, B):
         return matmul(B, self)
 
-    def __getitem__(self, items):
-        x = f(self)[items]
-        Δx = Δ(self)[items]
-        δx = δ(self)[items]
-        Δδx = Δδ(self)[items]
+    def __getitem__(self, key):
+        x = f(self)[key]
+        Δx = Δ(self)[key]
+        δx = δ(self)[key]
+        Δδx = Δδ(self)[key]
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=self.ntrax)
+
+    def __setitem__(self, key, value):
+        if isinstance(value, Tensor):
+            self.x[key] = f(value)
+            self.δx[key] = δ(value)
+            self.Δx[key] = Δ(value)
+            self.Δδx[key] = Δδ(value)
+        else:
+            self.x[key] = value
+            self.δx[key].fill(0)
+            self.Δx[key].fill(0)
+            self.Δδx[key].fill(0)
 
     def __repr__(self):
         header = "<tensortrax tensor object>"
@@ -174,6 +189,22 @@ class Tensor:
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
+
+
+def ravel(A, order="C"):
+    if isinstance(A, Tensor):
+        δtrax = δ(A).shape[len(A.shape) :]
+        Δtrax = Δ(A).shape[len(A.shape) :]
+        Δδtrax = Δδ(A).shape[len(A.shape) :]
+        return Tensor(
+            x=f(A).reshape(A.size, *A.trax, order=order),
+            δx=δ(A).reshape(A.size, *δtrax, order=order),
+            Δx=Δ(A).reshape(A.size, *Δtrax, order=order),
+            Δδx=Δδ(A).reshape(A.size, *Δδtrax, order=order),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.ravel(A, order=order)
 
 
 def einsum3(subscripts, *operands):

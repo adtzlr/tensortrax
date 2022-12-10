@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
+from .._tensor import Tensor, ravel, einsum, matmul, f, δ, Δ, Δδ
 from ._linalg import _linalg_array as array
 
 
@@ -170,3 +170,17 @@ def log10(A):
         )
     else:
         return np.log10(A)
+
+
+def diagonal(A, offset=0, axis1=0, axis2=1):
+    kwargs = dict(offset=offset, axis1=axis1, axis2=axis2)
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.diagonal(f(A), **kwargs).T,
+            δx=np.diagonal(δ(A), **kwargs).T,
+            Δx=np.diagonal(Δ(A), **kwargs).T,
+            Δδx=np.diagonal(Δδ(A), **kwargs).T,
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.diagonal(A, **kwargs).T

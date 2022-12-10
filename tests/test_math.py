@@ -58,6 +58,8 @@ def test_math():
         tm.exp,
         tm.log,
         tm.log10,
+        tm.diagonal,
+        tm.ravel,
     ]:
         assert np.allclose(fun(F), fun(T).x)
 
@@ -85,6 +87,11 @@ def test_math():
 
     with pytest.raises(NotImplementedError):
         tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, T)
+
+    T.ravel()
+    T[0] = F[0]
+    T[:, 0] = F[:, 0]
+    T[:, 0] = T[:, 0]
 
 
 if __name__ == "__main__":
