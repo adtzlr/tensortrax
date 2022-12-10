@@ -53,7 +53,7 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
     return evaluate_function
 
 
-def gradient(fun, wrt=0, ntrax=0, parallel=False):
+def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(*args, **kwargs):
@@ -88,12 +88,15 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False):
             for th in threads:
                 th.join()
 
-        return np.array(dfdx).reshape(*t.shape, *t.trax), fx[0]
+        if full_output:
+            return np.array(dfdx).reshape(*t.shape, *t.trax), fx[0]
+        else:
+            return np.array(dfdx).reshape(*t.shape, *t.trax)
 
     return evaluate_gradient
 
 
-def hessian(fun, wrt=0, ntrax=0, parallel=False):
+def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     "Evaluate the hessian of a scalar-valued function."
 
     def evaluate_hessian(*args, **kwargs):
@@ -130,11 +133,14 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False):
             for th in threads:
                 th.join()
 
-        return (
-            np.array(d2fdx2).reshape(*t.shape, *t.shape, *t.trax),
-            np.array(dfdx).reshape(*t.shape, *t.trax),
-            fx[0],
-        )
+        if full_output:
+            return (
+                np.array(d2fdx2).reshape(*t.shape, *t.shape, *t.trax),
+                np.array(dfdx).reshape(*t.shape, *t.trax),
+                fx[0],
+            )
+        else:
+            return np.array(d2fdx2).reshape(*t.shape, *t.shape, *t.trax)
 
     return evaluate_hessian
 
