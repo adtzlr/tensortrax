@@ -168,6 +168,18 @@ class Tensor:
     def __setitem__(self, key, value):
         if isinstance(value, Tensor):
             self.x[key] = f(value)
+            if self.δx[key].shape != δ(value).shape:
+                self.δx = transpose(
+                    np.resize(self.δx, (*self.trax[::-1], *self.shape[::-1])).T
+                )
+            if self.Δx[key].shape != Δ(value).shape:
+                self.Δx = transpose(
+                    np.resize(self.Δx, (*self.trax[::-1], *self.shape[::-1])).T
+                )
+            if self.Δδx[key].shape != Δδ(value).shape:
+                self.Δδx = transpose(
+                    np.resize(self.Δδx, (*self.trax[::-1], *self.shape[::-1])).T
+                )
             self.δx[key] = δ(value)
             self.Δx[key] = Δ(value)
             self.Δδx[key] = Δδ(value)

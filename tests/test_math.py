@@ -93,6 +93,12 @@ def test_math():
     T[:, 0] = F[:, 0]
     T[:, 0] = T[:, 0]
 
+    x = np.ones((3, 3, 100))
+    t = tr.Tensor(x, x, x, x, ntrax=1)
+    u = tr.Tensor(x, ntrax=1)
+
+    u[0] = t[0]
+
 
 if __name__ == "__main__":
     test_math()
