@@ -99,6 +99,14 @@ def test_math():
 
     u[0] = t[0]
 
+    t.reshape(9)
+    t.reshape(3, 3)
+
+    tm.reshape(t, (9,))
+    tm.reshape(t, (3, 3))
+    
+    tm.reshape(x, (3, 3, 100))
+
 
 if __name__ == "__main__":
     test_math()

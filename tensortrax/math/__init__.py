@@ -29,5 +29,6 @@ from ._math_tensor import (
     matmul,
     diagonal,
     ravel,
+    reshape,
 )
 from . import _math_array as array

@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, ravel, einsum, matmul, f, δ, Δ, Δδ
+from .._tensor import Tensor, ravel, reshape, einsum, matmul, f, δ, Δ, Δδ
 from ._linalg import _linalg_array as array
 
 

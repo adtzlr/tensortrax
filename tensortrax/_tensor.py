@@ -152,6 +152,9 @@ class Tensor:
     def ravel(self, order="C"):
         return ravel(self, order=order)
 
+    def reshape(self, *shape, order="C"):
+        return reshape(self, newshape=shape, order=order)
+
     def __matmul__(self, B):
         return matmul(self, B)
 
@@ -220,6 +223,22 @@ def ravel(A, order="C"):
         )
     else:
         return np.ravel(A, order=order)
+
+
+def reshape(A, newshape, order="C"):
+    if isinstance(A, Tensor):
+        δtrax = δ(A).shape[len(A.shape) :]
+        Δtrax = Δ(A).shape[len(A.shape) :]
+        Δδtrax = Δδ(A).shape[len(A.shape) :]
+        return Tensor(
+            x=f(A).reshape(*newshape, *A.trax, order=order),
+            δx=δ(A).reshape(*newshape, *δtrax, order=order),
+            Δx=Δ(A).reshape(*newshape, *Δtrax, order=order),
+            Δδx=Δδ(A).reshape(*newshape, *Δδtrax, order=order),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.reshape(A, newshape=newshape, order=order)
 
 
 def einsum3(subscripts, *operands):
@@ -387,7 +406,7 @@ def transpose(A):
 
 
 def matmul(A, B):
-    ik = "abcdefghijklm"[13-len(A.shape):]
-    kj = "mnopqrstuvwxy"[: len(B.shape)]
-    ij = (ik + kj).replace("m", "")
+    ik = "ik"[2 - len(A.shape) :]
+    kj = "kj"[: len(B.shape)]
+    ij = (ik + kj).replace("k", "")
     return einsum(f"{ik}...,{kj}...->{ij}...", A, B)
