@@ -406,7 +406,7 @@ def transpose(A):
 
 
 def matmul(A, B):
-    ik = "abcdefghijklm"[13 - len(A.shape) :]
-    kj = "mnopqrstuvwxy"[: len(B.shape)]
-    ij = (ik + kj).replace("m", "")
+    ik = "ik"[2 - len(A.shape) :]
+    kj = "kj"[: len(B.shape)]
+    ij = (ik + kj).replace("k", "")
     return einsum(f"{ik}...,{kj}...->{ij}...", A, B)
