@@ -381,7 +381,9 @@ def einsum(subscripts, *operands):
 
 
 def transpose(A):
-    return einsum("ij...->ji...", A)
+    ij = "abcdefghijklmnopqrstuvwxyz"[: len(A.shape)]
+    ji = ij[::-1]
+    return einsum(f"{ij}...->{ji}...", A)
 
 
 def matmul(A, B):
