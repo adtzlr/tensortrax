@@ -104,6 +104,8 @@ def test_math():
 
     tm.reshape(t, (9,))
     tm.reshape(t, (3, 3))
+    
+    tm.reshape(x, (3, 3, 100))
 
 
 if __name__ == "__main__":
