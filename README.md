@@ -169,7 +169,7 @@ For tensor-valued functions, use `jacobian()` instead of `gradient()`.
 ```python
 fun = lambda F: F.T() @ F
 
-func = tr.jacobian(fun)(x)
+jac = tr.jacobian(fun)(x)
 ```
 
 
