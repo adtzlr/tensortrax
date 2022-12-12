@@ -67,6 +67,9 @@ def test_math():
         assert np.allclose(fun(F), fun(T).x)
 
     assert tm.linalg.eigvalsh(T).shape == (3,)
+    
+    F = np.diag([1.2, 1.2, 2.])
+    
     assert tm.linalg.eigh(T)[0].shape == (3,)
     assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
 
