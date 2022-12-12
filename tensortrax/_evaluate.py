@@ -63,7 +63,7 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
         δx = Δx = np.eye(t.size)
         indices = range(t.size)
 
-        args0, kwargs0 = add_tensor(args, kwargs, wrt, δx[0], Δx[0], ntrax)
+        args0, kwargs0 = add_tensor(args, kwargs, wrt, None, None, ntrax)
         shape = fun(*args0, **kwargs0).shape
         axes = tuple([slice(None)] * len(shape))
 
@@ -93,7 +93,7 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
                 th.join()
 
         if full_output:
-            return np.array(dfdx).reshape(*shape, *t.shape, *t.trax), fx[0]
+            return np.array(dfdx).reshape(*shape, *t.shape, *t.trax), fx
         else:
             return np.array(dfdx).reshape(*shape, *t.shape, *t.trax)
 
