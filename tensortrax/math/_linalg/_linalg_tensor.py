@@ -146,11 +146,12 @@ def eigh(A):
             Δx=Δλ,
             Δδx=Δδλ,
             ntrax=A.ntrax,
-        ), Tensor(
+        ),
+        Tensor(
             x=M,
             δx=δM,
             Δx=δM * np.nan,
             Δδx=δM * np.nan,
             ntrax=A.ntrax,
-        )
+        ),
     )
