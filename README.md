@@ -154,7 +154,7 @@ P_12   =  δ(I1_C) # (= Δ(I1_C))
 A_1223 = Δδ(I1_C)
 ```
 
-To obtain full gradients and hessians in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls.
+To obtain full gradients and hessians of scalar-valued functions in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls.
 
 ```python
 fun = lambda F: trace(F.T() @ F)
@@ -163,6 +163,15 @@ func = tr.function(fun)(x)
 grad = tr.gradient(fun)(x)
 hess = tr.hessian(fun)(x)
 ```
+
+For tensor-valued functions, use `jacobian()` instead of `gradient()`.
+
+```python
+fun = lambda F: F.T() @ F
+
+func = tr.jacobian(fun)(x)
+```
+
 
 Evaluate the gradient- as well as the hessian-vector-product:
 
