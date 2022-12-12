@@ -67,11 +67,6 @@ def test_math():
         assert np.allclose(fun(F), fun(T).x)
 
     assert tm.linalg.eigvalsh(T).shape == (3,)
-    
-    F = np.diag([1.2, 1.2, 2.])
-    
-    assert tm.linalg.eigh(T)[0].shape == (3,)
-    assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
 
     assert tm.linalg.expm(T).shape == (3, 3)
 
@@ -113,6 +108,18 @@ def test_math():
     tm.reshape(t, (3, 3))
 
     tm.reshape(x, (3, 3, 100))
+
+    F = np.diag([1.2, 1.2, 2.0])
+    T = tr.Tensor(F)
+
+    assert tm.linalg.eigh(T)[0].shape == (3,)
+    assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
+
+    F = np.tile(F.reshape(3, 3, 1), 5)
+    T = tr.Tensor(F, ntrax=1)
+
+    assert tm.linalg.eigh(T)[0].shape == (3,)
+    assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
 
 
 if __name__ == "__main__":
