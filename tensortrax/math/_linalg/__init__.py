@@ -9,4 +9,4 @@ r"""
 """
 
 from ._linalg_array import det as _det, inv as _inv
-from ._linalg_tensor import det, inv, eigvalsh
+from ._linalg_tensor import det, inv, eigvalsh, eigh
