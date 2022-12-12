@@ -12,7 +12,7 @@ r"""
 import numpy as np
 
 from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from .._math_tensor import transpose, ddot, sum
+from .._math_tensor import transpose, ddot, sum, exp
 from . import _linalg_array as array
 
 
@@ -104,3 +104,60 @@ def eigvalsh(A):
         Δδx=Δδλ,
         ntrax=A.ntrax,
     )
+
+
+def eigh(A):
+    "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
+
+    λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
+    N = transpose(N)
+    M = einsum("ai...,aj...->aij...", N, N)
+
+    δλ = einsum("aij...,ij...->a...", M, δ(A))
+    Δλ = einsum("aij...,ij...->a...", M, Δ(A))
+
+    Γ = [(1, 2), (2, 0), (0, 1)]
+
+    δN = []
+    for α in range(3):
+        δNα = []
+        for γ in Γ[α]:
+            Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
+            δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
+            λαγ = λ[α] - λ[γ]
+            λ_equal = np.isclose(λ[α], λ[γ])
+            if np.any(λ_equal):
+                if len(λαγ.shape) == 0:
+                    λαγ = np.inf
+                else:
+                    λαγ[λ_equal] = np.inf
+            δNα.append(1 / λαγ * N[γ] * δAαγ)
+        δN.append(sum(δNα, axis=0))
+
+    δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
+    Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
+        "aij...,ij...->a...", M, Δδ(A)
+    )
+
+    return (
+        Tensor(
+            x=λ,
+            δx=δλ,
+            Δx=Δλ,
+            Δδx=Δδλ,
+            ntrax=A.ntrax,
+        ),
+        Tensor(
+            x=M,
+            δx=δM,
+            Δx=δM * np.nan,
+            Δδx=δM * np.nan,
+            ntrax=A.ntrax,
+        ),
+    )
+
+
+def expm(A):
+    "Compute the matrix exponential of a symmetric array."
+    λ, M = eigh(A)
+    return einsum("a...,aij...->ij...", exp(λ), M)
