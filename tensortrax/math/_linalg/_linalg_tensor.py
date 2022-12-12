@@ -159,4 +159,5 @@ def eigh(A):
 
 def expm(A):
     "Compute the matrix exponential of a symmetric array."
-    return einsum("a...,aij...->ij...", *eigh(A))
+    λ, M = eigh(A)
+    return einsum("a...,aij...->ij...", exp(A), M)
