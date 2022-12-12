@@ -53,6 +53,53 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
     return evaluate_function
 
 
+def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
+    "Evaluate the jacobian of a function."
+
+    def evaluate_jacobian(*args, **kwargs):
+
+        x = arg_to_tensor(args, kwargs, wrt)
+        t = Tensor(x, ntrax=ntrax)
+        δx = Δx = np.eye(t.size)
+        indices = range(t.size)
+
+        args0, kwargs0 = add_tensor(args, kwargs, wrt, δx[0], Δx[0], ntrax)
+        shape = fun(*args0, **kwargs0).shape
+        axes = tuple([slice(None)] * len(shape))
+
+        fx = np.zeros((*shape, *t.trax))
+        dfdx = np.zeros((*shape, t.size, *t.trax))
+
+        def kernel(a, wrt, δx, Δx, ntrax, args, kwargs):
+            args, kwargs = add_tensor(args, kwargs, wrt, δx[a], Δx[a], ntrax)
+            func = fun(*args, **kwargs)
+            fx[axes] = f(func)
+            dfdx[(*axes, a)] = δ(func)
+
+        if not parallel:
+            for a in indices:
+                kernel(a, wrt, δx, Δx, ntrax, args, kwargs)
+
+        else:
+            threads = [
+                Thread(target=kernel, args=(a, wrt, δx, Δx, ntrax, args, kwargs))
+                for a in indices
+            ]
+
+            for th in threads:
+                th.start()
+
+            for th in threads:
+                th.join()
+
+        if full_output:
+            return np.array(dfdx).reshape(*shape, *t.shape, *t.trax), fx[0]
+        else:
+            return np.array(dfdx).reshape(*shape, *t.shape, *t.trax)
+
+    return evaluate_jacobian
+
+
 def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     "Evaluate the gradient of a scalar-valued function."
 
