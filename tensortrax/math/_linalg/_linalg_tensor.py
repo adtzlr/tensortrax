@@ -12,7 +12,7 @@ r"""
 import numpy as np
 
 from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from .._math_tensor import transpose, ddot, sum
+from .._math_tensor import transpose, ddot, sum, exp
 from . import _linalg_array as array
 
 
@@ -155,3 +155,8 @@ def eigh(A):
             ntrax=A.ntrax,
         ),
     )
+
+
+def expm(A):
+    "Compute the matrix exponential of a symmetric array."
+    return einsum("a...,aij...->ij...", *eigh(A))

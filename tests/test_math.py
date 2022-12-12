@@ -63,10 +63,14 @@ def test_math():
     ]:
         assert np.allclose(fun(F), fun(T).x)
 
-    for fun in [tm.linalg.det]:
+    for fun in [tm.linalg.det, tm.linalg.inv]:
         assert np.allclose(fun(F), fun(T).x)
 
     assert tm.linalg.eigvalsh(T).shape == (3,)
+    assert tm.linalg.eigh(T)[0].shape == (3,)
+    assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
+
+    assert tm.linalg.expm(T).shape == (3, 3)
 
     assert tm.array.cross(F, F).shape == F.shape
     assert tm.array.eye(F).shape == F.shape
