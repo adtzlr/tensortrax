@@ -14,6 +14,7 @@ def test_jacobian():
     for parallel in [False, True]:
         for fun in [right_cauchy_green]:
             c = tr.function(fun, ntrax=2, parallel=parallel)(F)
+            dCdF = tr.jacobian(fun, ntrax=2, parallel=parallel)(F)
             dCdF, C = tr.jacobian(fun, ntrax=2, parallel=parallel, full_output=True)(F)
 
             assert c.shape == (3, 3, 1, 1)
