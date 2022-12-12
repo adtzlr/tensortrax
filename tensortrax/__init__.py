@@ -6,6 +6,7 @@ from ._tensor import Tensor
 from ._helpers import f, δ, Δ, Δδ
 from ._evaluate import (
     function,
+    jacobian,
     gradient,
     hessian,
     gradient_vector_product,
