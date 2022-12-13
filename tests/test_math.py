@@ -160,6 +160,10 @@ def test_triu():
     assert np.allclose(tr.f(T), tr.f(U))
     assert np.allclose(tr.δ(T), tr.δ(U))
 
+    V = tm.special.from_triu_2d(np.ones((6, 6, 10)))
+    
+    assert V.shape == (3, 3, 3, 3, 10)
+
 
 if __name__ == "__main__":
     test_math()
