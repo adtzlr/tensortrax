@@ -40,7 +40,7 @@ def triu_1d(A):
 
 
 def from_triu_1d(A):
-    "Recover Tensor from upper triangle entries of a Tensor."
+    "Recover full Tensor from upper triangle entries of a Tensor."
     size_from_dim = np.array([d**2 / 2 + d / 2 for d in np.arange(4)], dtype=int)
     dim = np.where(size_from_dim == A.size)[0][0]
     idx = np.zeros((dim, dim), dtype=int)
