@@ -120,7 +120,7 @@ def test_sym():
     S = 2 * tr.gradient(neo_hooke_sym)(C)
     D = 4 * tr.hessian(neo_hooke_sym)(C)
 
-    s = 2 * tr.gradient(neo_hooke_sym_triu, sym=True)(C)
+    s = 2 * tr.gradient(neo_hooke_sym_triu, wrt="C", sym=True)(C=C)
     d = 4 * tr.hessian(neo_hooke_sym_triu, sym=True)(C)
 
     assert np.allclose(S, s)
