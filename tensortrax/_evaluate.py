@@ -24,13 +24,17 @@ def add_tensor(args, kwargs, wrt, δx, Δx, ntrax, sym):
 
     if isinstance(wrt, str):
         if sym:
-            kwargs_out[wrt] = from_triu_1d(Tensor(x=triu_1d(kwargs[wrt]), δx=δx, Δx=Δx, ntrax=ntrax))
+            kwargs_out[wrt] = from_triu_1d(
+                Tensor(x=triu_1d(kwargs[wrt]), δx=δx, Δx=Δx, ntrax=ntrax)
+            )
         else:
             kwargs_out[wrt] = Tensor(x=kwargs[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
 
     elif isinstance(wrt, int):
         if sym:
-            args_out[wrt] = from_triu_1d(Tensor(x=triu_1d(args[wrt]), δx=δx, Δx=Δx, ntrax=ntrax))
+            args_out[wrt] = from_triu_1d(
+                Tensor(x=triu_1d(args[wrt]), δx=δx, Δx=Δx, ntrax=ntrax)
+            )
         else:
             args_out[wrt] = Tensor(x=args[wrt], δx=δx, Δx=Δx, ntrax=ntrax)
 
@@ -145,7 +149,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
             for th in threads:
                 th.join()
-        
+
         if sym:
             dfdx = from_triu_1d(dfdx)
             shape = dfdx.shape[:2]
@@ -191,7 +195,9 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
         else:
             threads = [
-                Thread(target=kernel, args=(a, b, wrt, δx, Δx, ntrax, sym, args, kwargs))
+                Thread(
+                    target=kernel, args=(a, b, wrt, δx, Δx, ntrax, sym, args, kwargs)
+                )
                 for a, b in indices
             ]
 
@@ -200,7 +206,7 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
             for th in threads:
                 th.join()
-        
+
         if sym:
             dfdx = from_triu_1d(dfdx)
             d2fdx2 = from_triu_2d(d2fdx2)
