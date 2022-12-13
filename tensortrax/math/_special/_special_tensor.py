@@ -8,6 +8,7 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
+import numpy as np
 
 # from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
 from .._math_tensor import trace, ddot, sqrt
@@ -31,3 +32,29 @@ def von_mises(A):
     "Von Mises Invariant."
     a = dev(A)
     return sqrt(3 / 2 * ddot(a, a))
+
+
+def triu_1d(A):
+    "Flattened upper triangle entries of a Tensor."
+    return A[np.triu_indices(A.shape[0])]
+
+
+def _from_triu_helper(A):
+    size_from_dim = np.array([d**2 / 2 + d / 2 for d in np.arange(4)], dtype=int)
+    size = A.shape[0]
+    dim = np.where(size_from_dim == size)[0][0]
+    idx = np.zeros((dim, dim), dtype=int)
+    idx.T[np.triu_indices(dim)] = idx[np.triu_indices(dim)] = np.arange(size)
+    return idx, dim
+
+
+def from_triu_1d(A):
+    "Recover full Tensor from upper triangle entries of a Tensor."
+    idx, dim = _from_triu_helper(A)
+    return A[idx.ravel()].reshape(dim, dim, *A.shape[1:])
+
+
+def from_triu_2d(A):
+    "Recover full Tensor from upper triangle entries of a Tensor."
+    idx, dim = _from_triu_helper(A)
+    return A[idx.ravel()][:, idx.ravel()].reshape(dim, dim, dim, dim, *A.shape[2:])
