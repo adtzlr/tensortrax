@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-#from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
+# from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
 from .._math_tensor import trace, ddot, sqrt
 from .. import _math_array as array
 from .._linalg import _linalg_tensor as linalg
@@ -46,6 +46,7 @@ def _from_triu_helper(A):
     idx = np.zeros((dim, dim), dtype=int)
     idx.T[np.triu_indices(dim)] = idx[np.triu_indices(dim)] = np.arange(size)
     return idx, dim
+
 
 def from_triu_1d(A):
     "Recover full Tensor from upper triangle entries of a Tensor."
