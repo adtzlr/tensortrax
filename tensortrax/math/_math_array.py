@@ -9,11 +9,15 @@ r"""
 """
 
 import numpy as np
+from .._tensor import Tensor, f
 
 
 def eye(A):
     "Identity (Eye) of a Tensor."
-    B = np.zeros_like(A)
+    if isinstance(A, Tensor):
+        B = np.zeros_like(f(A))
+    else:
+        B = np.zeros_like(A)
     B[np.diag_indices(B.shape[0])] = 1
     return B
 

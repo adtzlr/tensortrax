@@ -8,28 +8,4 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from . import _linalg as linalg
-from . import _special as special
-from ._math_tensor import (
-    sin,
-    cos,
-    tan,
-    sinh,
-    cosh,
-    tanh,
-    exp,
-    log,
-    log10,
-    dot,
-    ddot,
-    trace,
-    transpose,
-    sum,
-    sqrt,
-    einsum,
-    matmul,
-    diagonal,
-    ravel,
-    reshape,
-)
-from . import _math_array as array
+from ._special_tensor import dev, tresca, von_mises
