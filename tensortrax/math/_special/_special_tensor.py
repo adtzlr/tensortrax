@@ -45,5 +45,4 @@ def from_triu_1d(A):
     dim = np.where(size_from_dim == A.size)[0][0]
     idx = np.zeros((dim, dim), dtype=int)
     idx.T[np.triu_indices(dim)] = idx[np.triu_indices(dim)] = np.arange(A.size)
-    idx = idx.ravel()
-    return A[idx].reshape(dim, dim)
+    return A[idx.ravel()].reshape(dim, dim)
