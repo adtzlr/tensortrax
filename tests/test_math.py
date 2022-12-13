@@ -66,7 +66,12 @@ def test_math():
     for fun in [tm.linalg.det, tm.linalg.inv]:
         assert np.allclose(fun(F), fun(T).x)
 
-    for fun in [tm.special.dev, tm.special.tresca, tm.special.von_mises]:
+    for fun in [
+        tm.special.dev,
+        tm.special.tresca,
+        tm.special.von_mises,
+        tm.special.sym,
+    ]:
         fun(T)
 
     assert tm.linalg.eigvalsh(T).shape == (3,)

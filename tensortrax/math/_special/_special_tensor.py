@@ -10,16 +10,21 @@ r"""
 
 import numpy as np
 
-# from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from .._math_tensor import trace, ddot, sqrt
+# from ..._tensor import Tensor, transpose,  matmul, f, δ, Δ, Δδ
+from .._math_tensor import trace, ddot, sqrt, transpose
 from .. import _math_array as array
 from .._linalg import _linalg_tensor as linalg
 
 
 def dev(A):
-    "Deviatoric Part of a Tensor."
+    "Deviatoric part of a Tensor."
     dim = A.shape[0]
     return A - trace(A) / dim * array.eye(A)
+
+
+def sym(A):
+    "Symmetric part of a Tensor."
+    return (A + transpose(A)) / 2
 
 
 def tresca(A):
