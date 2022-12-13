@@ -230,7 +230,7 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
     def evaluate_gradient_vector_product(*args, δx, **kwargs):
-        args, kwargs = add_tensor(args, kwargs, wrt, δx, None, ntrax)
+        args, kwargs = add_tensor(args, kwargs, wrt, δx, None, ntrax, False)
         return fun(*args, **kwargs).δx
 
     return evaluate_gradient_vector_product
@@ -240,7 +240,7 @@ def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
     def evaluate_hessian_vector_product(*args, δx, Δx, **kwargs):
-        args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx, ntrax)
+        args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx, ntrax, False)
         return fun(*args, **kwargs).Δδx
 
     return evaluate_hessian_vector_product
