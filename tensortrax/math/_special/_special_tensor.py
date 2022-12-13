@@ -34,6 +34,16 @@ def von_mises(A):
     return sqrt(3 / 2 * ddot(a, a))
 
 
-def triu(A):
-    dim = A.shape[0]
-    i, j = np.triu_indices(dim)
+def triu_1d(A):
+    "Flattened upper triangle entries of a Tensor."
+    return A[np.triu_indices(A.shape[0])]
+
+
+def from_triu_1d(A):
+    "Recover Tensor from upper triangle entries of a Tensor."
+    size_from_dim = np.array([d**2 / 2 + d / 2 for d in np.arange(4)], dtype=int)
+    dim = np.where(size_from_dim == A.size)[0][0]
+    idx = np.zeros((dim, dim), dtype=int)
+    idx.T[np.triu_indices(dim)] = idx[np.triu_indices(dim)] = np.arange(A.size)
+    idx = idx.ravel()
+    return A[idx].reshape(dim, dim)

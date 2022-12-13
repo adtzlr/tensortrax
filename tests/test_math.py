@@ -145,9 +145,26 @@ def test_eigh():
     assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
 
 
+def test_triu():
+
+    F = np.tile((np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    V = tr.Tensor(F, F, F, ntrax=1)
+    T = V.T() @ V
+
+    t = tm.special.triu_1d(T)
+    assert t.shape == (6,)
+    assert t.size == 6
+
+    U = tm.special.from_triu_1d(t)
+
+    assert np.allclose(tr.f(T), tr.f(U))
+    assert np.allclose(tr.δ(T), tr.δ(U))
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
     test_slice()
     test_reshape()
     test_eigh()
+    test_triu()
