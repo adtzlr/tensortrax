@@ -18,8 +18,6 @@ def neo_hooke_sym(C):
 
 
 def neo_hooke_sym_triu(C):
-    C = tm.special.from_triu_1d(C)
-    C = (C + C.T()) / 2
     I3 = tm.linalg.det(C)
     I1 = tm.trace(C)
     return (I3 ** (-1 / 3) * I1 - 3) / 2
@@ -122,11 +120,8 @@ def test_sym():
     S = 2 * tr.gradient(neo_hooke_sym)(C)
     D = 4 * tr.hessian(neo_hooke_sym)(C)
 
-    s6 = tr.gradient(neo_hooke_sym_triu, sym=True)(tm.special.triu_1d(C))
-    d6 = tr.hessian(neo_hooke_sym_triu, sym=True)(tm.special.triu_1d(C))
-
-    s = 2 * tm.special.from_triu_1d(s6)
-    d = 4 * tm.special.from_triu_2d(d6)
+    s = 2 * tr.gradient(neo_hooke_sym_triu, sym=True)(C)
+    d = 4 * tr.hessian(neo_hooke_sym_triu, sym=True)(C)
 
     assert np.allclose(S, s)
     assert np.allclose(D, d)
