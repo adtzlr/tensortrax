@@ -58,7 +58,7 @@ def _from_triu_helper(A):
 def from_triu_1d(A):
     "Recover full Tensor from upper triangle entries of a Tensor."
     idx, dim = _from_triu_helper(A)
-    return A[idx.ravel()].reshape(dim, dim, *A.shape[1:])
+    return sym(A[idx.ravel()].reshape(dim, dim, *A.shape[1:]))
 
 
 def from_triu_2d(A):
