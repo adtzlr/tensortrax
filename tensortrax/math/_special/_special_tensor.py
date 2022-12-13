@@ -40,7 +40,9 @@ def triu_1d(A):
 
 
 def _from_triu_helper(A):
-    size_from_dim = np.array([d**2 / 2 + d / 2 for d in np.arange(4)], dtype=int)
+    size_from_dim = np.array(
+        [np.sum(1 + np.arange(d)) for d in np.arange(4)], dtype=int
+    )
     size = A.shape[0]
     dim = np.where(size_from_dim == size)[0][0]
     idx = np.zeros((dim, dim), dtype=int)
