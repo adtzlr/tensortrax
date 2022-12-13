@@ -10,16 +10,21 @@ r"""
 
 import numpy as np
 
-# from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from .._math_tensor import trace, ddot, sqrt
+# from ..._tensor import Tensor, transpose,  matmul, f, δ, Δ, Δδ
+from .._math_tensor import trace, ddot, sqrt, transpose
 from .. import _math_array as array
 from .._linalg import _linalg_tensor as linalg
 
 
 def dev(A):
-    "Deviatoric Part of a Tensor."
+    "Deviatoric part of a Tensor."
     dim = A.shape[0]
     return A - trace(A) / dim * array.eye(A)
+
+
+def sym(A):
+    "Symmetric part of a Tensor."
+    return (A + transpose(A)) / 2
 
 
 def tresca(A):
@@ -40,7 +45,9 @@ def triu_1d(A):
 
 
 def _from_triu_helper(A):
-    size_from_dim = np.array([d**2 / 2 + d / 2 for d in np.arange(4)], dtype=int)
+    size_from_dim = np.array(
+        [np.sum(1 + np.arange(d)) for d in np.arange(4)], dtype=int
+    )
     size = A.shape[0]
     dim = np.where(size_from_dim == size)[0][0]
     idx = np.zeros((dim, dim), dtype=int)

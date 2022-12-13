@@ -100,7 +100,7 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     return evaluate_jacobian
 
 
-def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
+def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     "Evaluate the gradient of a scalar-valued function."
 
     def evaluate_gradient(*args, **kwargs):
@@ -112,6 +112,10 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
         fx = np.zeros((1, *t.trax))
         dfdx = np.zeros((t.size, *t.trax))
         δx = Δx = np.eye(t.size)
+
+        if sym:
+            idx_off_diag = {1: None, 3: [1], 6: [1, 2, 4]}[t.size]
+            δx[idx_off_diag] /= 2
 
         def kernel(a, wrt, δx, Δx, ntrax, args, kwargs):
             args, kwargs = add_tensor(args, kwargs, wrt, δx[a], Δx[a], ntrax)
@@ -143,7 +147,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     return evaluate_gradient
 
 
-def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
+def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     "Evaluate the hessian of a scalar-valued function."
 
     def evaluate_hessian(*args, **kwargs):
@@ -156,6 +160,10 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
         dfdx = np.zeros((t.size, *t.trax))
         d2fdx2 = np.zeros((t.size, t.size, *t.trax))
         δx = Δx = np.eye(t.size)
+
+        if sym:
+            idx_off_diag = {1: None, 3: [1], 6: [1, 2, 4]}[t.size]
+            δx[idx_off_diag] /= 2
 
         def kernel(a, b, wrt, δx, Δx, ntrax, args, kwargs):
             args, kwargs = add_tensor(args, kwargs, wrt, δx[a], Δx[b], ntrax)

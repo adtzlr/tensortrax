@@ -8,4 +8,12 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from ._special_tensor import dev, tresca, von_mises, triu_1d, from_triu_1d, from_triu_2d
+from ._special_tensor import (
+    dev,
+    sym,
+    tresca,
+    von_mises,
+    triu_1d,
+    from_triu_1d,
+    from_triu_2d,
+)

@@ -10,6 +10,21 @@ def neo_hooke(F):
     return (J ** (-2 / 3) * I1 - 3) / 2
 
 
+def neo_hooke_sym(C):
+    C = (C + C.T()) / 2
+    I3 = tm.linalg.det(C)
+    I1 = tm.trace(C)
+    return (I3 ** (-1 / 3) * I1 - 3) / 2
+
+
+def neo_hooke_sym_triu(C):
+    C = tm.special.from_triu_1d(C)
+    C = (C + C.T()) / 2
+    I3 = tm.linalg.det(C)
+    I1 = tm.trace(C)
+    return (I3 ** (-1 / 3) * I1 - 3) / 2
+
+
 def ogden(F, mu=1, alpha=2):
     C = F.T() @ F
     J = tm.linalg.det(F)
@@ -99,7 +114,26 @@ def test_repeated_eigvals():
     assert np.allclose(d2wdf2, d2WdF2)
 
 
+def test_sym():
+
+    F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3)
+    C = F.T @ F
+
+    S = 2 * tr.gradient(neo_hooke_sym)(C)
+    D = 4 * tr.hessian(neo_hooke_sym)(C)
+
+    s6 = tr.gradient(neo_hooke_sym_triu, sym=True)(tm.special.triu_1d(C))
+    d6 = tr.hessian(neo_hooke_sym_triu, sym=True)(tm.special.triu_1d(C))
+
+    s = 2 * tm.special.from_triu_1d(s6)
+    d = 4 * tm.special.from_triu_2d(d6)
+
+    assert np.allclose(S, s)
+    assert np.allclose(D, d)
+
+
 if __name__ == "__main__":
     test_function_gradient_hessian()
     test_repeated_eigvals()
     test_trig()
+    test_sym()
