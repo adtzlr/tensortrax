@@ -8,6 +8,7 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
+import numpy as np
 
 # from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
 from .._math_tensor import trace, ddot, sqrt
@@ -31,3 +32,8 @@ def von_mises(A):
     "Von Mises Invariant."
     a = dev(A)
     return sqrt(3 / 2 * ddot(a, a))
+
+
+def triu(A):
+    dim = A.shape[0]
+    i, j = np.triu_indices(dim)

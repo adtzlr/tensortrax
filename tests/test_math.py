@@ -76,6 +76,14 @@ def test_math():
     assert tm.array.cross(F, F).shape == F.shape
     assert tm.array.eye(F).shape == F.shape
 
+    assert np.allclose(tm.array.eye(F), tm.array.eye(T))
+
+
+def test_einsum():
+
+    F = np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10
+    T = tr.Tensor(F)
+
     tm.einsum("ij...,kl...->ijkl...", F, F)
     tm.einsum("ij...,kl...->ijkl...", F, T)
     tm.einsum("ij...,kl...->ijkl...", T, F)
@@ -93,10 +101,19 @@ def test_math():
     with pytest.raises(NotImplementedError):
         tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, T)
 
+
+def test_slice():
+
+    F = np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10
+    T = tr.Tensor(F)
+
     T.ravel()
     T[0] = F[0]
     T[:, 0] = F[:, 0]
     T[:, 0] = T[:, 0]
+
+
+def test_reshape():
 
     x = np.ones((3, 3, 100))
     t = tr.Tensor(x, x, x, x, ntrax=1)
@@ -112,6 +129,9 @@ def test_math():
 
     tm.reshape(x, (3, 3, 100))
 
+
+def test_eigh():
+
     F = np.diag([1.2, 1.2, 2.0])
     T = tr.Tensor(F)
 
@@ -124,8 +144,10 @@ def test_math():
     assert tm.linalg.eigh(T)[0].shape == (3,)
     assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
 
-    assert np.allclose(tm.array.eye(F), tm.array.eye(T))
-
 
 if __name__ == "__main__":
     test_math()
+    test_einsum()
+    test_slice()
+    test_reshape()
+    test_eigh()
