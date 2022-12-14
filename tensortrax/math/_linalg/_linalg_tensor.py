@@ -68,7 +68,6 @@ def eigvalsh(A):
     "Eigenvalues of a symmetric Tensor."
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
-    N = transpose(N)
     M = einsum("ai...,aj...->aij...", N, N)
 
     δλ = einsum("aij...,ij...->a...", M, δ(A))
@@ -110,7 +109,6 @@ def eigh(A):
     "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
-    N = transpose(N)
     M = einsum("ai...,aj...->aij...", N, N)
 
     δλ = einsum("aij...,ij...->a...", M, δ(A))
