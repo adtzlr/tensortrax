@@ -62,9 +62,12 @@ def test_math():
         tm.ravel,
     ]:
         assert np.allclose(fun(F), fun(T).x)
+        
+    C = F.T @ F
+    V = tr.Tensor(C)
 
     for fun in [tm.linalg.det, tm.linalg.inv]:
-        assert np.allclose(fun(F), fun(T).x)
+        assert np.allclose(fun(C), fun(V).x)
 
     for fun in [
         tm.special.dev,
