@@ -62,7 +62,7 @@ def test_math():
         tm.ravel,
     ]:
         assert np.allclose(fun(F), fun(T).x)
-        
+
     C = F.T @ F
     V = tr.Tensor(C)
 
@@ -173,6 +173,27 @@ def test_triu():
     assert V.shape == (3, 3, 3, 3, 10)
 
 
+def test_logical():
+
+    F = np.tile((np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    T = tr.Tensor(F, ntrax=1)
+
+    G = np.tile((np.eye(3) - np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    V = tr.Tensor(G, ntrax=1)
+
+    for A in [F, T]:
+        for B in [G, V]:
+            A > B
+            A < B
+            A >= B
+            A <= B
+            A == B
+
+            assert (A > B).dtype == bool
+            assert np.all(A > B)
+            assert np.all(B < A)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -180,3 +201,4 @@ if __name__ == "__main__":
     test_reshape()
     test_eigh()
     test_triu()
+    test_logical()
