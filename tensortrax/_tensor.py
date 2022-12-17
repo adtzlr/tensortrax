@@ -146,14 +146,25 @@ class Tensor:
         Δδx = p * f(A) ** (p - 1) * Δδ(A) + p * (p - 1) * f(A) ** (p - 2) * δ(A) * Δ(A)
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
 
-    def T(self):
-        return transpose(self)
+    def __gt__(self, B):
+        A = self
+        return f(A) > (f(B) if isinstance(B, Tensor) else B)
 
-    def ravel(self, order="C"):
-        return ravel(self, order=order)
+    def __lt__(self, B):
+        A = self
+        return f(A) < (f(B) if isinstance(B, Tensor) else B)
 
-    def reshape(self, *shape, order="C"):
-        return reshape(self, newshape=shape, order=order)
+    def __ge__(self, B):
+        A = self
+        return f(A) >= (f(B) if isinstance(B, Tensor) else B)
+
+    def __le__(self, B):
+        A = self
+        return f(A) <= (f(B) if isinstance(B, Tensor) else B)
+
+    def __eq__(self, B):
+        A = self
+        return f(A) == (f(B) if isinstance(B, Tensor) else B)
 
     def __matmul__(self, B):
         return matmul(self, B)
@@ -203,6 +214,15 @@ class Tensor:
         ]
         data = self.x.__repr__()
         return "\n".join([header, *metadata, "", data])
+
+    def T(self):
+        return transpose(self)
+
+    def ravel(self, order="C"):
+        return ravel(self, order=order)
+
+    def reshape(self, *shape, order="C"):
+        return reshape(self, newshape=shape, order=order)
 
     __radd__ = __add__
     __rmul__ = __mul__
