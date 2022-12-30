@@ -16,10 +16,6 @@ from ._linalg import _linalg_array as array
 dot = matmul
 
 
-def ddot(A, B):
-    return einsum("ij...,ij...->...", A, B)
-
-
 def trace(A):
     return einsum("ii...->...", A)
 

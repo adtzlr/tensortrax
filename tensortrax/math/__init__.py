@@ -14,7 +14,6 @@ from . import _special as special
 from ._math_tensor import (
     cos,
     cosh,
-    ddot,
     diagonal,
     dot,
     einsum,
