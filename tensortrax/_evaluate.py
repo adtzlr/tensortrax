@@ -8,12 +8,13 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from threading import Thread
 from copy import copy
+from threading import Thread
+
 import numpy as np
 
-from ._tensor import Tensor, f, δ, Δδ
-from .math._special import triu_1d, from_triu_1d, from_triu_2d
+from ._tensor import Tensor, Δδ, f, δ
+from .math._special import from_triu_1d, from_triu_2d, triu_1d
 
 
 def add_tensor(args, kwargs, wrt, δx, Δx, ntrax, sym):

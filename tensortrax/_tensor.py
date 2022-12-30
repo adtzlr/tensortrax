@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from ._helpers import f, δ, Δ, Δδ
+from ._helpers import Δ, Δδ, f, δ
 
 
 class Tensor:

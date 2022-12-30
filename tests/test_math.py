@@ -1,7 +1,8 @@
-import tensortrax as tr
-import tensortrax.math as tm
 import numpy as np
 import pytest
+
+import tensortrax as tr
+import tensortrax.math as tm
 
 
 def test_math():
