@@ -10,10 +10,10 @@ r"""
 
 from ._special_tensor import (
     dev,
-    sym,
-    tresca,
-    von_mises,
-    triu_1d,
     from_triu_1d,
     from_triu_2d,
+    sym,
+    tresca,
+    triu_1d,
+    von_mises,
 )

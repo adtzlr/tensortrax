@@ -11,10 +11,9 @@ r"""
 
 import numpy as np
 
-from ..._tensor import Tensor, einsum, matmul, f, δ, Δ, Δδ
-from .._math_tensor import transpose, ddot, sum, exp
+from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
+from .._math_tensor import ddot, exp, sum, transpose
 from . import _linalg_array as array
-
 
 dot = matmul
 

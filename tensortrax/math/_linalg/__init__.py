@@ -8,5 +8,6 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
 """
 
-from ._linalg_array import det as _det, inv as _inv
-from ._linalg_tensor import det, inv, eigvalsh, eigh, expm
+from ._linalg_array import det as _det
+from ._linalg_array import inv as _inv
+from ._linalg_tensor import det, eigh, eigvalsh, expm, inv

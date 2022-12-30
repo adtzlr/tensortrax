@@ -1,6 +1,7 @@
+import numpy as np
+
 import tensortrax as tr
 import tensortrax.math as tm
-import numpy as np
 
 
 def neo_hooke(F):
