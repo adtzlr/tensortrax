@@ -12,9 +12,7 @@ import numpy as np
 
 from .. import _math_array as array
 from .._linalg import _linalg_tensor as linalg
-
-# from ..._tensor import Tensor, transpose,  matmul, f, δ, Δ, Δδ
-from .._math_tensor import sqrt, trace, transpose
+from .._math_tensor import einsum, sqrt, trace, transpose
 
 
 def ddot(A, B):
