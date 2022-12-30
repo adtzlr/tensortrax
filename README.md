@@ -38,6 +38,7 @@ Let's define a scalar-valued function which operates on a tensor.
 import tensortrax as tr
 import tensortrax.math as tm
 
+
 def fun(F, mu=1):
     C = F.T() @ F
     I1 = tm.trace(C)
@@ -129,17 +130,23 @@ import tensortrax as tr
 from tensortrax import Tensor, f, δ, Δ, Δδ
 from tensortrax.math import trace
 
-δF_12 = np.array([
-    [0, 1, 0], 
-    [0, 0, 0], 
-    [0, 0, 0],
-], dtype=float)
+δF_12 = np.array(
+    [
+        [0, 1, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ],
+    dtype=float,
+)
 
-ΔF_23 = np.array([
-    [0, 0, 0], 
-    [0, 0, 1], 
-    [0, 0, 0],
-], dtype=float)
+ΔF_23 = np.array(
+    [
+        [0, 0, 0],
+        [0, 0, 1],
+        [0, 0, 0],
+    ],
+    dtype=float,
+)
 
 x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
 F = Tensor(x=x, δx=δF_12, Δx=ΔF_23, Δδx=None)
@@ -149,8 +156,8 @@ I1_C = trace(F.T() @ F)
 The function as well as the gradient and hessian components are accessible as:
 
 ```python
-ψ      =  f(I1_C)
-P_12   =  δ(I1_C) # (= Δ(I1_C))
+ψ = f(I1_C)
+P_12 = δ(I1_C)  # (= Δ(I1_C))
 A_1223 = Δδ(I1_C)
 ```
 
@@ -187,6 +194,7 @@ Custom functions (extensions) are easy to implement in `tensortrax`. Beside the 
 import numpy as np
 from tensortrax import Tensor, f, δ, Δ, Δδ
 
+
 def sin(A):
     return Tensor(
         x=np.sin(f(A)),
@@ -195,6 +203,7 @@ def sin(A):
         Δδx=-np.sin(f(A)) * δ(A) * Δ(A) + np.cos(f(A)) * Δδ(A),
         ntrax=A.ntrax,
     )
+
 
 x = np.eye(3)
 y = sin(Tensor(x))
