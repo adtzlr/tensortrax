@@ -127,12 +127,7 @@ class Tensor:
 
     def __truediv__(self, B):
         A = self
-        if isinstance(B, Tensor):
-            raise NotImplementedError("Divide by Tensor is not supported.")
-        else:
-            return Tensor(
-                x=f(A) / B, δx=δ(A) / B, Δx=Δ(A) / B, Δδx=Δδ(A) / B, ntrax=A.ntrax
-            )
+        return A * B**-1
 
     def __rtruediv__(self, B):
         A = self
