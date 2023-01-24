@@ -9,12 +9,23 @@ r"""
 """
 
 from copy import copy
+from functools import wraps
 from threading import Thread
 
 import numpy as np
 
 from ._tensor import Tensor, Δδ, f, δ
 from .math._special import from_triu_1d, from_triu_2d, triu_1d
+
+
+def take(fun, item=0):
+    "Evaluate the function and take only the selected item."
+
+    @wraps(fun)
+    def evaluate(*args, **kwargs):
+        return fun(*args, **kwargs)[item]
+
+    return evaluate
 
 
 def add_tensor(args, kwargs, wrt, δx, Δx, ntrax, sym):
@@ -58,6 +69,7 @@ def arg_to_tensor(args, kwargs, wrt, sym):
 def function(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate a scalar-valued function."
 
+    @wraps(fun)
     def evaluate_function(*args, **kwargs):
         args, kwargs = add_tensor(args, kwargs, wrt, None, None, ntrax, False)
         return fun(*args, **kwargs).x
@@ -68,6 +80,7 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
 def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     "Evaluate the jacobian of a function."
 
+    @wraps(fun)
     def evaluate_jacobian(*args, **kwargs):
 
         x = arg_to_tensor(args, kwargs, wrt, False)
@@ -115,6 +128,7 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
 def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     "Evaluate the gradient of a scalar-valued function."
 
+    @wraps(fun)
     def evaluate_gradient(*args, **kwargs):
 
         x = arg_to_tensor(args, kwargs, wrt, sym)
@@ -168,6 +182,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     "Evaluate the hessian of a scalar-valued function."
 
+    @wraps(fun)
     def evaluate_hessian(*args, **kwargs):
 
         x = arg_to_tensor(args, kwargs, wrt, sym)
@@ -230,6 +245,7 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
+    @wraps(fun)
     def evaluate_gradient_vector_product(*args, δx, **kwargs):
         args, kwargs = add_tensor(args, kwargs, wrt, δx, None, ntrax, False)
         return fun(*args, **kwargs).δx
@@ -240,6 +256,7 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
 def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     "Evaluate the gradient-vector-product of a function."
 
+    @wraps(fun)
     def evaluate_hessian_vector_product(*args, δx, Δx, **kwargs):
         args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx, ntrax, False)
         return fun(*args, **kwargs).Δδx
