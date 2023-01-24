@@ -11,6 +11,7 @@ from ._evaluate import (
     hessian,
     hessian_vector_product,
     jacobian,
+    take,
 )
 from ._helpers import Δ, Δδ, f, δ
 from ._tensor import Tensor
