@@ -65,7 +65,7 @@ d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
 # Performance
-A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/tensortrax/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about five seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about five seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
 
 ```math
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
