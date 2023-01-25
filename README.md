@@ -64,6 +64,40 @@ for a in range(3):
 d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
+# Performance
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/tensortrax/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about five seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
+
+```math
+\psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
+```
+
+| Tensors | Gradient in s | Hessian in s |
+| ------- | ------------- | ------------ |
+|       2 |       0.00529 |      0.01379 |
+|       4 |       0.00427 |      0.01388 |
+|       8 |       0.00384 |      0.01452 |
+|      16 |       0.00408 |      0.01320 |
+|      32 |       0.00408 |      0.01393 |
+|      64 |       0.00392 |      0.01419 |
+|     128 |       0.00433 |      0.01470 |
+|     256 |       0.00446 |      0.01547 |
+|     512 |       0.00778 |      0.02581 |
+|    1024 |       0.00766 |      0.02808 |
+|    2048 |       0.00804 |      0.03157 |
+|    4096 |       0.00955 |      0.03850 |
+|    8192 |       0.01402 |      0.05078 |
+|   16384 |       0.01739 |      0.06913 |
+|   32768 |       0.02890 |      0.11632 |
+|   65536 |       0.06598 |      0.24860 |
+|  131072 |       0.16249 |      0.61318 |
+|  262144 |       0.38328 |      1.35828 |
+|  524288 |       0.67369 |      2.72501 |
+| 1048576 |       1.51160 |      5.41486 |
+| 2097152 |       3.08933 |     11.39978 |
+| 4194304 |       6.25461 |     26.56323 |
+
+![benchmark](https://user-images.githubusercontent.com/5793153/214537299-b9f5b672-a5a5-4760-a78d-fc6226f4bb8e.svg)
+
 # Theory
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
 
