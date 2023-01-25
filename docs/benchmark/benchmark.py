@@ -30,7 +30,7 @@ def pre(n, **kwargs):
     return C, stress, elasticity
 
 
-tensors = 2 ** np.arange(1, 23)
+tensors = 2 ** np.arange(1, 23, 2)
 time_gradient = []
 time_hessian = []
 
