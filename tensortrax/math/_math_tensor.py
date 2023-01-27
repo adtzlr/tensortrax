@@ -10,8 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, ravel, reshape, δ
-from ._linalg import _linalg_array as array
+from .._tensor import Tensor, einsum, f, matmul, ravel, reshape, δ
 
 dot = matmul
 
@@ -20,8 +19,13 @@ def trace(A):
     return einsum("ii...->...", A)
 
 
-def transpose(A):
-    return einsum("ij...->ji...", A)
+def transpose(A, axes=None):
+    ij = "abcdefghijklmnopqrstuvwxyz"[: len(A.shape)]
+    if axes is None:
+        ji = ij[::-1]
+    else:
+        ji = np.array(ij)[axes].tolist()
+    return einsum(f"{ij}...->{ji}...", A)
 
 
 def sum(A, axis=0):
@@ -29,8 +33,6 @@ def sum(A, axis=0):
         return Tensor(
             x=np.sum(f(A), axis=axis),
             δx=np.sum(δ(A), axis=axis),
-            Δx=np.sum(Δ(A), axis=axis),
-            Δδx=np.sum(Δδ(A), axis=axis),
             ntrax=A.ntrax,
         )
     else:
@@ -49,8 +51,6 @@ def sin(A):
         return Tensor(
             x=np.sin(f(A)),
             δx=np.cos(f(A)) * δ(A),
-            Δx=np.cos(f(A)) * Δ(A),
-            Δδx=-np.sin(f(A)) * δ(A) * Δ(A) + np.cos(f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -62,8 +62,6 @@ def cos(A):
         return Tensor(
             x=np.cos(f(A)),
             δx=-np.sin(f(A)) * δ(A),
-            Δx=-np.sin(f(A)) * Δ(A),
-            Δδx=-np.cos(f(A)) * δ(A) * Δ(A) - np.sin(f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -75,9 +73,6 @@ def tan(A):
         return Tensor(
             x=np.tan(f(A)),
             δx=np.cos(f(A)) ** -2 * δ(A),
-            Δx=np.cos(f(A)) ** -2 * Δ(A),
-            Δδx=2 * np.tan(f(A)) * np.cos(f(A)) ** -2 * δ(A) * Δ(A)
-            + np.cos(f(A)) ** -2 * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -89,8 +84,6 @@ def sinh(A):
         return Tensor(
             x=np.sinh(f(A)),
             δx=np.cosh(f(A)) * δ(A),
-            Δx=np.cosh(f(A)) * Δ(A),
-            Δδx=np.sinh(f(A)) * δ(A) * Δ(A) + np.cosh(f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -102,8 +95,6 @@ def cosh(A):
         return Tensor(
             x=np.cosh(f(A)),
             δx=np.sinh(f(A)) * δ(A),
-            Δx=np.sinh(f(A)) * Δ(A),
-            Δδx=np.cosh(f(A)) * δ(A) * Δ(A) + np.sinh(f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -116,8 +107,6 @@ def tanh(A):
         return Tensor(
             x=x,
             δx=(1 - x**2) * δ(A),
-            Δx=(1 - x**2) * Δ(A),
-            Δδx=-2 * x * (1 - x**2) * δ(A) * Δ(A) + (1 - x**2) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -130,8 +119,6 @@ def exp(A):
         return Tensor(
             x=x,
             δx=x * δ(A),
-            Δx=x * Δ(A),
-            Δδx=x * δ(A) * Δ(A) + x * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -144,8 +131,6 @@ def log(A):
         return Tensor(
             x=x,
             δx=1 / f(A) * δ(A),
-            Δx=1 / f(A) * Δ(A),
-            Δδx=-1 / f(A) ** 2 * δ(A) * Δ(A) + 1 / f(A) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -158,9 +143,6 @@ def log10(A):
         return Tensor(
             x=x,
             δx=1 / (np.log(10) * f(A)) * δ(A),
-            Δx=1 / (np.log(10) * f(A)) * Δ(A),
-            Δδx=-1 / (np.log(10) * f(A) ** 2) * δ(A) * Δ(A)
-            + 1 / (np.log(10) * f(A)) * Δδ(A),
             ntrax=A.ntrax,
         )
     else:
@@ -173,8 +155,6 @@ def diagonal(A, offset=0, axis1=0, axis2=1):
         return Tensor(
             x=np.diagonal(f(A), **kwargs).T,
             δx=np.diagonal(δ(A), **kwargs).T,
-            Δx=np.diagonal(Δ(A), **kwargs).T,
-            Δδx=np.diagonal(Δδ(A), **kwargs).T,
             ntrax=A.ntrax,
         )
     else:

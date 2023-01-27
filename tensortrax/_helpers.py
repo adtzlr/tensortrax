@@ -17,13 +17,3 @@ def f(A):
 def δ(A):
     "Return the (dual) δ-variation of the tensor."
     return A.δx
-
-
-def Δ(A):
-    "Return the (dual) Δ-variation of the tensor."
-    return A.Δx
-
-
-def Δδ(A):
-    "Return the (dual) Δδ-variation of the tensor."
-    return A.Δδx
