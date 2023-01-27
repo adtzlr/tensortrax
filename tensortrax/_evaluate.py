@@ -78,8 +78,8 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
 
 
 def asarray(A):
-    asarr = lambda A: asarray(A) if hasattr(A[0], "x") else np.asarray(A)
-    return Tensor(asarr([f(Ai) for Ai in A]), asarr([δ(Ai) for Ai in A]))
+    asarr = lambda A: asarray(A) if istensor(A[0]) else np.asarray(A)
+    return Tensor(asarr([f(Ai) for Ai in A]), asarr([δ(Ai) for Ai in A]), ntrax=A[0].ntrax)
 
 
 def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
@@ -117,8 +117,8 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
 
             for th in threads:
                 th.join()
-
-        return asarray(dfdx).reshape(*shape, *t.shape, *t.trax)
+        
+        return asarray(dfdx).reshape(*shape, *t.shape)
 
     return evaluate_jacobian
 
