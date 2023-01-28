@@ -28,15 +28,22 @@ def test_hvp():
             δfun = tr.gradient_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(
                 F=F, δx=δF
             )
-            Δδfun = tr.hessian_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(
-                F=F, δx=δF, Δx=ΔF
+            Δδfun = tr.hessian_vectors_product(
+                fun, wrt="F", ntrax=2, parallel=parallel
+            )(F=F, δx=δF, Δx=ΔF)
+
+            hvp = tr.hessian_vector_product(fun, wrt="F", ntrax=2, parallel=parallel)(
+                F=F, δx=δF
             )
 
             assert δfun.shape == (1, 1)
             assert Δδfun.shape == (1, 1)
 
+            assert hvp.shape == (3, 3, 1, 1)
+
             assert not np.any(np.isnan(δfun))
             assert not np.any(np.isnan(Δδfun))
+            assert not np.any(np.isnan(hvp))
 
 
 if __name__ == "__main__":

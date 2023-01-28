@@ -204,11 +204,12 @@ jac = tr.jacobian(fun)(x)
 ```
 
 
-Evaluate the gradient- as well as the hessian-vector-product:
+Evaluate the gradient- as well as the hessian-vector(s)-product:
 
 ```python
 gvp = tr.gradient_vector_product(fun)(x, δx=x)
-hvp = tr.hessian_vector_product(fun)(x, δx=x, Δx=x)
+hvp = tr.hessian_vector_product(fun)(x, δx=x)
+hvsp = tr.hessian_vectors_product(fun)(x, δx=x, Δx=x)
 ```
 
 # Extensions

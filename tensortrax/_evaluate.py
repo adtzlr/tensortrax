@@ -101,21 +101,9 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
             fx[axes] = f(func)
             dfdx[(*axes, a)] = δ(func)
 
-        if not parallel:
-            for a in indices:
-                kernel(a, wrt, δx, Δx, ntrax, args, kwargs)
-
-        else:
-            threads = [
-                Thread(target=kernel, args=(a, wrt, δx, Δx, ntrax, args, kwargs))
-                for a in indices
-            ]
-
-            for th in threads:
-                th.start()
-
-            for th in threads:
-                th.join()
+        run(target=kernel, parallel=parallel)(
+            (a, wrt, δx, Δx, ntrax, args, kwargs) for a in indices
+        )
 
         if full_output:
             return np.array(dfdx).reshape(*shape, *t.shape, *t.trax), fx
@@ -149,21 +137,9 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
             fx[:] = f(func)
             dfdx[a] = δ(func)
 
-        if not parallel:
-            for a in indices:
-                kernel(a, wrt, δx, Δx, ntrax, sym, args, kwargs)
-
-        else:
-            threads = [
-                Thread(target=kernel, args=(a, wrt, δx, Δx, ntrax, sym, args, kwargs))
-                for a in indices
-            ]
-
-            for th in threads:
-                th.start()
-
-            for th in threads:
-                th.join()
+        run(target=kernel, parallel=parallel)(
+            (a, wrt, δx, Δx, ntrax, sym, args, kwargs) for a in indices
+        )
 
         if sym:
             dfdx = from_triu_1d(dfdx)
@@ -205,23 +181,9 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
             dfdx[a] = δ(func)
             d2fdx2[a, b] = d2fdx2[b, a] = Δδ(func)
 
-        if not parallel:
-            for a, b in indices:
-                kernel(a, b, wrt, δx, Δx, ntrax, sym, args, kwargs)
-
-        else:
-            threads = [
-                Thread(
-                    target=kernel, args=(a, b, wrt, δx, Δx, ntrax, sym, args, kwargs)
-                )
-                for a, b in indices
-            ]
-
-            for th in threads:
-                th.start()
-
-            for th in threads:
-                th.join()
+        run(target=kernel, parallel=parallel)(
+            (a, b, wrt, δx, Δx, ntrax, sym, args, kwargs) for a, b in indices
+        )
 
         if sym:
             dfdx = from_triu_1d(dfdx)
@@ -253,12 +215,65 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     return evaluate_gradient_vector_product
 
 
-def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate the gradient-vector-product of a function."
+def hessian_vectors_product(fun, wrt=0, ntrax=0, parallel=False):
+    "Evaluate the hessian-vectors-product of a function."
 
     @wraps(fun)
-    def evaluate_hessian_vector_product(*args, δx, Δx, **kwargs):
+    def evaluate_hessian_vectors_product(*args, δx, Δx, **kwargs):
         args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx, ntrax, False)
         return fun(*args, **kwargs).Δδx
 
+    return evaluate_hessian_vectors_product
+
+
+def hessian_vector_product(
+    fun, wrt=0, ntrax=0, parallel=False, full_output=False
+):
+    "Evaluate the hessian-vector-product of a function."
+
+    @wraps(fun)
+    def evaluate_hessian_vector_product(*args, δx, **kwargs):
+
+        x = arg_to_tensor(args, kwargs, wrt, False)
+        t = Tensor(x, ntrax=ntrax)
+        indices = range(t.size)
+
+        fx = np.zeros((1, *t.trax))
+        hvp = np.zeros((t.size, *t.trax))
+        Δx = np.eye(t.size)
+
+        def kernel(a, wrt, δx, Δx, ntrax, args, kwargs):
+            args, kwargs = add_tensor(args, kwargs, wrt, δx, Δx[a], ntrax, False)
+            func = fun(*args, **kwargs)
+            fx[:] = f(func)
+            hvp[a] = Δδ(func)
+
+        run(target=kernel, parallel=parallel)(
+            (a, wrt, δx, Δx, ntrax, args, kwargs) for a in indices
+        )
+
+        return np.array(hvp).reshape(*t.shape, *t.trax)
+
     return evaluate_hessian_vector_product
+
+
+def run(target, parallel=False):
+    "Serial or threaded execution of a callable target."
+
+    @wraps(target)
+    def run(args=()):
+        "Run the callable target with iterable args (one item per thread if parallel)."
+
+        if not parallel:
+            [target(*arg) for arg in args]
+
+        else:
+            threads = [Thread(target=target, args=arg) for arg in args]
+
+            for th in threads:
+                th.start()
+
+            for th in threads:
+                th.join()
+
+    return run
