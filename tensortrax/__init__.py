@@ -10,6 +10,7 @@ from ._evaluate import (
     gradient_vector_product,
     hessian,
     hessian_vector_product,
+    hessian_vectors_product,
     jacobian,
     take,
 )
