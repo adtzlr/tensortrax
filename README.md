@@ -17,15 +17,16 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 # Features
 - Designed to operate on input arrays with trailing axes
 - Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. three operands)
+- Math is limited but similar to NumPy, try to use `import tensortrax.math as tm` instead of `import numpy as np`
 - Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
-- Stable gradient and hessian of eigenvalues `eigvalsh` in case of repeated equal eigenvalues
+- Stable gradient and hessian of eigenvalues obtained from `eigvalsh` in case of repeated equal eigenvalues for 3x3 arrays
 - Slicing and item assignments
 
 # Not Features
-- Not imitating a full-featured NumPy (e.g. like [Autograd](https://github.com/HIPS/autograd))
+- Not imitating a 100% full-featured NumPy (e.g. like [Autograd](https://github.com/HIPS/autograd))
 - No arbitrary-order gradients (only first- and second order gradients)
 - No support for `dtype=complex`
 

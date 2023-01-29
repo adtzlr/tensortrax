@@ -14,7 +14,7 @@ import numpy as np
 from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
 from .._math_tensor import exp, sum, transpose
 from .._special._special_tensor import ddot
-from . import _linalg_array as array
+from . import _linalg_array as linalg
 
 dot = matmul
 
@@ -22,8 +22,8 @@ dot = matmul
 def det(A):
     "Determinant of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
-        x = array.det(f(A))
-        B = transpose(array.inv(f(A)))
+        x = linalg.det(f(A))
+        B = transpose(linalg.inv(f(A)))
         δx = x * ddot(B, δ(A))
         Δx = x * ddot(B, Δ(A))
 
@@ -37,14 +37,14 @@ def det(A):
             ntrax=A.ntrax,
         )
     else:
-        return array.det(A)
+        return linalg.det(A)
 
 
 def inv(A):
     "Inverse of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
-        x = array.inv(f(A))
-        invA = array.inv(f(A))
+        x = linalg.inv(f(A))
+        invA = linalg.inv(f(A))
         δx = -matmul(matmul(invA, δ(A)), invA)
         Δx = -matmul(matmul(invA, Δ(A)), invA)
         Δδx = -(
@@ -61,11 +61,11 @@ def inv(A):
             ntrax=A.ntrax,
         )
     else:
-        return array.inv(A)
+        return linalg.inv(A)
 
 
 def eigvalsh(A):
-    "Eigenvalues of a symmetric Tensor."
+    "Eigenvalues of a 3x3 symmetric Tensor."
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
     M = einsum("ai...,aj...->aij...", N, N)

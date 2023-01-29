@@ -51,7 +51,7 @@ class Tensor:
         Δδx : arrayl_like or None, optional
             (Dual) linearization data (Δδ-operator) of the tensor.
         ntrax : int, optional
-            Number of trailing axes (default is 2).
+            Number of trailing axes (default is 0).
 
         """
 
