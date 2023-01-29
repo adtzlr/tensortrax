@@ -11,9 +11,33 @@ r"""
 import numpy as np
 
 from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, ravel, reshape, δ
-from ._linalg import _linalg_array as array
+from ._linalg import _linalg_array as linalg
 
 dot = matmul
+
+
+def array(object, dtype=None):
+    "Create an array."
+
+    if isinstance(object, Tensor):
+        return Tensor(
+            x=np.array(f(object), dtype=dtype),
+            δx=np.array(δ(object), dtype=dtype),
+            Δx=np.array(Δ(object), dtype=dtype),
+            Δδx=np.array(Δδ(object), dtype=dtype),
+            ntrax=object.ntrax,
+        )
+    elif isinstance(object, list) or isinstance(object, tuple):
+        if isinstance(object[0], Tensor):
+            return Tensor(
+                x=np.array([f(o) for o in object], dtype=dtype),
+                δx=np.array([δ(o) for o in object], dtype=dtype),
+                Δx=np.array([Δ(o) for o in object], dtype=dtype),
+                Δδx=np.array([Δδ(o) for o in object], dtype=dtype),
+                ntrax=object[0].ntrax,
+            )
+    else:
+        return np.array(object, dtype=dtype)
 
 
 def trace(A):
@@ -168,6 +192,8 @@ def log10(A):
 
 
 def diagonal(A, offset=0, axis1=0, axis2=1):
+    "Return specified diagonals."
+
     kwargs = dict(offset=offset, axis1=axis1, axis2=axis2)
     if isinstance(A, Tensor):
         return Tensor(
@@ -179,3 +205,78 @@ def diagonal(A, offset=0, axis1=0, axis2=1):
         )
     else:
         return np.diagonal(A, **kwargs).T
+
+
+def tile(A, reps):
+    "Construct an array by repeating A the number of times given by reps."
+
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.tile(f(A), reps=reps),
+            δx=np.tile(δ(A), reps=reps),
+            Δx=np.tile(Δ(A), reps=reps),
+            Δδx=np.tile(Δδ(A), reps=reps),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.tile(A, reps=reps)
+
+
+def repeat(a, repeats, axis=None):
+    "Repeat elements of an array."
+
+    if isinstance(a, Tensor):
+        return Tensor(
+            x=np.repeat(f(a), repeats=repeats, axis=axis),
+            δx=np.repeat(δ(a), repeats=repeats, axis=axis),
+            Δx=np.repeat(Δ(a), repeats=repeats, axis=axis),
+            Δδx=np.repeat(Δδ(a), repeats=repeats, axis=axis),
+            ntrax=a.ntrax,
+        )
+    else:
+        return np.repeat(a, repeats=repeats, axis=axis)
+
+
+def hstack(tup):
+    "Stack arrays in sequence horizontally (column wise)."
+
+    if isinstance(tup[0], Tensor):
+        return Tensor(
+            x=np.hstack([f(A) for A in tup]),
+            δx=np.hstack([δ(A) for A in tup]),
+            Δx=np.hstack([Δ(A) for A in tup]),
+            Δδx=np.hstack([Δδ(A) for A in tup]),
+            ntrax=tup[0].ntrax,
+        )
+    else:
+        return np.hstack(tup)
+
+
+def vstack(tup):
+    "Stack arrays in sequence vertically (row wise)."
+
+    if isinstance(tup[0], Tensor):
+        return Tensor(
+            x=np.vstack([f(A) for A in tup]),
+            δx=np.vstack([δ(A) for A in tup]),
+            Δx=np.vstack([Δ(A) for A in tup]),
+            Δδx=np.vstack([Δδ(A) for A in tup]),
+            ntrax=tup[0].ntrax,
+        )
+    else:
+        return np.vstack(tup)
+
+
+def stack(arrays, axis=0):
+    "Join a sequence of arrays along a new axis."
+
+    if isinstance(arrays[0], Tensor):
+        return Tensor(
+            x=np.stack([f(A) for A in arrays], axis=axis),
+            δx=np.stack([δ(A) for A in arrays], axis=axis),
+            Δx=np.stack([Δ(A) for A in arrays], axis=axis),
+            Δδx=np.stack([Δδ(A) for A in arrays], axis=axis),
+            ntrax=arrays[0].ntrax,
+        )
+    else:
+        return np.stack(arrays, axis=0)
