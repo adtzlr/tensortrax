@@ -226,9 +226,7 @@ def hessian_vectors_product(fun, wrt=0, ntrax=0, parallel=False):
     return evaluate_hessian_vectors_product
 
 
-def hessian_vector_product(
-    fun, wrt=0, ntrax=0, parallel=False, full_output=False
-):
+def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
     "Evaluate the hessian-vector-product of a function."
 
     @wraps(fun)
