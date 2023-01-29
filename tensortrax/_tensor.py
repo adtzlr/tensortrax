@@ -58,8 +58,8 @@ class Tensor:
         self.x = np.asarray(x)
 
         self.ntrax = ntrax
-        self.shape = x.shape[: len(x.shape) - ntrax]
-        self.trax = x.shape[len(x.shape) - ntrax :]
+        self.shape = self.x.shape[: len(self.x.shape) - ntrax]
+        self.trax = self.x.shape[len(self.x.shape) - ntrax :]
         self.size = np.product(self.shape, dtype=int)
 
         self.δx = self._init_and_reshape(δx)
