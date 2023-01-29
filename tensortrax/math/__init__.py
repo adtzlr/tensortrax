@@ -9,26 +9,32 @@ r"""
 """
 
 from . import _linalg as linalg
-from . import _math_array as array
+from . import _math_array as base
 from . import _special as special
 from ._math_tensor import (
+    array,
     cos,
     cosh,
     diagonal,
     dot,
     einsum,
     exp,
+    hstack,
     log,
     log10,
     matmul,
     ravel,
+    repeat,
     reshape,
     sin,
     sinh,
     sqrt,
+    stack,
     sum,
     tan,
     tanh,
+    tile,
     trace,
     transpose,
+    vstack,
 )
