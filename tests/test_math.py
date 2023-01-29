@@ -85,13 +85,12 @@ def test_math():
     assert tm.base.eye(F).shape == F.shape
 
     assert np.allclose(tm.base.eye(F), tm.base.eye(T))
-
-    assert np.allclose(tm.array([T, T]).x, np.array([F, F]))
-    assert np.allclose(tm.vstack([T, T]).x, np.vstack([F, F]))
-    assert np.allclose(tm.hstack([T, T]).x, np.hstack([F, F]))
-    assert np.allclose(tm.stack([T, T]).x, np.stack([F, F]))
-    assert np.allclose(tm.repeat(T, 3).x, np.repeat(F, 3))
-    assert np.allclose(tm.tile(T, 3).x, np.tile(F, 3))
+    assert np.allclose(tm.array([T, T]).x, tm.array([F, F]))
+    assert np.allclose(tm.vstack([T, T]).x, tm.vstack([F, F]))
+    assert np.allclose(tm.hstack([T, T]).x, tm.hstack([F, F]))
+    assert np.allclose(tm.stack([T, T]).x, tm.stack([F, F]))
+    assert np.allclose(tm.repeat(T, 3).x, tm.repeat(F, 3))
+    assert np.allclose(tm.tile(T, 3).x, tm.tile(F, 3))
 
 
 def test_einsum():

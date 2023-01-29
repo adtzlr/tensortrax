@@ -36,6 +36,8 @@ def array(object, dtype=None):
                 Δδx=np.array([Δδ(o) for o in object], dtype=dtype),
                 ntrax=object[0].ntrax,
             )
+        else:
+            return np.array(object, dtype=dtype)
     else:
         return np.array(object, dtype=dtype)
 
