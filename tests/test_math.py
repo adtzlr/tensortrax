@@ -81,10 +81,16 @@ def test_math():
 
     assert tm.linalg.expm(T).shape == (3, 3)
 
-    assert tm.array.cross(F, F).shape == F.shape
-    assert tm.array.eye(F).shape == F.shape
-
-    assert np.allclose(tm.array.eye(F), tm.array.eye(T))
+    assert tm.base.cross(F, F).shape == F.shape
+    assert tm.base.eye(F).shape == F.shape
+    assert np.allclose(tm.base.eye(F), tm.base.eye(T))
+    assert np.allclose(tm.array(T).x, tm.array(F))
+    assert np.allclose(tm.array([T, T]).x, tm.array([F, F]))
+    assert np.allclose(tm.vstack([T, T]).x, tm.vstack([F, F]))
+    assert np.allclose(tm.hstack([T, T]).x, tm.hstack([F, F]))
+    assert np.allclose(tm.stack([T, T]).x, tm.stack([F, F]))
+    assert np.allclose(tm.repeat(T, 3).x, tm.repeat(F, 3))
+    assert np.allclose(tm.tile(T, 3).x, tm.tile(F, 3))
 
 
 def test_einsum():
