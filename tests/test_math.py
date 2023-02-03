@@ -45,7 +45,13 @@ def test_math():
 
     tm.linalg._det(F[:2, :2])
     tm.linalg._det(F[:1, :1])
+
     tm.linalg._inv(F[:2, :2])
+    tm.linalg._inv(F[:1, :1])
+
+    G = np.eye(4) + np.arange(1, 17).reshape(4, 4) / 10
+    tm.linalg._det(G)
+    tm.linalg._inv(G)
 
     for fun in [
         tm.sin,

@@ -65,18 +65,21 @@ def inv(A):
 
 
 def eigvalsh(A):
-    "Eigenvalues of a 3x3 symmetric Tensor."
+    "Eigenvalues of a symmetric Tensor."
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
     M = einsum("ai...,aj...->aij...", N, N)
 
+    dim = len(λ)
+
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    Γ = [(1, 2), (2, 0), (0, 1)]
+    # Γ = [(1, 2), (2, 0), (0, 1)]
+    Γ = [np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)]
 
     δN = []
-    for α in range(3):
+    for α in range(dim):
         δNα = []
         for γ in Γ[α]:
             Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
@@ -111,13 +114,16 @@ def eigh(A):
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
     M = einsum("ai...,aj...->aij...", N, N)
 
+    dim = len(λ)
+
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    Γ = [(1, 2), (2, 0), (0, 1)]
+    # Γ = [(1, 2), (2, 0), (0, 1)]
+    Γ = [np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)]
 
     δN = []
-    for α in range(3):
+    for α in range(dim):
         δNα = []
         for γ in Γ[α]:
             Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
