@@ -157,12 +157,16 @@ def test_eigh():
 
     assert tm.linalg.eigh(T)[0].shape == (3,)
     assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
+    
+    assert tm.linalg.eigvalsh(T).shape == (3,)
 
     F = np.tile(F.reshape(3, 3, 1), 5)
     T = tr.Tensor(F, ntrax=1)
 
     assert tm.linalg.eigh(T)[0].shape == (3,)
     assert tm.linalg.eigh(T)[1].shape == (3, 3, 3)
+    
+    assert tm.linalg.eigvalsh(T).shape == (3,)
 
 
 def test_triu():
