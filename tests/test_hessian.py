@@ -48,7 +48,6 @@ def test_function_gradient_hessian():
             d2WdF2, dWdF, W = tr.hessian(
                 fun, ntrax=2, parallel=parallel, full_output=True
             )(F)
-
             assert W.shape == (1, 1)
             assert dWdF.shape == (3, 3, 1, 1)
             assert d2WdF2.shape == (3, 3, 3, 3, 1, 1)
