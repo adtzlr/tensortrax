@@ -64,7 +64,7 @@ d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
 # Performance
-A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about five seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about two seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
 
 ```math
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
@@ -72,19 +72,19 @@ A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benc
 
 | Tensors | Gradient in s | Hessian in s |
 | ------- | ------------- | ------------ |
-|       2 |       0.00552 |      0.01474 |
-|       8 |       0.00429 |      0.01420 |
-|      32 |       0.00415 |      0.01364 |
-|     128 |       0.00418 |      0.01453 |
-|     512 |       0.00697 |      0.02465 |
-|    2048 |       0.00831 |      0.03134 |
-|    8192 |       0.01289 |      0.05174 |
-|   32768 |       0.02837 |      0.11737 |
-|  131072 |       0.16327 |      0.58191 |
-|  524288 |       0.86078 |      2.65141 |
-| 2097152 |       2.97900 |     10.95087 |
+|       2 |       0.00077 |      0.00058 |
+|       8 |       0.00070 |      0.00057 |
+|      32 |       0.00053 |      0.00063 |
+|     128 |       0.00061 |      0.00068 |
+|     512 |       0.00095 |      0.00126 |
+|    2048 |       0.00261 |      0.00338 |
+|    8192 |       0.00604 |      0.01298 |
+|   32768 |       0.02806 |      0.05353 |
+|  131072 |       0.13473 |      0.25056 |
+|  524288 |       0.56922 |      1.03252 |
+| 2097152 |       2.42609 |      4.59884 |
 
-![benchmark](https://user-images.githubusercontent.com/5793153/214539409-63d9418e-9cb6-4e38-9a86-572665da30fe.svg)
+![benchmark](https://user-images.githubusercontent.com/5793153/216739312-c0a199fb-c905-43fc-9f2a-5550ce045b32.svg)
 
 # Theory
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.

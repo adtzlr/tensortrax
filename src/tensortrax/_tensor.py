@@ -37,7 +37,7 @@ class Tensor:
 
     """
 
-    def __init__(self, x, δx=None, Δx=None, Δδx=None, ntrax=0):
+    def __init__(self, x, δx=None, Δx=None, Δδx=None, ntrax=0, ndual=0):
         """Init a Hyper-Dual Tensor with trailing axes.
 
         Parameters
@@ -52,12 +52,15 @@ class Tensor:
             (Dual) linearization data (Δδ-operator) of the tensor.
         ntrax : int, optional
             Number of trailing axes (default is 0).
+        ndual : int, optional
+            Number of axes containing dual data (default is 0).
 
         """
 
         self.x = np.asarray(x)
 
         self.ntrax = ntrax
+        self.ndual = ndual
         self.shape = self.x.shape[: len(self.x.shape) - ntrax]
         self.trax = self.x.shape[len(self.x.shape) - ntrax :]
         self.size = np.product(self.shape, dtype=int)
@@ -66,13 +69,93 @@ class Tensor:
         self.Δx = self._init_and_reshape(Δx)
         self.Δδx = self._init_and_reshape(Δδx)
 
+    def _add(self, ndual=1):
+        "Add additional trailing axes for dual values."
+
+        # reset the tensor
+        self._reset()
+
+        # add new dual-related axes to the shape of the data
+        newshape = (*self.shape, *np.ones(ndual, dtype=int), *self.trax)
+        x = self.x.reshape(newshape)
+
+        # re-init the tensor
+        self.__init__(
+            x,
+            δx=self.δx,
+            Δx=self.Δx,
+            Δδx=self.Δδx,
+            ntrax=self.ntrax + ndual,
+            ndual=ndual,
+        )
+
+    def _reset(self):
+        "Reset the Tensor (set all dual values to zero)."
+
+        # reset the shape of the data (delete axes related to dual data)
+        newshape = (*self.shape, *self.trax[self.ndual :])
+        x = self.x.reshape(newshape)
+
+        # re-init the tensor
+        self.__init__(x, ntrax=self.ntrax - self.ndual)
+
+    def init(self, gradient=False, hessian=False, sym=False, δx=None, Δx=None):
+        """Re-Initialize tensor with dual values to keep track of the
+        hessian and/or the gradient."""
+
+        if gradient and not hessian:
+            # add additional trailing axes for dual values
+            self._add(ndual=len(self.shape))
+
+            # create the dual values
+            if δx is None:
+                δx = np.eye(self.size).reshape(*self.shape, *self.shape)
+                Δx = δx.copy()
+
+        elif hessian:
+            # add additional trailing axes for dual values
+            self._add(ndual=2 * len(self.shape))
+
+            # create the dual values
+            ones = np.ones(len(self.shape), dtype=int)
+
+            if δx is None:
+                shape = (*self.shape, *self.shape, *ones)
+                if len(shape) == 0:
+                    shape = (1,)
+                δx = np.eye(self.size).reshape(shape)
+            else:
+                δx = δx.reshape(*self.shape, *ones, *ones)
+
+            if Δx is None:
+                shape = (*self.shape, *ones, *self.shape)
+                if len(shape) == 0:
+                    shape = (1,)
+                Δx = np.eye(self.size).reshape(shape)
+            else:
+                Δx = Δx.reshape(*self.shape, *ones, *ones)
+
+        if gradient or hessian:
+
+            if sym:
+                idx_off_diag = {1: None, 3: [1], 6: [1, 2, 4]}[self.size]
+                δx[idx_off_diag] /= 2
+                Δx[idx_off_diag] /= 2
+
+            # re-init the tensor
+            self.__init__(self.x, δx=δx, Δx=Δx, ntrax=self.ntrax, ndual=self.ndual)
+
     def _init_and_reshape(self, value):
         if value is None:
             value = np.zeros(self.shape)
         else:
             value = np.asarray(value)
         if len(value.shape) != len(self.x.shape):
-            value = value.reshape([*self.shape, *np.ones(self.ntrax, dtype=int)])
+            newshape = (
+                *value.shape,
+                *np.ones(len(self.x.shape) - len(value.shape), dtype=int),
+            )
+            value = value.reshape(newshape)
         return value
 
     def __neg__(self):
