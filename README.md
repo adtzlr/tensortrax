@@ -46,7 +46,7 @@ def fun(F, mu=1):
     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
 ```
 
-The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. Optionally, the function calls are executed in parallel (threaded).
+The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. ~~Optionally, the function calls are executed in parallel (threaded)~~ (currently disabled, will be re-enabled soon).
 
 ```python
 import numpy as np
