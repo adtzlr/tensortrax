@@ -16,7 +16,7 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 # Highlights
 
-- Designed to operate on input arrays with trailing axes
+- Designed to operate on input arrays with (elementwise-operating) trailing axes
 - Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. three operands)
 - Math is limited but similar to NumPy, try to use `import tensortrax.math as tm` instead of `import numpy as np` inside functions to be differentiated
 - Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
@@ -24,7 +24,6 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
 - Stable gradient and hessian of eigenvalues obtained from `eigvalsh` in case of repeated equal eigenvalues
-- Slicing and item assignments
 
 Please keep in mind that `tensortrax` is not imitating a 100% full-featured NumPy, e.g. like [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). No arbitrary-order gradients or gradients-of-gradients are supported. The capability is limited to first- and second order gradients of a given function. Also, `tensortrax` provides no support for `dtype=complex`.
 
@@ -64,7 +63,7 @@ d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
 # Performance
-A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about two seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package. The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM).
 
 ```math
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
@@ -72,19 +71,19 @@ A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benc
 
 | Tensors | Gradient in s | Hessian in s |
 | ------- | ------------- | ------------ |
-|       2 |       0.00077 |      0.00058 |
-|       8 |       0.00070 |      0.00057 |
-|      32 |       0.00053 |      0.00063 |
-|     128 |       0.00061 |      0.00068 |
-|     512 |       0.00095 |      0.00126 |
-|    2048 |       0.00261 |      0.00338 |
-|    8192 |       0.00604 |      0.01298 |
-|   32768 |       0.02806 |      0.05353 |
-|  131072 |       0.13473 |      0.25056 |
-|  524288 |       0.56922 |      1.03252 |
-| 2097152 |       2.42609 |      4.59884 |
+|       2 |       0.00061 |      0.00058 |
+|       8 |       0.00056 |      0.00057 |
+|      32 |       0.00058 |      0.00061 |
+|     128 |       0.00065 |      0.00073 |
+|     512 |       0.00097 |      0.00127 |
+|    2048 |       0.00225 |      0.00315 |
+|    8192 |       0.00545 |      0.01202 |
+|   32768 |       0.02766 |      0.05250 |
+|  131072 |       0.13386 |      0.24942 |
+|  524288 |       0.59516 |      1.15749 |
+| 2097152 |       2.71652 |      4.96867 |
 
-![benchmark](https://user-images.githubusercontent.com/5793153/216739312-c0a199fb-c905-43fc-9f2a-5550ce045b32.svg)
+![benchmark](https://user-images.githubusercontent.com/5793153/217097960-39b0f0d8-31ff-4b43-b578-ff07e7489e58.svg)
 
 # Theory
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
@@ -233,7 +232,7 @@ x = np.eye(3)
 y = sin(Tensor(x))
 ```
 
-> **Hint**: *Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to [`tensortrax/math/_math_tensor.py`](https://github.com/adtzlr/tensortrax/blob/main/tensortrax/math/_math_tensor.py)* :page_with_curl: :pencil2:.
+> **Hint**: *Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to [`src/tensortrax/math/_math_tensor.py`](https://github.com/adtzlr/tensortrax/blob/main/src/tensortrax/math/_math_tensor.py)* :page_with_curl: :pencil2:.
 
 # References
 1. D. Maclaurin, D. Duvenaud, M. Johnson and J. Townsend, *Autograd*. [Online]. Available: https://github.com/HIPS/autograd.

@@ -14,7 +14,7 @@ from threading import Thread
 
 import numpy as np
 
-from ._tensor import Tensor, Δδ, f, δ
+from ._tensor import Tensor, Δδ, broadcast_to, f, δ
 from .math._special import from_triu_1d, from_triu_2d, triu_1d
 
 
@@ -50,7 +50,7 @@ def add_tensor(
     x = args_old[wrt]
 
     if sym:
-        x = x = triu_1d(x)
+        x = triu_1d(x)
 
     tensor = Tensor(x=x, ntrax=ntrax)
     trax = tensor.trax
@@ -89,10 +89,14 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         )
         func = fun(*args, **kwargs)
         grad = δ(func) if sym is False else from_triu_1d(δ(func))
+        grad = broadcast_to(grad, (*shape, *trax))
 
         if full_output:
             trax = (1,) if len(trax) == 0 else trax
-            return grad, f(func).reshape(*trax)
+            zeros = np.zeros_like(shape) if sym is False else (0,)
+            funct = f(func)[(*zeros,)]
+            funct = broadcast_to(funct, (*trax,))
+            return grad, funct
         else:
             return grad
 
@@ -112,9 +116,18 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
         if full_output:
             grad = δ(func) if sym is False else from_triu_1d(δ(func))
-            grad = grad.reshape(*shape, *trax)
+            zeros = np.zeros_like(shape) if sym is False else (0,)
+            grad = grad[(*[slice(None) for a in shape], *zeros)]
+            grad = broadcast_to(grad, (*shape, *trax))
+            funct = f(func)[
+                (
+                    *zeros,
+                    *zeros,
+                )
+            ]
+            funct = broadcast_to(funct, (*trax,))
             trax = (1,) if len(trax) == 0 else trax
-            return hess, grad, f(func).reshape(*trax)
+            return hess, grad, funct
         else:
             return hess
 
@@ -147,7 +160,9 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
         args, kwargs, shape, trax = add_tensor(
             args, kwargs, wrt, ntrax, False, gradient=True, δx=δx
         )
-        return δ(fun(*args, **kwargs)).reshape(*trax)
+        δfun = δ(fun(*args, **kwargs))
+        trim = np.zeros(len(δfun.shape) - ntrax, dtype=int)
+        return broadcast_to(δfun[(*trim,)], trax)
 
     return evaluate_gradient_vector_product
 
@@ -160,7 +175,9 @@ def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
         args, kwargs, shape, trax = add_tensor(
             args, kwargs, wrt, ntrax, False, hessian=True, δx=δx
         )
-        return Δδ(fun(*args, **kwargs)).reshape(*shape, *trax)
+        Δδfun = Δδ(fun(*args, **kwargs))
+        trim = np.zeros(len(Δδfun.shape) - len(shape) - ntrax, dtype=int)
+        return broadcast_to(Δδfun[(*trim,)], (*shape, *trax))
 
     return evaluate_hessian_vector_product
 
@@ -173,6 +190,8 @@ def hessian_vectors_product(fun, wrt=0, ntrax=0, parallel=False):
         args, kwargs, shape, trax = add_tensor(
             args, kwargs, wrt, ntrax, False, hessian=True, δx=δx, Δx=Δx
         )
-        return Δδ(fun(*args, **kwargs)).reshape(*trax)
+        Δδfun = Δδ(fun(*args, **kwargs))
+        trim = np.zeros(len(Δδfun.shape) - ntrax, dtype=int)
+        return broadcast_to(Δδfun[(*trim,)], trax)
 
     return evaluate_hessian_vectors_product

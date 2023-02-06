@@ -39,11 +39,13 @@ print("| Tensors | Gradient in s | Hessian in s |")
 print("| ------- | ------------- | ------------ |")
 
 kwargs = dict(ntrax=1, sym=True, parallel=True)
+number = 3
 
 for n in tensors:
     C, stress, elasticity = pre(n, **kwargs)
-    time_gradient.append(timeit(lambda: stress(C), number=1))
-    time_hessian.append(timeit(lambda: elasticity(C), number=1))
+    stress(C), elasticity(C)
+    time_gradient.append(timeit(lambda: stress(C), number=number) / number)
+    time_hessian.append(timeit(lambda: elasticity(C), number=number) / number)
     print(f"| {n:7d} | {time_gradient[-1]:13.5f} | {time_hessian[-1]:12.5f} |")
 
 plt.figure()

@@ -13,6 +13,7 @@ from . import _math_array as base
 from . import _special as special
 from ._math_tensor import (
     array,
+    broadcast_to,
     cos,
     cosh,
     diagonal,

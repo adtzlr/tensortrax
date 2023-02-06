@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, ravel, reshape, δ
+from .._tensor import Tensor, Δ, Δδ, broadcast_to, einsum, f, matmul, ravel, reshape, δ
 from ._linalg import _linalg_array as linalg
 
 dot = matmul
