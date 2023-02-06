@@ -61,6 +61,7 @@ class Tensor:
 
         self.ntrax = ntrax
         self.ndual = ndual
+
         self.shape = self.x.shape[: len(self.x.shape) - ntrax]
         self.trax = self.x.shape[len(self.x.shape) - ntrax :]
         self.size = np.product(self.shape, dtype=int)
@@ -73,11 +74,11 @@ class Tensor:
         "Add additional trailing axes for dual values."
 
         # reset the tensor
-        self._reset()
+        self.reset()
 
         # add new dual-related axes to the shape of the data
-        newshape = (*self.shape, *np.ones(ndual, dtype=int), *self.trax)
-        x = self.x.reshape(newshape)
+        ones = np.ones(ndual, dtype=int)
+        x = self.x.reshape(*self.shape, *ones, *self.trax)
 
         # re-init the tensor
         self.__init__(
@@ -89,12 +90,11 @@ class Tensor:
             ndual=ndual,
         )
 
-    def _reset(self):
+    def reset(self):
         "Reset the Tensor (set all dual values to zero)."
 
         # reset the shape of the data (delete axes related to dual data)
-        newshape = (*self.shape, *self.trax[self.ndual :])
-        x = self.x.reshape(newshape)
+        x = self.x.reshape(*self.shape, *self.trax[self.ndual :])
 
         # re-init the tensor
         self.__init__(x, ntrax=self.ntrax - self.ndual)
@@ -104,7 +104,7 @@ class Tensor:
         hessian and/or the gradient."""
 
         if gradient and not hessian:
-            # add additional trailing axes for dual values
+            # add additional element-wise acting axes for dual values
             self._add(ndual=len(self.shape))
 
             # create the dual values
@@ -125,7 +125,7 @@ class Tensor:
                     shape = (1,)
                 δx = np.eye(self.size).reshape(shape)
             else:
-                δx = δx.reshape(*self.shape, *ones, *ones)
+                δx = δx.reshape(*self.shape, *self.trax)
 
             if Δx is None:
                 shape = (*self.shape, *ones, *self.shape)
@@ -133,7 +133,7 @@ class Tensor:
                     shape = (1,)
                 Δx = np.eye(self.size).reshape(shape)
             else:
-                Δx = Δx.reshape(*self.shape, *ones, *ones)
+                Δx = Δx.reshape(*self.shape, *self.trax)
 
         if gradient or hessian:
 
@@ -259,22 +259,14 @@ class Tensor:
 
     def __setitem__(self, key, value):
         if isinstance(value, Tensor):
+            shape = (*self.shape, *self.trax)
             self.x[key] = f(value)
             if self.δx[key].shape != δ(value).shape:
-                self.δx = np.tile(
-                    self.δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax),
-                )
+                self.δx = broadcast_to(self.δx, shape).copy()
             if self.Δx[key].shape != Δ(value).shape:
-                self.Δx = np.tile(
-                    self.Δx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax),
-                )
+                self.Δx = broadcast_to(self.Δx, shape).copy()
             if self.Δδx[key].shape != Δδ(value).shape:
-                self.Δδx = np.tile(
-                    self.Δδx.reshape(*self.shape, *np.ones(len(self.trax), dtype=int)),
-                    (*np.ones(len(self.shape), dtype=int), *self.trax),
-                )
+                self.Δδx = broadcast_to(self.Δδx, shape).copy()
             self.δx[key] = δ(value)
             self.Δx[key] = Δ(value)
             self.Δδx[key] = Δδ(value)
@@ -305,6 +297,23 @@ class Tensor:
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
+
+
+def broadcast_to(A, shape):
+    "Broadcast Array or Tensor to a new shape."
+
+    _broadcast_to = lambda A: np.broadcast_to(A, shape=shape)
+
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=_broadcast_to(f(A)),
+            δx=_broadcast_to(δ(A)),
+            Δx=_broadcast_to(Δ(A)),
+            Δδx=_broadcast_to(Δδ(A)),
+            ntrax=A.ntrax,
+        )
+    else:
+        return _broadcast_to(A)
 
 
 def ravel(A, order="C"):
