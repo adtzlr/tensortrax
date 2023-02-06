@@ -149,6 +149,9 @@ def test_reshape():
 
     tm.reshape(x, (3, 3, 100))
 
+    tm.broadcast_to(x, x.shape)
+    tm.broadcast_to(t, (*t.shape, *t.trax))
+
 
 def test_eigh():
 
