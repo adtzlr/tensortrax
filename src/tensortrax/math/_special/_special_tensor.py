@@ -10,6 +10,7 @@ r"""
 
 import numpy as np
 
+from ..._tensor import Tensor
 from .. import _math_array as array
 from .._linalg import _linalg_tensor as linalg
 from .._math_tensor import einsum, sqrt, trace, transpose
@@ -48,8 +49,14 @@ def triu_1d(A):
 
 
 def _from_triu_helper(A):
+    "Helper to recover full Tensor from upper triangle entries of a Tensor."
+    # length of triu-entries
+    # size_from_dim = [0, 1, 3, 6]
+    # size_from_dim[2] = 3
+    # size_from_dim[3] = 6
+    # ...
     size_from_dim = np.array(
-        [np.sum(1 + np.arange(d)) for d in np.arange(4)], dtype=int
+        [len(np.triu_indices(d)[0]) for d in np.arange(4)], dtype=int
     )
     size = A.shape[0]
     dim = np.where(size_from_dim == size)[0][0]
@@ -58,10 +65,18 @@ def _from_triu_helper(A):
     return idx, dim
 
 
-def from_triu_1d(A):
+def from_triu_1d(A, like=None):
     "Recover full Tensor from upper triangle entries of a Tensor."
     idx, dim = _from_triu_helper(A)
-    return sym(A[idx.ravel()].reshape(dim, dim, *A.shape[1:]))
+    out = sym(A[idx.ravel()].reshape(dim, dim, *A.shape[1:]))
+    if like is not None:
+        axes = len(out.shape)
+        if isinstance(A, Tensor):
+            axes += out.ntrax
+        if axes < (len(like.shape) + like.ntrax):
+            ones = np.ones(like.ndual, dtype=int)
+            out = out.reshape(dim, dim, *ones, *like.trax)
+    return out
 
 
 def from_triu_2d(A):
