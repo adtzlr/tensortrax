@@ -24,7 +24,6 @@ Math on (Hyper-Dual) Tensors with Trailing Axes.
 - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
 - Stable gradient and hessian of eigenvalues obtained from `eigvalsh` in case of repeated equal eigenvalues
-- Slicing, but no item assignments
 
 Please keep in mind that `tensortrax` is not imitating a 100% full-featured NumPy, e.g. like [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). No arbitrary-order gradients or gradients-of-gradients are supported. The capability is limited to first- and second order gradients of a given function. Also, `tensortrax` provides no support for `dtype=complex`.
 
