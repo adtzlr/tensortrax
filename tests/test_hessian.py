@@ -19,6 +19,7 @@ def neo_hooke_sym(C):
 
 
 def neo_hooke_sym_triu(C, statevars):
+    tm.special.from_triu_1d(tm.special.triu_1d(C), like=C)
     sv = tm.special.from_triu_1d(statevars, like=C)
     I3 = tm.linalg.det(C)
     I1 = tm.trace(C)
