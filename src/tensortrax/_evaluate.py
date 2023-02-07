@@ -65,7 +65,7 @@ def add_tensor(
     return args_out, kwargs_out, tensor.shape, trax
 
 
-def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=1000, axis=None):
+def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=None):
     """Partition function (keyword) arguments into a list of (keyword) arguments. Only
     top-level args and kwargs with equal shapes to be splitted are allowed."""
 
