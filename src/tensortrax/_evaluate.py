@@ -81,7 +81,7 @@ def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=1000, axis=
 
         # select axis
         if axis is None:
-            axis = -(1 + np.argmax(trax))
+            axis = -(1 + np.argmax(trax[::-1]))
 
         # define chunks
         if chunks is None:
