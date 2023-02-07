@@ -69,21 +69,43 @@ A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benc
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
 ```
 
-| Tensors | Gradient in s | Hessian in s |
-| ------- | ------------- | ------------ |
-|       2 |       0.00061 |      0.00058 |
-|       8 |       0.00056 |      0.00057 |
-|      32 |       0.00058 |      0.00061 |
-|     128 |       0.00065 |      0.00073 |
-|     512 |       0.00097 |      0.00127 |
-|    2048 |       0.00225 |      0.00315 |
-|    8192 |       0.00545 |      0.01202 |
-|   32768 |       0.02766 |      0.05250 |
-|  131072 |       0.13386 |      0.24942 |
-|  524288 |       0.59516 |      1.15749 |
-| 2097152 |       2.71652 |      4.96867 |
+**Table 1**: *Runtimes of Gradients evaluated by `tensortrax` and `autograd`.*
 
-![benchmark](https://user-images.githubusercontent.com/5793153/217097960-39b0f0d8-31ff-4b43-b578-ff07e7489e58.svg)
+|         | (Tensortrax)  |  (Autograd)   |         |
+| Tensors | Gradient in s | Gradient in s | Speedup |
+| ------- | ------------- | ------------- | ------- |
+|       1 |       0.00056 |       0.00045 | x  0.80 |
+|       4 |       0.00058 |       0.00053 | x  0.91 |
+|      16 |       0.00067 |       0.00061 | x  0.90 |
+|      64 |       0.00067 |       0.00119 | x  1.77 |
+|     256 |       0.00084 |       0.00365 | x  4.36 |
+|    1024 |       0.00147 |       0.01293 | x  8.77 |
+|    4096 |       0.00539 |       0.05212 | x  9.67 |
+|   16384 |       0.01341 |       0.20465 | x 15.26 |
+|   65536 |       0.06621 |       0.81736 | x 12.34 |
+|  262144 |       0.30733 |       3.24824 | x 10.57 |
+| 1048576 |       1.26015 |      14.25759 | x 11.31 |
+
+
+**Table 2**: *Runtimes of Hessians evaluated by `tensortrax` and `autograd`.*
+
+|         | (Tensortrax)  |  (Autograd)   |         |
+| Tensors | Hessian in s  | Hessian in s  | Speedup |
+| ------- | ------------- | ------------- | ------- |
+|       1 |       0.00056 |       0.00441 | x  7.94 |
+|       4 |       0.00057 |       0.00476 | x  8.36 |
+|      16 |       0.00064 |       0.00580 | x  9.12 |
+|      64 |       0.00069 |       0.01220 | x 17.71 |
+|     256 |       0.00094 |       0.03725 | x 39.81 |
+|    1024 |       0.00199 |       0.13652 | x 68.66 |
+|    4096 |       0.00879 |       0.53378 | x 60.71 |
+|   16384 |       0.02704 |       2.16036 | x 79.88 |
+|   65536 |       0.12761 |       8.62102 | x 67.56 |
+|  262144 |       0.54711 |      34.50333 | x 63.06 |
+| 1048576 |       2.33360 |     144.86341 | x 62.08 |
+
+![benchmark_tensortrax_vs_autograd](https://user-images.githubusercontent.com/5793153/217264562-b47594b0-d3f8-4b64-9563-350be93bff90.svg)
+
 
 # Theory
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
