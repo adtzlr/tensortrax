@@ -12,11 +12,11 @@ from timeit import timeit
 
 import matplotlib.pyplot as plt
 import numpy as np
+from autograd import jacobian
+from autograd import numpy as anp
 
 import tensortrax as tr
 import tensortrax.math as tm
-
-from autograd import numpy as anp, jacobian
 
 
 def fun_tensortrax(C):
@@ -65,45 +65,65 @@ print("")
 for i, n in enumerate(tensors):
     c, stress, elasticity = pre_tensortrax(n, **kwargs)
     C, Stress, Elasticity = pre_autograd(n, **kwargs)
-    
+
     s = stress(c)
     e = elasticity(c)
-    
+
     S = Stress(C)
     E = Elasticity(C)
 
     assert np.allclose(s, S)
     assert np.allclose(e, E)
-    
+
     time_gradient_tensortrax.append(timeit(lambda: stress(c), number=number) / number)
-    time_hessian_tensortrax.append(timeit(lambda: elasticity(c), number=number) / number)
+    time_hessian_tensortrax.append(
+        timeit(lambda: elasticity(c), number=number) / number
+    )
     time_gradient_autograd.append(timeit(lambda: Stress(C), number=number) / number)
     time_hessian_autograd.append(timeit(lambda: Elasticity(C), number=number) / number)
-    
+
     print(f"...Evaluate timings... {i+1}/{len(tensors)}")
 
 print("")
 print("|         | (Tensortrax)  |  (Autograd)   |         |")
 print("| Tensors | Gradient in s | Gradient in s | Speedup |")
 print("| ------- | ------------- | ------------- | ------- |")
-for n, t_grad_trax, t_grad_autograd in zip(tensors, time_gradient_tensortrax, time_gradient_autograd):
+for n, t_grad_trax, t_grad_autograd in zip(
+    tensors, time_gradient_tensortrax, time_gradient_autograd
+):
     speedup = t_grad_autograd / t_grad_trax
-    print(f"| {n:7d} | {t_grad_trax:13.5f} | {t_grad_autograd:13.5f} | x{speedup:6.2f} |")
+    print(
+        f"| {n:7d} | {t_grad_trax:13.5f} | {t_grad_autograd:13.5f} | x{speedup:6.2f} |"
+    )
 
 print("")
 print("")
 print("|         | (Tensortrax)  |  (Autograd)   |         |")
 print("| Tensors | Hessian in s  | Hessian in s  | Speedup |")
 print("| ------- | ------------- | ------------- | ------- |")
-for n, t_hess_trax, t_hess_autograd in zip(tensors, time_hessian_tensortrax, time_hessian_autograd):
+for n, t_hess_trax, t_hess_autograd in zip(
+    tensors, time_hessian_tensortrax, time_hessian_autograd
+):
     speedup = t_hess_autograd / t_hess_trax
-    print(f"| {n:7d} | {t_hess_trax:13.5f} | {t_hess_autograd:13.5f} | x{speedup:6.2f} |")
-    
+    print(
+        f"| {n:7d} | {t_hess_trax:13.5f} | {t_hess_autograd:13.5f} | x{speedup:6.2f} |"
+    )
+
 
 plt.figure()
 plt.title(r"Strain Energy Function $\psi(C) = \mathrm{tr}(C) - \ln(\det(C))$")
-plt.loglog(tensors, time_gradient_tensortrax, "C0", label="Gradient (Tensortrax) $\partial \psi~/~\partial C$")
-plt.loglog(tensors, time_gradient_autograd, "C0--", label="Gradient (Autograd) $\partial \psi~/~\partial C$")
+plt.loglog(
+    tensors,
+    time_gradient_tensortrax,
+    "C0",
+    label="Gradient (Tensortrax) $\partial \psi~/~\partial C$",
+)
+plt.loglog(
+    tensors,
+    time_gradient_autograd,
+    "C0--",
+    label="Gradient (Autograd) $\partial \psi~/~\partial C$",
+)
 plt.loglog(
     tensors,
     time_hessian_tensortrax,

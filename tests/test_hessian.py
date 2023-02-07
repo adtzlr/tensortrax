@@ -19,6 +19,7 @@ def neo_hooke_sym(C):
 
 
 def neo_hooke_sym_triu(C, statevars):
+    tm.special.from_triu_1d(tm.special.triu_1d(C), like=C)
     sv = tm.special.from_triu_1d(statevars, like=C)
     I3 = tm.linalg.det(C)
     I1 = tm.trace(C)
@@ -41,18 +42,18 @@ def trig(F):
 
 def test_function_gradient_hessian():
 
-    F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
+    F = np.tile((np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1), 2100)
 
     for parallel in [False, True]:
         for fun in [neo_hooke, ogden]:
             ww = tr.function(fun, ntrax=2, parallel=parallel)(F)
             dwdf, w = tr.gradient(fun, ntrax=2, parallel=parallel, full_output=True)(F)
             d2WdF2, dWdF, W = tr.hessian(
-                fun, ntrax=2, parallel=parallel, full_output=True
-            )(F)
-            assert W.shape == (1, 1)
-            assert dWdF.shape == (3, 3, 1, 1)
-            assert d2WdF2.shape == (3, 3, 3, 3, 1, 1)
+                fun, wrt="F", ntrax=2, parallel=parallel, full_output=True
+            )(F=F)
+            assert W.shape == (1, 2100)
+            assert dWdF.shape == (3, 3, 1, 2100)
+            assert d2WdF2.shape == (3, 3, 3, 3, 1, 2100)
 
             assert np.allclose(w, ww)
             assert np.allclose(w, W)
