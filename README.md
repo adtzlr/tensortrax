@@ -104,7 +104,7 @@ A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benc
 
 ![benchmark_tensortrax_vs_autograd](https://user-images.githubusercontent.com/5793153/217264562-b47594b0-d3f8-4b64-9563-350be93bff90.svg)
 
-**Figure 1**: * **Runtime** vs. **Number of input tensors** plot for Gradients and Hessians evaluated by `tensortrax` and `autograd`.*
+**Figure 1**: * Runtime vs. Number of input tensors - plot for Gradients and Hessians evaluated by `tensortrax` and `autograd`.*
 
 # Theory
 The calculus of variation deals with variations, i.e. small changes in functions and functionals. A small-change in a function is evaluated by applying small changes on the tensor components.
