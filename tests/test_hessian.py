@@ -41,7 +41,7 @@ def trig(F):
 
 def test_function_gradient_hessian():
 
-    F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
+    F = np.tile((np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1), 2100)
 
     for parallel in [False, True]:
         for fun in [neo_hooke, ogden]:
@@ -50,9 +50,9 @@ def test_function_gradient_hessian():
             d2WdF2, dWdF, W = tr.hessian(
                 fun, ntrax=2, parallel=parallel, full_output=True
             )(F)
-            assert W.shape == (1, 1)
-            assert dWdF.shape == (3, 3, 1, 1)
-            assert d2WdF2.shape == (3, 3, 3, 3, 1, 1)
+            assert W.shape == (1, 2100)
+            assert dWdF.shape == (3, 3, 1, 2100)
+            assert d2WdF2.shape == (3, 3, 3, 3, 1, 2100)
 
             assert np.allclose(w, ww)
             assert np.allclose(w, W)
