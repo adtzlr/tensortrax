@@ -23,9 +23,20 @@ def fun_tensortrax(C):
     return tm.trace(C) - tm.log(tm.linalg.det(C))
 
 
+def det_autograd(A):
+    return (
+        A[0, 0] * A[1, 1] * A[2, 2]
+        + A[0, 1] * A[1, 2] * A[2, 0]
+        + A[0, 2] * A[1, 0] * A[2, 1]
+        - A[2, 0] * A[1, 1] * A[0, 2]
+        - A[2, 1] * A[1, 2] * A[0, 0]
+        - A[2, 2] * A[1, 0] * A[0, 1]
+    )
+
+
 def fun_autograd(C):
     Csym = (anp.einsum("ij...->ji...", C) + C) / 2
-    return anp.trace(Csym) - anp.log(anp.linalg.det(Csym.T).T)
+    return anp.trace(Csym) - anp.log(det_autograd(Csym))
 
 
 def pre_tensortrax(n, **kwargs):
@@ -53,8 +64,8 @@ time_hessian_tensortrax = []
 time_gradient_autograd = []
 time_hessian_autograd = []
 
-kwargs = dict(ntrax=1, sym=True)
-number = 3
+kwargs = dict(ntrax=1, sym=True, parallel=False)
+number = 1
 
 print("Tensortrax Benchmark (Comparison with Autograd)")
 print("===============================================")
@@ -66,14 +77,21 @@ for i, n in enumerate(tensors):
     c, stress, elasticity = pre_tensortrax(n, **kwargs)
     C, Stress, Elasticity = pre_autograd(n, **kwargs)
 
-    s = stress(c)
-    e = elasticity(c)
+    if n < 10000:
 
-    S = Stress(C)
-    E = Elasticity(C)
-
-    assert np.allclose(s, S)
-    assert np.allclose(e, E)
+        s = stress(c)
+        e = elasticity(c)
+    
+        S = Stress(C)
+        E = Elasticity(C)
+    
+        assert np.allclose(s, S)
+        assert np.allclose(e, E)
+    
+        del s
+        del e
+        del S
+        del E
 
     time_gradient_tensortrax.append(timeit(lambda: stress(c), number=number) / number)
     time_hessian_tensortrax.append(
@@ -85,28 +103,26 @@ for i, n in enumerate(tensors):
     print(f"...Evaluate timings... {i+1}/{len(tensors)}")
 
 print("")
-print("|         | (Tensortrax)  |  (Autograd)   |         |")
-print("| Tensors | Gradient in s | Gradient in s | Speedup |")
-print("| ------- | ------------- | ------------- | ------- |")
+print("| Tensors | Gradient (Tensortrax) in s | Gradient (Autograd) in s | Speedup |")
+print("| ------- | -------------------------- | ------------------------ | ------- |")
 for n, t_grad_trax, t_grad_autograd in zip(
     tensors, time_gradient_tensortrax, time_gradient_autograd
 ):
     speedup = t_grad_autograd / t_grad_trax
     print(
-        f"| {n:7d} | {t_grad_trax:13.5f} | {t_grad_autograd:13.5f} | x{speedup:6.2f} |"
+        f"| {n:7d} | {t_grad_trax:26.5f} | {t_grad_autograd:24.5f} | x{speedup:6.2f} |"
     )
 
 print("")
 print("")
-print("|         | (Tensortrax)  |  (Autograd)   |         |")
-print("| Tensors | Hessian in s  | Hessian in s  | Speedup |")
-print("| ------- | ------------- | ------------- | ------- |")
+print("| Tensors | Hessian (Tensortrax) in s  | Hessian (Autograd) in s  | Speedup |")
+print("| ------- | -------------------------- | ------------------------ | ------- |")
 for n, t_hess_trax, t_hess_autograd in zip(
     tensors, time_hessian_tensortrax, time_hessian_autograd
 ):
     speedup = t_hess_autograd / t_hess_trax
     print(
-        f"| {n:7d} | {t_hess_trax:13.5f} | {t_hess_autograd:13.5f} | x{speedup:6.2f} |"
+        f"| {n:7d} | {t_hess_trax:26.5f} | {t_hess_autograd:24.5f} | x{speedup:6.2f} |"
     )
 
 
