@@ -63,7 +63,7 @@ d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
 # Performance
-A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark_tensortrax_vs_autograd.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package compared to [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM). While the runtimes of the gradients evaluated by Tensortrax tend to be a bit longer than those of Autograd for a small amount of tensors, the Hessian evaluation in Tensortrax is **much faster** (see **Table 1**, **Table 2** and **Figure 1**). Note that is only one exemplaric benchmark for a specific kind of function - runtimes may vary.
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark_tensortrax_vs_autograd.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package compared to [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM). While the runtimes of the gradients evaluated by Tensortrax are similar compared to those of Autograd, the Hessian evaluation in Tensortrax is **much faster** than in Autograd (see **Table 1**, **Table 2** and **Figure 1**). Note that is only one exemplaric benchmark for a specific kind of function - runtimes may vary.
 
 ```math
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
@@ -73,36 +73,36 @@ A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benc
 
 | Tensors | Gradient (Tensortrax) in s | Gradient (Autograd) in s | Speedup |
 | ------- | -------------------------- | ------------------------ | ------- |
-|       1 |                    0.00056 |                  0.00045 | x  0.80 |
-|       4 |                    0.00058 |                  0.00053 | x  0.91 |
-|      16 |                    0.00067 |                  0.00061 | x  0.90 |
-|      64 |                    0.00067 |                  0.00119 | x  1.77 |
-|     256 |                    0.00084 |                  0.00365 | x  4.36 |
-|    1024 |                    0.00147 |                  0.01293 | x  8.77 |
-|    4096 |                    0.00539 |                  0.05212 | x  9.67 |
-|   16384 |                    0.01341 |                  0.20465 | x 15.26 |
-|   65536 |                    0.06621 |                  0.81736 | x 12.34 |
-|  262144 |                    0.30733 |                  3.24824 | x 10.57 |
-| 1048576 |                    1.26015 |                 14.25759 | x 11.31 |
+|       1 |                    0.00071 |                  0.00082 | x  1.16 |
+|       4 |                    0.00075 |                  0.00070 | x  0.93 |
+|      16 |                    0.00075 |                  0.00071 | x  0.94 |
+|      64 |                    0.00083 |                  0.00077 | x  0.94 |
+|     256 |                    0.00097 |                  0.00094 | x  0.97 |
+|    1024 |                    0.00160 |                  0.00161 | x  1.01 |
+|    4096 |                    0.00568 |                  0.00428 | x  0.75 |
+|   16384 |                    0.01233 |                  0.01690 | x  1.37 |
+|   65536 |                    0.06103 |                  0.06756 | x  1.11 |
+|  262144 |                    0.27910 |                  0.26911 | x  0.96 |
+| 1048576 |                    1.15561 |                  1.09512 | x  0.95 |
 
 
 **Table 2**: *Runtimes of Hessians evaluated by `tensortrax` and `autograd`.*
 
 | Tensors | Hessian (Tensortrax) in s  | Hessian (Autograd) in s  | Speedup |
 | ------- | -------------------------- | ------------------------ | ------- |
-|       1 |                    0.00056 |                  0.00441 | x  7.94 |
-|       4 |                    0.00057 |                  0.00476 | x  8.36 |
-|      16 |                    0.00064 |                  0.00580 | x  9.12 |
-|      64 |                    0.00069 |                  0.01220 | x 17.71 |
-|     256 |                    0.00094 |                  0.03725 | x 39.81 |
-|    1024 |                    0.00199 |                  0.13652 | x 68.66 |
-|    4096 |                    0.00879 |                  0.53378 | x 60.71 |
-|   16384 |                    0.02704 |                  2.16036 | x 79.88 |
-|   65536 |                    0.12761 |                  8.62102 | x 67.56 |
-|  262144 |                    0.54711 |                 34.50333 | x 63.06 |
-| 1048576 |                    2.33360 |                144.86341 | x 62.08 |
+|       1 |                    0.00068 |                  0.01348 | x 19.77 |
+|       4 |                    0.00073 |                  0.00723 | x  9.87 |
+|      16 |                    0.00076 |                  0.00718 | x  9.41 |
+|      64 |                    0.00083 |                  0.00792 | x  9.58 |
+|     256 |                    0.00111 |                  0.01044 | x  9.43 |
+|    1024 |                    0.00214 |                  0.02094 | x  9.79 |
+|    4096 |                    0.00844 |                  0.06148 | x  7.28 |
+|   16384 |                    0.02544 |                  0.23778 | x  9.35 |
+|   65536 |                    0.11685 |                  0.95208 | x  8.15 |
+|  262144 |                    0.51561 |                  3.94024 | x  7.64 |
+| 1048576 |                    2.13629 |                 16.15154 | x  7.56 |
 
-![benchmark_tensortrax_vs_autograd](https://user-images.githubusercontent.com/5793153/217264562-b47594b0-d3f8-4b64-9563-350be93bff90.svg)
+![benchmark_tensortrax_vs_autograd](https://user-images.githubusercontent.com/5793153/217664124-260514d0-854e-42f1-98ed-68bdbfafaa5b.svg)
 
 **Figure 1**: *Runtime vs. Number of input tensors - plot for Gradients and Hessians evaluated by `tensortrax` and `autograd`.*
 
