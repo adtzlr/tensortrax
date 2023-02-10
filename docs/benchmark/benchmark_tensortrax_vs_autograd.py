@@ -81,13 +81,13 @@ for i, n in enumerate(tensors):
 
         s = stress(c)
         e = elasticity(c)
-    
+
         S = Stress(C)
         E = Elasticity(C)
-    
+
         assert np.allclose(s, S)
         assert np.allclose(e, E)
-    
+
         del s
         del e
         del S

@@ -12,6 +12,7 @@ from . import _linalg as linalg
 from . import _math_array as base
 from . import _special as special
 from ._math_tensor import (
+    abs,
     array,
     broadcast_to,
     cos,
@@ -27,6 +28,7 @@ from ._math_tensor import (
     ravel,
     repeat,
     reshape,
+    sign,
     sin,
     sinh,
     sqrt,

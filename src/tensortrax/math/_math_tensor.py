@@ -63,6 +63,32 @@ def sum(A, axis=0):
         return np.sum(A, axis=axis)
 
 
+def sign(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.sign(f(A)),
+            δx=0 * δ(A),
+            Δx=0 * Δ(A),
+            Δδx=0 * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.sign(A)
+
+
+def abs(A):
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.abs(f(A)),
+            δx=np.sign(f(A)) * δ(A),
+            Δx=np.sign(f(A)) * Δ(A),
+            Δδx=np.sign(f(A)) * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.abs(A)
+
+
 def sqrt(A):
     if isinstance(A, Tensor):
         return A**0.5
