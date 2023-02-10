@@ -86,7 +86,7 @@ def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=N
         # define chunks
         if chunks is None:
             if (trax[axis] // batch) > 0:
-                chunks = min(trax[-1] // batch, cpu_count())
+                chunks = min(trax[axis] // batch, cpu_count())
             else:
                 parallel = False
 
