@@ -31,6 +31,7 @@ from ._math_tensor import (
     sign,
     sin,
     sinh,
+    split,
     sqrt,
     stack,
     sum,

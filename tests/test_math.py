@@ -99,6 +99,7 @@ def test_math():
     assert np.allclose(tm.stack([T, T]).x, tm.stack([F, F]))
     assert np.allclose(tm.repeat(T, 3).x, tm.repeat(F, 3))
     assert np.allclose(tm.tile(T, 3).x, tm.tile(F, 3))
+    assert np.allclose(tm.split(T, [1, 2]).x, tm.split(F, [1, 2]))
 
 
 def test_einsum():

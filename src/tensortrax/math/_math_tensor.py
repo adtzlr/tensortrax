@@ -308,3 +308,18 @@ def stack(arrays, axis=0):
         )
     else:
         return np.stack(arrays, axis=0)
+
+
+def split(ary, indices_or_sections, axis=0):
+    "Split an array into multiple sub-arrays as views into ary."
+
+    if isinstance(ary, Tensor):
+        return Tensor(
+            x=np.split(f(ary), indices_or_sections=indices_or_sections, axis=axis),
+            δx=np.split(δ(ary), indices_or_sections=indices_or_sections, axis=axis),
+            Δx=np.split(Δ(ary), indices_or_sections=indices_or_sections, axis=axis),
+            Δδx=np.split(Δδ(ary), indices_or_sections=indices_or_sections, axis=axis),
+            ntrax=ary.ntrax,
+        )
+    else:
+        return np.split(ary, indices_or_sections=indices_or_sections, axis=axis)
