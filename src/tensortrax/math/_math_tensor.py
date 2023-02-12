@@ -314,12 +314,13 @@ def split(ary, indices_or_sections, axis=0):
     "Split an array into multiple sub-arrays as views into ary."
 
     if isinstance(ary, Tensor):
-        return Tensor(
-            x=np.split(f(ary), indices_or_sections=indices_or_sections, axis=axis),
-            δx=np.split(δ(ary), indices_or_sections=indices_or_sections, axis=axis),
-            Δx=np.split(Δ(ary), indices_or_sections=indices_or_sections, axis=axis),
-            Δδx=np.split(Δδ(ary), indices_or_sections=indices_or_sections, axis=axis),
-            ntrax=ary.ntrax,
-        )
+        xs = np.split(f(ary), indices_or_sections=indices_or_sections, axis=axis)
+        δxs = np.split(δ(ary), indices_or_sections=indices_or_sections, axis=axis)
+        Δxs = np.split(Δ(ary), indices_or_sections=indices_or_sections, axis=axis)
+        Δδxs = np.split(Δδ(ary), indices_or_sections=indices_or_sections, axis=axis)
+        return [
+            Tensor(x, δx, Δx, Δδx, ntrax=ary.ntrax)
+            for x, δx, Δx, Δδx in zip(xs, δxs, Δxs, Δδxs)
+        ]
     else:
         return np.split(ary, indices_or_sections=indices_or_sections, axis=axis)
