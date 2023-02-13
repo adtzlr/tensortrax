@@ -45,16 +45,14 @@ def fun(F, mu=1):
     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
 ```
 
-The hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. Optionally, the function, gradient and hessian calls are executed in parallel (threaded).
+The Hessian of the scalar-valued function w.r.t. the chosen function argument (here, `wrt=0` or `wrt="F"`) is evaluated by variational calculus (Forward Mode AD implemented as Hyper-Dual Tensors). The function is called once for each component of the hessian (symmetry is taken care of). The function and the gradient are evaluated with no additional computational cost. Optionally, the function, gradient and Hessian calls are executed in parallel (threaded).
 
 ```python
 import numpy as np
 
 # some random input data
 np.random.seed(125161)
-F = np.random.rand(3, 3, 8, 50) / 10
-for a in range(3):
-    F[a, a] += 1
+F = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
 
 # W = tr.function(fun, wrt=0, ntrax=2)(F)
 # dWdF = tr.gradient(fun, wrt=0, ntrax=2)(F)
@@ -62,7 +60,7 @@ for a in range(3):
 d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
-Another possibility is to initiate Tensors manually, either for the evaluation of the hessian
+Another possibility is to initiate Tensors manually, either for the evaluation of the Hessian
 
 ```python
 # some random input data
