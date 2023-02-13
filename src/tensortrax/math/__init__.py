@@ -33,6 +33,7 @@ from ._math_tensor import (
     sinh,
     split,
     sqrt,
+    squeeze,
     stack,
     sum,
     tan,

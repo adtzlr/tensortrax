@@ -62,6 +62,36 @@ for a in range(3):
 d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
+Another possibility is to initiate Tensors manually, either for the evaluation of the hessian
+
+```python
+# some random input data
+np.random.seed(125161)
+x = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
+    
+F = tr.Tensor(x, ntrax=2)
+F.init(hessian=True)
+
+C = F.T() @ F
+W = tm.linalg.det(F) ** (-2 / 3) * tm.trace(C) - 3
+
+tr.f(W) # the value of the variable
+tr.Δδ(W) # the hessian of the variable
+```
+
+or for the gradient only.
+
+```python
+F = tr.Tensor(x, ntrax=2)
+F.init(gradient=True)
+
+C = F.T() @ F
+W = tm.linalg.det(F) ** (-2 / 3) * tm.trace(C) - 3
+
+tr.f(W) # the value of the variable
+tr.δ(W) # the gradient of the variable
+```
+
 # Performance
 A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark_tensortrax_vs_autograd.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package compared to [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM). While the runtimes of the gradients evaluated by Tensortrax are similar compared to those of Autograd, the Hessian evaluation in Tensortrax is **much faster** than in Autograd (see **Table 1**, **Table 2** and **Figure 1**). Note that is only one exemplaric benchmark for a specific kind of function - runtimes may vary.
 

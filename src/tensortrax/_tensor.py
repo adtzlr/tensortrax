@@ -119,19 +119,25 @@ class Tensor:
             # create the dual values
             ones = np.ones(len(self.shape), dtype=int)
 
-            if δx is None:
+            if δx is None or δx is False:
                 shape = (*self.shape, *self.shape, *ones)
                 if len(shape) == 0:
                     shape = (1,)
-                δx = np.eye(self.size).reshape(shape)
+                if δx is False:
+                    δx = np.zeros(self.size**2).reshape(shape)
+                else:
+                    δx = np.eye(self.size).reshape(shape)
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
 
-            if Δx is None:
+            if Δx is None or Δx is False:
                 shape = (*self.shape, *ones, *self.shape)
                 if len(shape) == 0:
                     shape = (1,)
-                Δx = np.eye(self.size).reshape(shape)
+                if Δx is False:
+                    Δx = np.zeros(self.size**2).reshape(shape)
+                else:
+                    Δx = np.eye(self.size).reshape(shape)
             else:
                 Δx = Δx.reshape(*self.shape, *self.trax)
 
@@ -294,6 +300,9 @@ class Tensor:
     def reshape(self, *shape, order="C"):
         return reshape(self, newshape=shape, order=order)
 
+    def squeeze(self, axis=None):
+        return squeeze(self, axis=axis)
+
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
@@ -330,6 +339,24 @@ def ravel(A, order="C"):
         )
     else:
         return np.ravel(A, order=order)
+
+
+def squeeze(A, axis=None):
+    if isinstance(A, Tensor):
+        if axis is None:
+            if 1 in A.shape:
+                axis = tuple(np.arange(len(A.shape))[np.array(A.shape) == 1])
+            else:
+                axis = ()
+        return Tensor(
+            x=np.squeeze(f(A), axis=axis),
+            δx=np.squeeze(δ(A), axis=axis),
+            Δx=np.squeeze(Δ(A), axis=axis),
+            Δδx=np.squeeze(Δδ(A), axis=axis),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.squeeze(A, axis=axis)
 
 
 def reshape(A, newshape, order="C"):
