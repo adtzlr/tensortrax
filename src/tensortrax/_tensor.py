@@ -119,19 +119,25 @@ class Tensor:
             # create the dual values
             ones = np.ones(len(self.shape), dtype=int)
 
-            if δx is None:
+            if δx is None or δx is False:
                 shape = (*self.shape, *self.shape, *ones)
                 if len(shape) == 0:
                     shape = (1,)
-                δx = np.eye(self.size).reshape(shape)
+                if δx is False:
+                    δx = np.zeros(self.size**2).reshape(shape)
+                else:
+                    δx = np.eye(self.size).reshape(shape)
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
 
-            if Δx is None:
+            if Δx is None or Δx is False:
                 shape = (*self.shape, *ones, *self.shape)
                 if len(shape) == 0:
                     shape = (1,)
-                Δx = np.eye(self.size).reshape(shape)
+                if Δx is False:
+                    Δx = np.zeros(self.size**2).reshape(shape)
+                else:
+                    Δx = np.eye(self.size).reshape(shape)
             else:
                 Δx = Δx.reshape(*self.shape, *self.trax)
 
