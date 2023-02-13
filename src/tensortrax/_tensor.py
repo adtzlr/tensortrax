@@ -294,6 +294,9 @@ class Tensor:
     def reshape(self, *shape, order="C"):
         return reshape(self, newshape=shape, order=order)
 
+    def squeeze(self, axis=None):
+        return squeeze(self, axis=axis)
+
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
@@ -330,6 +333,24 @@ def ravel(A, order="C"):
         )
     else:
         return np.ravel(A, order=order)
+
+
+def squeeze(A, axis=None):
+    if isinstance(A, Tensor):
+        if axis is None:
+            if np.any(A.shape == 1):
+                axis = tuple(np.arange(len(A.shape)))
+            else:
+                axis = ()
+        return Tensor(
+            x=np.squeeze(f(A), axis=axis),
+            δx=np.squeeze(δ(A), axis=axis),
+            Δx=np.squeeze(Δ(A), axis=axis),
+            Δδx=np.squeeze(Δδ(A), axis=axis),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.squeeze(A, axis=axis)
 
 
 def reshape(A, newshape, order="C"):
