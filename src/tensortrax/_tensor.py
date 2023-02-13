@@ -344,8 +344,8 @@ def ravel(A, order="C"):
 def squeeze(A, axis=None):
     if isinstance(A, Tensor):
         if axis is None:
-            if np.any(A.shape == 1):
-                axis = tuple(np.arange(len(A.shape)))
+            if 1 in A.shape:
+                axis = tuple(np.arange(len(A.shape))[np.array(A.shape) == 1])
             else:
                 axis = ()
         return Tensor(
