@@ -46,7 +46,7 @@ def array(object, dtype=None):
                 δx=np.array([δ(o) for o in object], dtype=dtype),
                 Δx=np.array([Δ(o) for o in object], dtype=dtype),
                 Δδx=np.array([Δδ(o) for o in object], dtype=dtype),
-                ntrax=object[0].ntrax,
+                ntrax=min([o.ntrax for o in object]),
             )
         else:
             return np.array(object, dtype=dtype)
@@ -286,7 +286,7 @@ def hstack(tup):
             δx=np.hstack([δ(A) for A in tup]),
             Δx=np.hstack([Δ(A) for A in tup]),
             Δδx=np.hstack([Δδ(A) for A in tup]),
-            ntrax=tup[0].ntrax,
+            ntrax=min([A.ntrax for A in tup]),
         )
     else:
         return np.hstack(tup)
@@ -301,7 +301,7 @@ def vstack(tup):
             δx=np.vstack([δ(A) for A in tup]),
             Δx=np.vstack([Δ(A) for A in tup]),
             Δδx=np.vstack([Δδ(A) for A in tup]),
-            ntrax=tup[0].ntrax,
+            ntrax=min([A.ntrax for A in tup]),
         )
     else:
         return np.vstack(tup)
@@ -316,7 +316,7 @@ def stack(arrays, axis=0):
             δx=np.stack([δ(A) for A in arrays], axis=axis),
             Δx=np.stack([Δ(A) for A in arrays], axis=axis),
             Δδx=np.stack([Δδ(A) for A in arrays], axis=axis),
-            ntrax=arrays[0].ntrax,
+            ntrax=min([A.ntrax for A in arrays]),
         )
     else:
         return np.stack(arrays, axis=0)
