@@ -91,7 +91,7 @@ tr.δ(W) # the gradient of the variable
 ```
 
 # Performance
-A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark_tensortrax_vs_autograd.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package compared to [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM). While the runtimes of the gradients evaluated by Tensortrax are similar compared to those of Autograd, the Hessian evaluation in Tensortrax is **much faster** than in Autograd (see **Table 1**, **Table 2** and **Figure 1**). Note that is only one exemplaric benchmark for a specific kind of function - runtimes may vary.
+A [benchmark](https://github.com/adtzlr/tensortrax/blob/main/docs/benchmark/benchmark_tensortrax_vs_autograd.py) for the gradient and hessian runtimes of an isotropic hyperelastic strain energy function demonstrates the performance of this package compared to [Autograd](https://github.com/HIPS/autograd) [[1]](https://github.com/HIPS/autograd). The hessian is evaluated in about 2.5 seconds for one million input tensors (Intel Core i7-11850H, 32GB RAM). While the runtimes of the gradients evaluated by Tensortrax are similar compared to those of Autograd, the Hessian evaluation in Tensortrax is **much faster** than in Autograd (see **Table 1**, **Table 2** and **Figure 1**). Note that this is only one exemplaric benchmark for a specific kind of function - runtimes may vary.
 
 ```math
 \psi(\boldsymbol{C}) = tr(\boldsymbol{C}) - \ln(\det(\boldsymbol{C}))
