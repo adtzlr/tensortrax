@@ -176,7 +176,7 @@ class Tensor:
             δx = δ(A) + δ(B)
             Δx = Δ(A) + Δ(B)
             Δδx = Δδ(A) + Δδ(B)
-            min(A.ntrax, B.ntrax)
+            ntrax = min(A.ntrax, B.ntrax)
         else:
             x = f(A) + B
             δx = δ(A)
