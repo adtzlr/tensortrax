@@ -309,6 +309,9 @@ class Tensor:
     def squeeze(self, axis=None):
         return squeeze(self, axis=axis)
 
+    def dual2real(self, like):
+        return dual2real(self, like=like)
+
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
@@ -329,6 +332,16 @@ def broadcast_to(A, shape):
         )
     else:
         return _broadcast_to(A)
+
+
+def dual2real(A, like=None):
+    """Return a new Tensor with old-dual data as new-real values,
+    with `ntrax` derived by `like`."""
+
+    ndual = like.ndual - len(like.shape)
+    ntrax = A.ntrax - ndual
+
+    return Tensor(x=A.δx, δx=A.Δδx, Δx=A.Δδx, ndual=min(ndual, ntrax), ntrax=ntrax)
 
 
 def ravel(A, order="C"):

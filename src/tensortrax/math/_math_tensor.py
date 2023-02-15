@@ -15,6 +15,7 @@ from .._tensor import (
     Δ,
     Δδ,
     broadcast_to,
+    dual2real,
     einsum,
     f,
     matmul,
