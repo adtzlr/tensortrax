@@ -176,12 +176,14 @@ class Tensor:
             δx = δ(A) + δ(B)
             Δx = Δ(A) + Δ(B)
             Δδx = Δδ(A) + Δδ(B)
+            min(A.ntrax, B.ntrax)
         else:
             x = f(A) + B
             δx = δ(A)
             Δx = Δ(A)
             Δδx = Δδ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+            ntrax = A.ntrax
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=ntrax)
 
     def __sub__(self, B):
         A = self
@@ -190,12 +192,14 @@ class Tensor:
             δx = δ(A) - δ(B)
             Δx = Δ(A) - Δ(B)
             Δδx = Δδ(A) - Δδ(B)
+            ntrax = min(A.ntrax, B.ntrax)
         else:
             x = f(A) - B
             δx = δ(A)
             Δx = Δ(A)
             Δδx = Δδ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+            ntrax = A.ntrax
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=ntrax)
 
     def __rsub__(self, B):
         return -self.__sub__(B)
@@ -207,12 +211,14 @@ class Tensor:
             δx = δ(A) * f(B) + f(A) * δ(B)
             Δx = Δ(A) * f(B) + f(A) * Δ(B)
             Δδx = Δ(A) * δ(B) + δ(A) * Δ(B) + Δδ(A) * f(B) + f(A) * Δδ(B)
+            ntrax = min(A.ntrax, B.ntrax)
         else:
             x = f(A) * B
             δx = δ(A) * B
             Δx = Δ(A) * B
             Δδx = Δδ(A) * B
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+            ntrax = A.ntrax
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=ntrax)
 
     def __truediv__(self, B):
         A = self
@@ -403,7 +409,7 @@ def einsum3(subscripts, *operands):
             + _einsum(f(A), δ(B), Δ(C))
             + _einsum(f(A), Δ(B), δ(C))
         )
-        ntrax = A.ntrax
+        ntrax = min(A.ntrax, B.ntrax, C.ntrax)
     elif (
         isinstance(A, Tensor)
         and not isinstance(B, Tensor)
@@ -444,7 +450,7 @@ def einsum3(subscripts, *operands):
             + _einsum(δ(A), Δ(B), C)
             + _einsum(Δ(A), δ(B), C)
         )
-        ntrax = A.ntrax
+        ntrax = min(A.ntrax, B.ntrax)
     elif isinstance(A, Tensor) and not isinstance(B, Tensor) and isinstance(C, Tensor):
         x = _einsum(f(A), B, f(C))
         δx = _einsum(δ(A), B, f(C)) + _einsum(f(A), B, δ(C))
@@ -455,7 +461,7 @@ def einsum3(subscripts, *operands):
             + _einsum(δ(A), B, Δ(C))
             + _einsum(Δ(A), B, δ(C))
         )
-        ntrax = A.ntrax
+        ntrax = min(A.ntrax, C.ntrax)
     elif not isinstance(A, Tensor) and isinstance(B, Tensor) and isinstance(C, Tensor):
         x = _einsum(A, f(B), f(C))
         δx = _einsum(A, δ(B), f(C)) + _einsum(A, f(B), δ(C))
@@ -466,7 +472,7 @@ def einsum3(subscripts, *operands):
             + _einsum(A, δ(B), Δ(C))
             + _einsum(A, Δ(B), δ(C))
         )
-        ntrax = B.ntrax
+        ntrax = min(B.ntrax, C.ntrax)
     else:
         return _einsum(*operands)
 
@@ -488,7 +494,7 @@ def einsum2(subscripts, *operands):
             + _einsum(δ(A), Δ(B))
             + _einsum(Δ(A), δ(B))
         )
-        ntrax = A.ntrax
+        ntrax = min(A.ntrax, B.ntrax)
     elif isinstance(A, Tensor) and not isinstance(B, Tensor):
         x = _einsum(f(A), B)
         δx = _einsum(δ(A), B)
