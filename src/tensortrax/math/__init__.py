@@ -19,6 +19,7 @@ from ._math_tensor import (
     cosh,
     diagonal,
     dot,
+    dual2real,
     einsum,
     exp,
     hstack,
