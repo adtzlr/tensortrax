@@ -60,34 +60,58 @@ F = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
 d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
-Another possibility is to initiate Tensors manually, either for the evaluation of the Hessian
+Another possibility is to define and operate on Tensors manually. This enables more flexible coding, which wouldn't be possible with the builtin functions. The Hu-Washizu Three-Field-Variational principle for nearly incompressible hyperelastic solids [[5]](https://doi.org/10.1017/CBO9780511755446) is used here to obtain mixed partial derivatives. First, let's define some input data and create a Tensor for each variable. 
 
 ```python
 # some random input data
-np.random.seed(125161)
-x = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
+n = 10
+x = (np.eye(3) + np.random.rand(n, 3, 3) / 10).T
+y = np.random.rand(n) / 10 + 1
+z = np.random.rand(n)
     
-F = tr.Tensor(x, ntrax=2)
-F.init(hessian=True)
+# create tensors
+F = tr.Tensor(x, ntrax=1)
+p = tr.Tensor(y, ntrax=1)
+J = tr.Tensor(z, ntrax=1)
 
-C = F.T() @ F
-W = tm.linalg.det(F) ** (-2 / 3) * tm.trace(C) - 3
 
-tr.f(W) # the value of the variable
-tr.Δδ(W) # the hessian of the variable
+def neo_hooke(F, mu=1):
+    "Strain energy function of the Neo-Hookean material formulation."
+    C = F.T() @ F
+    I3 = tm.linalg.det(C)
+    return mu * (I3**(-1 / 3) * tm.trace(C) - 3) / 2
+
+
+def volumetric(J, bulk=20):
+    "Volumetric strain energy function."
+    return bulk * (J - 1)**2 / 2
+
+
+def W(F, p, J):
+    "Hu-Washizu (u, p, J) - Three-Field-Variation."
+    detF = tm.linalg.det(F)
+    return neo_hooke(F) + volumetric(J) + p * (detF - J)
+
+
+# init Tensors to be used with second partial derivatives
+F.init(hessian=True, δx=False, Δx=False)
+p.init(hessian=True, δx=True, Δx=False)
+J.init(hessian=True, δx=False, Δx=True)
+
+# evaluate a mixed second partial derivative
+dWdpdJ = tr.Δδ(W(F, p, J))
 ```
 
-or for the gradient only.
+In a similar way, the gradient may be obtained by initiating a Tensor with the gradient argument.
 
 ```python
-F = tr.Tensor(x, ntrax=2)
-F.init(gradient=True)
+# init Tensors to be used with first partial derivatives
+F.init(gradient=True, δx=False)
+p.init(gradient=True, δx=True)
+J.init(gradient=True, δx=False)
 
-C = F.T() @ F
-W = tm.linalg.det(F) ** (-2 / 3) * tm.trace(C) - 3
-
-tr.f(W) # the value of the variable
-tr.δ(W) # the gradient of the variable
+# evaluate a partial derivative
+dWdp = tr.δ(W(F, p, J))
 ```
 
 # Performance
@@ -285,6 +309,7 @@ y = sin(Tensor(x))
 
 # References
 1. D. Maclaurin, D. Duvenaud, M. Johnson and J. Townsend, *Autograd*. [Online]. Available: https://github.com/HIPS/autograd.
-2. J. Fike and J. Alonso, *The Development of Hyper-Dual Numbers for Exact Second-Derivative Calculations*, 49th AIAA Aerospace Sciences Meeting including the New Horizons Forum and Aerospace Exposition. American Institute of Aeronautics and Astronautics, Jan. 04, 2011. doi: [10.2514/6.2011-886](https://doi.org/10.2514/6.2011-886).
+2. J. Fike and J. Alonso, *The Development of Hyper-Dual Numbers for Exact Second-Derivative Calculations*, 49th AIAA Aerospace Sciences Meeting including the New Horizons Forum and Aerospace Exposition. American Institute of Aeronautics and Astronautics, Jan. 04, 2011, [![10.2514/6.2011-886](https://zenodo.org/badge/DOI/10.2514/6.2011-886.svg)](https://doi.org/10.2514/6.2011-886).
 3. P. Rehner and G. Bauer, *Application of Generalized (Hyper-) Dual Numbers in Equation of State Modeling*, Frontiers in Chemical Engineering, vol. 3, 2021. Available: https://github.com/itt-ustutt/num-dual.
 4. T. Oberbichler, *HyperJet*. [Online]. Available: http://github.com/oberbichler/HyperJet.
+5. J. Bonet and R. D. Wood, *Nonlinear Continuum Mechanics for Finite Element Analysis*, 2nd ed. Cambridge: Cambridge University Press, 2008, [![10.1017/CBO9780511755446](https://zenodo.org/badge/DOI/10.1017/CBO9780511755446.svg)](https://doi.org/10.1017/CBO9780511755446).

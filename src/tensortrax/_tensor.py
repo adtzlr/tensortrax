@@ -108,8 +108,14 @@ class Tensor:
             self._add(ndual=len(self.shape))
 
             # create the dual values
-            if δx is None:
-                δx = np.eye(self.size).reshape(*self.shape, *self.shape)
+            if δx is None or isinstance(δx, bool):
+                shape = (*self.shape, *self.shape)
+                if len(shape) == 0:
+                    shape = (1,)
+                if δx is False:
+                    δx = np.zeros(self.size**2).reshape(shape)
+                else:
+                    δx = np.eye(self.size).reshape(shape)
                 Δx = δx.copy()
 
         elif hessian:
@@ -119,7 +125,7 @@ class Tensor:
             # create the dual values
             ones = np.ones(len(self.shape), dtype=int)
 
-            if δx is None or δx is False:
+            if δx is None or isinstance(δx, bool):
                 shape = (*self.shape, *self.shape, *ones)
                 if len(shape) == 0:
                     shape = (1,)
@@ -130,7 +136,7 @@ class Tensor:
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
 
-            if Δx is None or Δx is False:
+            if Δx is None or isinstance(Δx, bool):
                 shape = (*self.shape, *ones, *self.shape)
                 if len(shape) == 0:
                     shape = (1,)
