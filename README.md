@@ -60,14 +60,14 @@ F = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
 d2WdF2 = tr.hessian(fun, wrt="F", ntrax=2, parallel=False)(F=F)
 ```
 
-Another possibility is to define and operate on Tensors manually. This enables more flexible coding, which wouldn't be possible with the builtin functions. The Hu-Washizu Three-Field-Variational principle for nearly incompressible hyperelastic solids [[5]](https://doi.org/10.1017/CBO9780511755446) is used here to obtain mixed partial derivatives. First, let's define some input data and create a Tensor for each variable. 
+Another possibility is to define and operate on Tensors manually. This enables more flexible coding, which wouldn't be possible with the builtin functions. The Hu-Washizu Three-Field-Variational principle for nearly incompressible hyperelastic solids [[5]](https://doi.org/10.1017/CBO9780511755446) is used here to obtain mixed partial derivatives. Some random input arrays are generated and a Tensor is created for each variable. After performing some math, the hessian of the resulting tensor object is extracted.
 
 ```python
 # some random input data
 n = 10
 x = (np.eye(3) + np.random.rand(n, 3, 3) / 10).T
-y = np.random.rand(n) / 10 + 1
-z = np.random.rand(n)
+y = np.random.rand(n)
+z = np.random.rand(n) / 10 + 1
 
 # create tensors
 F = tr.Tensor(x, ntrax=1)
