@@ -68,7 +68,7 @@ n = 10
 x = (np.eye(3) + np.random.rand(n, 3, 3) / 10).T
 y = np.random.rand(n) / 10 + 1
 z = np.random.rand(n)
-    
+
 # create tensors
 F = tr.Tensor(x, ntrax=1)
 p = tr.Tensor(y, ntrax=1)
@@ -79,12 +79,12 @@ def neo_hooke(F, mu=1):
     "Strain energy function of the Neo-Hookean material formulation."
     C = F.T() @ F
     I3 = tm.linalg.det(C)
-    return mu * (I3**(-1 / 3) * tm.trace(C) - 3) / 2
+    return mu * (I3 ** (-1 / 3) * tm.trace(C) - 3) / 2
 
 
 def volumetric(J, bulk=20):
     "Volumetric strain energy function."
-    return bulk * (J - 1)**2 / 2
+    return bulk * (J - 1) ** 2 / 2
 
 
 def W(F, p, J):
