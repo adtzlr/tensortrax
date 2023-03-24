@@ -20,7 +20,10 @@ def test_dual2real():
 
     # set old dual data as new real values (i.e. obtain the gradient)
     P = W.dual2real(like=F)
-    tm.dual2real(W, like=F)
+    p = tm.dual2real(W, like=F)
+
+    assert np.allclose(tr.f(P), tr.f(p))
+    assert np.allclose(tr.δ(P), tr.δ(p))
 
     # perform some more math with a derived Tensor involved
     Q = eta * P
@@ -31,6 +34,9 @@ def test_dual2real():
     assert P.shape == (3, 3)
     assert Q.shape == (3, 3)
     assert A.shape == (3, 3, 3, 3)
+
+    # can't take more than two gradients
+    assert np.any(tr.Δδ(Q))
 
 
 if __name__ == "__main__":
