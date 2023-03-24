@@ -78,7 +78,6 @@ for i, n in enumerate(tensors):
     C, Stress, Elasticity = pre_autograd(n, **kwargs)
 
     if n < 10000:
-
         s = stress(c)
         e = elasticity(c)
 

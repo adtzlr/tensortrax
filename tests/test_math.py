@@ -6,7 +6,6 @@ import tensortrax.math as tm
 
 
 def test_math():
-
     F = np.eye(3) + np.arange(9).reshape(3, 3) / 10
     T = tr.Tensor(F)
     print(T)
@@ -105,7 +104,6 @@ def test_math():
 
 
 def test_einsum():
-
     F = np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10
     T = tr.Tensor(F)
 
@@ -128,7 +126,6 @@ def test_einsum():
 
 
 def test_slice():
-
     F = np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10
     T = tr.Tensor(F)
 
@@ -139,7 +136,6 @@ def test_slice():
 
 
 def test_reshape():
-
     x = np.ones((3, 3, 100))
     t = tr.Tensor(x, x, x, x, ntrax=1)
     u = tr.Tensor(x, ntrax=1)
@@ -159,7 +155,6 @@ def test_reshape():
 
 
 def test_eigh():
-
     F = np.diag([1.2, 1.2, 2.0])
     T = tr.Tensor(F)
 
@@ -178,7 +173,6 @@ def test_eigh():
 
 
 def test_triu():
-
     F = np.tile((np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
     V = tr.Tensor(F, F, F, ntrax=1)
     T = V.T() @ V
@@ -198,7 +192,6 @@ def test_triu():
 
 
 def test_logical():
-
     F = np.tile((np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
     T = tr.Tensor(F, ntrax=1)
 

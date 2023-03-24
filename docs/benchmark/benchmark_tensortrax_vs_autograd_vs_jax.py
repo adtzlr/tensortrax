@@ -96,12 +96,11 @@ for i, n in enumerate(tensors):
     stress, elasticity = pre_tensortrax(**kwargs)
     Stress, Elasticity = pre_autograd(**kwargs)
     JStress, JElasticity = pre_jax(**kwargs)
-    
+
     JStress(C)
     JElasticity(C)
 
     if n < 10000:
-
         s = stress(C)
         e = elasticity(C)
 
@@ -128,8 +127,12 @@ for i, n in enumerate(tensors):
     print(f"...Evaluate timings... {i+1}/{len(tensors)}")
 
 print("")
-print("| Tensors | Gradient (Tensortrax) in s | Gradient (Autograd) in s | Speedup | Gradient (JAX) in s | Speedup |")
-print("| ------- | -------------------------- | ------------------------ | ------- | ------------------- | ------- |")
+print(
+    "| Tensors | Gradient (Tensortrax) in s | Gradient (Autograd) in s | Speedup | Gradient (JAX) in s | Speedup |"
+)
+print(
+    "| ------- | -------------------------- | ------------------------ | ------- | ------------------- | ------- |"
+)
 for n, t_grad_trax, t_grad_autograd, t_grad_jax in zip(
     tensors, time_gradient_tensortrax, time_gradient_autograd, time_gradient_jax
 ):
@@ -141,8 +144,12 @@ for n, t_grad_trax, t_grad_autograd, t_grad_jax in zip(
 
 print("")
 print("")
-print("| Tensors | Hessian (Tensortrax) in s  | Hessian (Autograd) in s  | Speedup | Hessian (JAX) in s  | Speedup |")
-print("| ------- | -------------------------- | ------------------------ | ------- | ------------------- | ------- |")
+print(
+    "| Tensors | Hessian (Tensortrax) in s  | Hessian (Autograd) in s  | Speedup | Hessian (JAX) in s  | Speedup |"
+)
+print(
+    "| ------- | -------------------------- | ------------------------ | ------- | ------------------- | ------- |"
+)
 for n, t_hess_trax, t_hess_autograd, t_hess_jax in zip(
     tensors, time_hessian_tensortrax, time_hessian_autograd, time_hessian_jax
 ):

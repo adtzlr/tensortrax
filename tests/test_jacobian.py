@@ -13,7 +13,6 @@ def right_cauchy_green(F):
 
 
 def test_jacobian():
-
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1)
 
     for parallel in [False, True]:

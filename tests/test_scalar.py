@@ -10,7 +10,6 @@ def fun(x, y):
 
 
 def test_scalar():
-
     np.random.seed(6574)
     x = np.random.rand(100)
 

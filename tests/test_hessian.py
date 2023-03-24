@@ -41,7 +41,6 @@ def trig(F):
 
 
 def test_function_gradient_hessian():
-
     F = np.tile((np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3, 1, 1), 2100)
 
     for parallel in [False, True]:
@@ -61,7 +60,6 @@ def test_function_gradient_hessian():
 
 
 def test_trig():
-
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3)
 
     for fun in [trig]:
@@ -71,7 +69,6 @@ def test_trig():
 
 
 def test_repeated_eigvals():
-
     F = np.eye(3)
 
     ntrax = len(F.shape) - 2
@@ -116,7 +113,6 @@ def test_repeated_eigvals():
 
 
 def test_sym():
-
     F = (np.eye(3).ravel() + np.arange(9) / 10).reshape(3, 3)
     C = F.T @ F
     statevars = tm.special.triu_1d(C)

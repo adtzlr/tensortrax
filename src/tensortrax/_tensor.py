@@ -148,7 +148,6 @@ class Tensor:
                 Δx = Δx.reshape(*self.shape, *self.trax)
 
         if gradient or hessian:
-
             if sym:
                 idx_off_diag = {1: None, 3: [1], 6: [1, 2, 4]}[self.size]
                 δx[idx_off_diag] /= 2
