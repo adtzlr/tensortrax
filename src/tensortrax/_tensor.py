@@ -268,10 +268,10 @@ class Tensor:
         return matmul(B, self)
 
     def __getitem__(self, key):
-        x = f(self)[key]
-        Δx = Δ(self)[key]
-        δx = δ(self)[key]
-        Δδx = Δδ(self)[key]
+        x = self.x[key]
+        δx = self.δx[key]
+        Δx = self.Δx[key]
+        Δδx = self.Δδx[key]
         return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=self.ntrax)
 
     def __setitem__(self, key, value):
@@ -289,9 +289,9 @@ class Tensor:
             self.Δδx[key] = Δδ(value)
         else:
             self.x[key] = value
-            self.δx[key].fill(0)
-            self.Δx[key].fill(0)
-            self.Δδx[key].fill(0)
+            self.δx[broadcast_to(key, self.δx.shape)].fill(0)
+            self.Δx[broadcast_to(key, self.Δx.shape)].fill(0)
+            self.Δδx[broadcast_to(key, self.Δδx.shape)].fill(0)
 
     def __repr__(self):
         header = "<tensortrax tensor object>"
