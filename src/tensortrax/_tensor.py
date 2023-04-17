@@ -1,11 +1,11 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 import numpy as np
@@ -325,7 +325,8 @@ class Tensor:
 def broadcast_to(A, shape):
     "Broadcast Array or Tensor to a new shape."
 
-    _broadcast_to = lambda A: np.broadcast_to(A, shape=shape)
+    def _broadcast_to(a):
+        return np.broadcast_to(A, shape=shape)
 
     if isinstance(A, Tensor):
         return Tensor(
@@ -402,7 +403,9 @@ def reshape(A, newshape, order="C"):
 def einsum3(subscripts, *operands):
     "Einsum with three operands."
     A, B, C = operands
-    _einsum = lambda *operands: np.einsum(subscripts, *operands)
+
+    def _einsum(*operands):
+        return np.einsum(subscripts, *operands)
 
     if isinstance(A, Tensor) and isinstance(B, Tensor) and isinstance(C, Tensor):
         x = _einsum(f(A), f(B), f(C))
@@ -500,7 +503,9 @@ def einsum3(subscripts, *operands):
 def einsum2(subscripts, *operands):
     "Einsum with two operands."
     A, B = operands
-    _einsum = lambda *operands: np.einsum(subscripts, *operands)
+
+    def _einsum(*operands):
+        return np.einsum(subscripts, *operands)
 
     if isinstance(A, Tensor) and isinstance(B, Tensor):
         x = _einsum(f(A), f(B))
@@ -534,7 +539,10 @@ def einsum2(subscripts, *operands):
 def einsum1(subscripts, *operands):
     "Einsum with one operand."
     A = operands[0]
-    _einsum = lambda *operands: np.einsum(subscripts, *operands)
+
+    def _einsum(*operands):
+        return np.einsum(subscripts, *operands)
+
     if isinstance(A, Tensor):
         x = _einsum(f(A))
         δx = _einsum(δ(A))

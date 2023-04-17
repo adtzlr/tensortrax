@@ -1,11 +1,11 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 from timeit import timeit
@@ -52,7 +52,13 @@ def pre_autograd(n, **kwargs):
     np.random.seed(4519245)
     F = anp.eye(3).reshape(3, 3, 1) + (anp.random.rand(3, 3, n) - 0.5) / 10
     C = anp.einsum("ki...,kj...->ij...", F, F)
-    reduce = lambda fun: lambda C: anp.sum(fun(C), -1)
+
+    def reduce(fun):
+        def inner(C):
+            return anp.sum(fun(C), -1)
+
+        return inner
+
     stress = jacobian(reduce(fun_autograd))
     elasticity = jacobian(reduce(jacobian(reduce(fun_autograd))))
     return C, stress, elasticity
@@ -131,25 +137,25 @@ plt.loglog(
     tensors,
     time_gradient_tensortrax,
     "C0",
-    label="Gradient (Tensortrax) $\partial \psi~/~\partial C$",
+    label=r"Gradient (Tensortrax) $\partial \psi~/~\partial C$",
 )
 plt.loglog(
     tensors,
     time_gradient_autograd,
     "C0--",
-    label="Gradient (Autograd) $\partial \psi~/~\partial C$",
+    label=r"Gradient (Autograd) $\partial \psi~/~\partial C$",
 )
 plt.loglog(
     tensors,
     time_hessian_tensortrax,
     "C1",
-    label="Hessian (Tensortrax) $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian (Tensortrax) $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.loglog(
     tensors,
     time_hessian_autograd,
     "C1--",
-    label="Hessian (Autograd) $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian (Autograd) $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.xlabel(r"Number of input tensors $\longrightarrow$")
 plt.ylabel(r"Runtime in s $\longrightarrow$")

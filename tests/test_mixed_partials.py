@@ -15,7 +15,8 @@ def test_mixed_partials_scalars():
     x = np.array([5.7])
     y = np.array([2.3])
 
-    fun = lambda x, y: tm.log(x) * tm.exp(y)
+    def fun(x, y):
+        return tm.log(x) * tm.exp(y)
 
     r = tr.Tensor(x)
     s = tr.Tensor(y)
@@ -44,7 +45,8 @@ def test_mixed_partials():
     x = (np.eye(3).ravel() + np.arange(9)).reshape(3, 3)
     y = (np.eye(3).ravel() + np.arange(10, 19)).reshape(3, 3)
 
-    fun = lambda x, y: tm.trace(x) * tm.linalg.det(y)
+    def fun(x, y):
+        return tm.trace(x) * tm.linalg.det(y)
 
     r = tr.Tensor(x)
     s = tr.Tensor(y)

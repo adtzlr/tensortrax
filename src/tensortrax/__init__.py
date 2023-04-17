@@ -19,4 +19,18 @@ from ._tensor import Tensor
 
 __all__ = [
     "__version__",
+    "math",
+    "function",
+    "gradient",
+    "gradient_vector_product",
+    "hessian",
+    "hessian_vector_product",
+    "hessian_vectors_product",
+    "jacobian",
+    "take",
+    "Δ",
+    "Δδ",
+    "f",
+    "δ",
+    "Tensor",
 ]

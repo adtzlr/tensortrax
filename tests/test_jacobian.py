@@ -1,7 +1,6 @@
 import numpy as np
 
 import tensortrax as tr
-import tensortrax.math as tm
 
 
 def simple(F):
