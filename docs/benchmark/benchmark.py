@@ -1,11 +1,11 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 from timeit import timeit
@@ -50,12 +50,12 @@ for n in tensors:
 
 plt.figure()
 plt.title(r"Strain Energy Function $\psi(C) = \mathrm{tr}(C) - \ln(\det(C))$")
-plt.loglog(tensors, time_gradient, "C0", label="Gradient $\partial \psi~/~\partial C$")
+plt.loglog(tensors, time_gradient, "C0", label=r"Gradient $\partial \psi~/~\partial C$")
 plt.loglog(
     tensors,
     time_hessian,
     "C1",
-    label="Hessian $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.xlabel(r"Number of input tensors $\longrightarrow$")
 plt.ylabel(r"Runtime in s $\longrightarrow$")

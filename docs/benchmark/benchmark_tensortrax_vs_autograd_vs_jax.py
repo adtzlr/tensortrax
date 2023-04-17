@@ -1,11 +1,11 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 from timeit import timeit
@@ -15,7 +15,8 @@ import numpy as np
 from autograd import jacobian
 from autograd import numpy as anp
 from jax import jacobian as jjacobian
-from jax import numpy as jnp, jit
+from jax import jit
+from jax import numpy as jnp
 
 import tensortrax as tr
 import tensortrax.math as tm
@@ -61,14 +62,24 @@ def pre_tensortrax(**kwargs):
 
 
 def pre_autograd(**kwargs):
-    reduce = lambda fun: lambda C: anp.sum(fun(C), axis=-1)
+    def reduce(fun):
+        def inner(C):
+            return anp.sum(fun(C), axis=-1)
+
+        return inner
+
     stress = jacobian(reduce(fun_autograd))
     elasticity = jacobian(reduce(jacobian(reduce(fun_autograd))))
     return stress, elasticity
 
 
 def pre_jax(**kwargs):
-    reduce = lambda fun: lambda C: jnp.sum(fun(C), axis=-1)
+    def reduce(fun):
+        def inner(C):
+            return jnp.sum(fun(C), -1)
+
+        return inner
+
     stress = jjacobian(reduce(fun_jax))
     elasticity = jjacobian(reduce(jjacobian(reduce(fun_jax))))
     return stress, elasticity
@@ -166,37 +177,37 @@ plt.loglog(
     tensors,
     time_gradient_tensortrax,
     "C0",
-    label="Gradient (Tensortrax) $\partial \psi~/~\partial C$",
+    label=r"Gradient (Tensortrax) $\partial \psi~/~\partial C$",
 )
 plt.loglog(
     tensors,
     time_gradient_autograd,
     "C0--",
-    label="Gradient (Autograd) $\partial \psi~/~\partial C$",
+    label=r"Gradient (Autograd) $\partial \psi~/~\partial C$",
 )
 plt.loglog(
     tensors,
     time_gradient_jax,
     "C0:",
-    label="Gradient (JAX, CPU) $\partial \psi~/~\partial C$",
+    label=r"Gradient (JAX, CPU) $\partial \psi~/~\partial C$",
 )
 plt.loglog(
     tensors,
     time_hessian_tensortrax,
     "C1",
-    label="Hessian (Tensortrax) $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian (Tensortrax) $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.loglog(
     tensors,
     time_hessian_autograd,
     "C1--",
-    label="Hessian (Autograd) $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian (Autograd) $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.loglog(
     tensors,
     time_hessian_jax,
     "C1:",
-    label="Hessian (JAX, CPU) $\partial^2 \psi~/~\partial C \partial C$",
+    label=r"Hessian (JAX, CPU) $\partial^2 \psi~/~\partial C \partial C$",
 )
 plt.xlabel(r"Number of input tensors $\longrightarrow$")
 plt.ylabel(r"Runtime in s $\longrightarrow$")

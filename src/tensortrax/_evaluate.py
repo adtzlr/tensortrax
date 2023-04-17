@@ -1,11 +1,11 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 from copy import copy
@@ -100,9 +100,8 @@ def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=N
         list_of_args_kwargs = [[list(args), {**kwargs}] for chunk in range(chunks)]
 
         # test if object has attribute shape (is tensor or array)
-        isactive = lambda x: hasattr(x, "shape") and np.all(
-            np.isin(trax, x.shape[-ntrax:])
-        )
+        def isactive(x):
+            return hasattr(x, "shape") and np.all(np.isin(trax, x.shape[-ntrax:]))
 
         # iterate through args and split tensor-like objects
         args_partitioned = []

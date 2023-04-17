@@ -67,6 +67,10 @@ def test_trig():
         dwdf = tr.gradient(fun, full_output=False)(F)
         d2WdF2 = tr.hessian(fun, full_output=False)(F)
 
+        assert ww.shape == ()
+        assert dwdf.shape == (3, 3)
+        assert d2WdF2.shape == (3, 3, 3, 3)
+
 
 def test_repeated_eigvals():
     F = np.eye(3)
