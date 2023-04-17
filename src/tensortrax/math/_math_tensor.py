@@ -1,30 +1,16 @@
 r"""
- _                            
+ _
 | |                          ████████╗██████╗  █████╗ ██╗  ██╗
 | |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝ 
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗ 
+| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
+| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
  \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
+                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
 import numpy as np
 
-from .._tensor import (
-    Tensor,
-    Δ,
-    Δδ,
-    broadcast_to,
-    dual2real,
-    einsum,
-    f,
-    matmul,
-    ravel,
-    reshape,
-    squeeze,
-    δ,
-)
-from ._linalg import _linalg_array as linalg
+from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
 
 dot = matmul
 
@@ -337,3 +323,41 @@ def split(ary, indices_or_sections, axis=0):
         ]
     else:
         return np.split(ary, indices_or_sections=indices_or_sections, axis=axis)
+
+
+def external(x, function, gradient, hessian, *args, **kwargs):
+    """Evaluate the Tensor returned by an external scalar-valued function, evaluated at
+    a given value `x`, with provided gradient and hessian which operates on the values
+    of a tensor and optional arguments. All math methods inside the external
+    function/gradient/hessian must handle arbitrary number of elementwise-operating
+    trailing axes.
+    """
+
+    # pre-evaluate the scalar-valued function along with its gradient and hessian
+    func = function(f(x), *args, **kwargs)
+    grad = gradient(f(x), *args, **kwargs)
+    hess = hessian(f(x), *args, **kwargs)
+
+    def gvp(g, v, ntrax):
+        "Evaluate the gradient-vector product."
+
+        ij = "ijklmnpqrstuvwxyz"[: len(g.shape) - ntrax]
+
+        return einsum(f"{ij}...,{ij}...->...", g, v)
+
+    def hvp(h, v, u, ntrax):
+        "Evalaute the hessian-vectors product."
+
+        ijkl = "ijklmnpqrstuvwxyz"[: len(h.shape) - ntrax]
+        ij = ijkl[: len(ijkl) // 2]
+        kl = ijkl[len(ijkl) // 2 :]
+
+        return einsum(f"{ij}{kl}...,{ij}...,{kl}...->...", h, v, u)
+
+    return Tensor(
+        x=func,
+        δx=gvp(grad, δ(x), x.ntrax),
+        Δx=gvp(grad, Δ(x), x.ntrax),
+        Δδx=hvp(hess, δ(x), Δ(x), x.ntrax) + gvp(grad, Δδ(x), x.ntrax),
+        ntrax=x.ntrax,
+    )
