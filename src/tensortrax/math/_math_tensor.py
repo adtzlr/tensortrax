@@ -346,7 +346,7 @@ def external(x, function, gradient, hessian, *args, **kwargs):
         return einsum(f"{ij}...,{ij}...->...", g, v)
 
     def hvp(h, v, u, ntrax):
-        "Evalaute the hessian-vectors product."
+        "Evaluate the hessian-vectors product."
 
         ijkl = "ijklmnpqrstuvwxyz"[: len(h.shape) - ntrax]
         ij = ijkl[: len(ijkl) // 2]
