@@ -11,8 +11,8 @@ import tensortrax as tr
 import tensortrax.math as tm
 
 
-def W(F, mu=1):
-    C = F.T() @ F
+def psi(F, mu=1):
+    C = tm.dot(tm.transpose(F), F)
     I1 = tm.trace(C)
     return mu * (I1 - 3) / 2
 
@@ -21,15 +21,15 @@ def neo_hooke_ext(F):
     J = tm.linalg.det(F)
     return tm.external(
         x=J ** (-1 / 3) * F,
-        function=tr.function(W, ntrax=F.ntrax),
-        gradient=tr.gradient(W, ntrax=F.ntrax),
-        hessian=tr.hessian(W, ntrax=F.ntrax),
+        function=tr.function(psi, ntrax=F.ntrax),
+        gradient=tr.gradient(psi, ntrax=F.ntrax),
+        hessian=tr.hessian(psi, ntrax=F.ntrax),
         indices="ij",
     )
 
 
 def neo_hooke(F, mu=1):
-    C = F.T() @ F
+    C = tm.dot(tm.transpose(F), F)
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
     return mu * (J ** (-2 / 3) * I1 - 3) / 2
@@ -54,6 +54,16 @@ def test_external():
     assert np.allclose(*W)
     assert np.allclose(*dWdF)
     assert np.allclose(*d2WdF2)
+
+    W = tm.external(
+        x=F,
+        function=neo_hooke,
+        gradient=None,
+        hessian=None,
+        indices=None,
+    )
+
+    assert W.shape == (1, 2100)
 
 
 if __name__ == "__main__":
