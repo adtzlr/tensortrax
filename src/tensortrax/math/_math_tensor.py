@@ -334,9 +334,10 @@ def external(x, function, gradient, hessian, indices="ij", *args, **kwargs):
     """
 
     # pre-evaluate the scalar-valued function along with its gradient and hessian
-    func = function(f(x), *args, **kwargs)
-    grad = gradient(f(x), *args, **kwargs)
-    hess = hessian(f(x), *args, **kwargs)
+    if isinstance(x, Tensor):
+        func = function(f(x), *args, **kwargs)
+        grad = gradient(f(x), *args, **kwargs)
+        hess = hessian(f(x), *args, **kwargs)
 
     def gvp(g, v, ntrax):
         "Evaluate the gradient-vector product."
@@ -353,10 +354,13 @@ def external(x, function, gradient, hessian, indices="ij", *args, **kwargs):
 
         return einsum(f"{ij}{kl}...,{ij}...,{kl}...->...", h, v, u)
 
-    return Tensor(
-        x=func,
-        δx=gvp(grad, δ(x), x.ntrax),
-        Δx=gvp(grad, Δ(x), x.ntrax),
-        Δδx=hvp(hess, δ(x), Δ(x), x.ntrax) + gvp(grad, Δδ(x), x.ntrax),
-        ntrax=x.ntrax,
-    )
+    if isinstance(x, Tensor):
+        return Tensor(
+            x=func,
+            δx=gvp(grad, δ(x), x.ntrax),
+            Δx=gvp(grad, Δ(x), x.ntrax),
+            Δδx=hvp(hess, δ(x), Δ(x), x.ntrax) + gvp(grad, Δδ(x), x.ntrax),
+            ntrax=x.ntrax,
+        )
+    else:
+        return function(x, *args, **kwargs)
