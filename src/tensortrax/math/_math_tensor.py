@@ -325,7 +325,7 @@ def split(ary, indices_or_sections, axis=0):
         return np.split(ary, indices_or_sections=indices_or_sections, axis=axis)
 
 
-def external(x, function, gradient, hessian, *args, **kwargs):
+def external(x, function, gradient, hessian, indices="ij", *args, **kwargs):
     """Evaluate the Tensor returned by an external scalar-valued function, evaluated at
     a given value `x`, with provided gradient and hessian which operates on the values
     of a tensor and optional arguments. All math methods inside the external
@@ -341,16 +341,15 @@ def external(x, function, gradient, hessian, *args, **kwargs):
     def gvp(g, v, ntrax):
         "Evaluate the gradient-vector product."
 
-        ij = "ijklmnpqrstuvwxyz"[: len(g.shape) - ntrax]
+        ij = indices.lower()
 
         return einsum(f"{ij}...,{ij}...->...", g, v)
 
     def hvp(h, v, u, ntrax):
         "Evaluate the hessian-vectors product."
 
-        ijkl = "ijklmnpqrstuvwxyz"[: len(h.shape) - ntrax]
-        ij = ijkl[: len(ijkl) // 2]
-        kl = ijkl[len(ijkl) // 2 :]
+        ij = indices.lower()
+        kl = indices.upper()
 
         return einsum(f"{ij}{kl}...,{ij}...,{kl}...->...", h, v, u)
 

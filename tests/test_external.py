@@ -24,6 +24,7 @@ def neo_hooke_ext(F):
         function=tr.function(W, ntrax=F.ntrax),
         gradient=tr.gradient(W, ntrax=F.ntrax),
         hessian=tr.hessian(W, ntrax=F.ntrax),
+        indices="ij",
     )
 
 
