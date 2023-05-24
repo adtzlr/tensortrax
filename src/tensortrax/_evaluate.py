@@ -149,7 +149,7 @@ def concatenate_results(res, axis, full_output):
 
 
 def function(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate a scalar-valued function."
+    "Evaluate a function."
 
     @wraps(fun)
     def evaluate_function(*args, **kwargs):
@@ -158,7 +158,9 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
                 args, kwargs, wrt, ntrax, False, False, False
             )
             func = fun(*args, **kwargs)
-            return f(func)
+            if isinstance(func, Tensor):
+                func = f(func)
+            return func
 
         list_of_args_kwargs, chunks, axis = partition(
             args, kwargs, wrt, ntrax, parallel
@@ -174,7 +176,7 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
 
 
 def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
-    "Evaluate a scalar-valued function."
+    "Evaluate the gradient of a scalar-valued function."
 
     @wraps(fun)
     def evaluate_gradient(*args, **kwargs):
@@ -206,7 +208,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
 
 def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
-    "Evaluate a scalar-valued function."
+    "Evaluate the hessian of a scalar-valued function."
 
     @wraps(fun)
     def evaluate_hessian(*args, **kwargs):
@@ -246,7 +248,7 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
 
 def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
-    "Evaluate a scalar-valued function."
+    "Evaluate the jacobian a scalar-valued function."
 
     @wraps(fun)
     def evaluate_jacobian(*args, **kwargs):
