@@ -400,18 +400,7 @@ def if_else(cond, true, false):
         out = broadcast_to(true, shape=shape).copy()
 
         mask = np.broadcast_to(mask, shape)
-        true = broadcast_to(true, shape=shape)
-        false = broadcast_to(false, shape=shape)
-
-        out.x[..., mask] = true.x[..., mask]
-        out.δx[..., mask] = true.δx[..., mask]
-        out.Δx[..., mask] = true.Δx[..., mask]
-        out.Δδx[..., mask] = true.Δδx[..., mask]
-
-        out.x[..., ~mask] = false.x[..., ~mask]
-        out.δx[..., ~mask] = false.δx[..., ~mask]
-        out.Δx[..., ~mask] = false.Δx[..., ~mask]
-        out.Δδx[..., ~mask] = false.Δδx[..., ~mask]
+        out[..., ~mask] = broadcast_to(false, shape=shape)[..., ~mask]
 
     else:
         raise NotImplementedError(
