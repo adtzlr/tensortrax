@@ -324,6 +324,15 @@ class Tensor:
     def dual2real(self, like):
         return dual2real(self, like=like)
 
+    def astype(self, dtype):
+        return Tensor(
+            x=self.x.astype(dtype),
+            δx=self.δx.astype(dtype),
+            Δx=self.Δx.astype(dtype),
+            Δδx=self.Δδx.astype(dtype),
+            ntrax=self.ntrax,
+        )
+
     __radd__ = __add__
     __rmul__ = __mul__
     __array_ufunc__ = None
@@ -333,7 +342,7 @@ def broadcast_to(A, shape):
     "Broadcast Array or Tensor to a new shape."
 
     def _broadcast_to(a):
-        return np.broadcast_to(A, shape=shape)
+        return np.broadcast_to(a, shape=shape)
 
     if isinstance(A, Tensor):
         return Tensor(
