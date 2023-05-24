@@ -15,7 +15,7 @@ from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
 dot = matmul
 
 
-def array(object, dtype=None):
+def array(object, dtype=None, like=None, shape=None):
     "Create an array."
 
     if isinstance(object, Tensor):
@@ -38,7 +38,13 @@ def array(object, dtype=None):
         else:
             return np.array(object, dtype=dtype)
     else:
-        return np.array(object, dtype=dtype)
+        if like is None:
+            return np.array(object, dtype=dtype)
+        else:
+            x = np.array(object, dtype=dtype)
+            if shape is None:
+                shape = like.shape
+            return Tensor(x=x.reshape(*shape, *like.trax), ntrax=like.ntrax)
 
 
 def trace(A):
