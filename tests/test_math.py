@@ -92,6 +92,8 @@ def test_math():
     assert tm.base.eye(F).shape == F.shape
     assert np.allclose(tm.base.eye(F), tm.base.eye(T))
     assert np.allclose(tm.array(T).x, tm.array(F))
+    assert np.allclose(tm.array(F, like=T).x, tm.array(F))
+    assert np.allclose(T.copy().x, T.x)
     assert np.allclose(tm.array([T, T]).x, tm.array([F, F]))
     assert np.allclose(tm.vstack([T, T]).x, tm.vstack([F, F]))
     assert np.allclose(tm.hstack([T, T]).x, tm.hstack([F, F]))
