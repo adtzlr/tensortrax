@@ -23,6 +23,7 @@ from ._math_tensor import (
     exp,
     external,
     hstack,
+    if_else,
     log,
     log10,
     matmul,
@@ -78,4 +79,5 @@ __all__ = [
     "trace",
     "transpose",
     "vstack",
+    "if_else",
 ]
