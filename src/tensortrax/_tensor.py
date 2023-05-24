@@ -8,6 +8,8 @@ r"""
                                 ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 """
 
+from copy import deepcopy
+
 import numpy as np
 
 from ._helpers import Δ, Δδ, f, δ
@@ -98,6 +100,11 @@ class Tensor:
 
         # re-init the tensor
         self.__init__(x, ntrax=self.ntrax - self.ndual)
+
+    def copy(self):
+        "Copy the Tensor."
+
+        return deepcopy(self)
 
     def init(self, gradient=False, hessian=False, sym=False, δx=None, Δx=None):
         """Re-Initialize tensor with dual values to keep track of the
