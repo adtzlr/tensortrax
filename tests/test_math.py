@@ -214,6 +214,25 @@ def test_logical():
             assert np.all(B < A)
 
 
+def test_condition():
+    F = np.tile((np.eye(3) + np.arange(-2, 7).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    T = tr.Tensor(F, ntrax=1)
+
+    G = np.tile((np.eye(3) - np.arange(-7, 2).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    V = tr.Tensor(G, ntrax=1)
+
+    Y = tm.if_else(F >= G, 2 * F, G / 2)
+    Z = tm.if_else(T >= V, 2 * T, V / 2)
+
+    np.allclose(Y, Z.x)
+
+    with pytest.raises(NotImplementedError):
+        tm.if_else(F >= T, 2 * F, V / 2)
+
+    with pytest.raises(NotImplementedError):
+        tm.if_else(T >= G, 2 * T, G / 2)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -222,3 +241,4 @@ if __name__ == "__main__":
     test_eigh()
     test_triu()
     test_logical()
+    test_condition()

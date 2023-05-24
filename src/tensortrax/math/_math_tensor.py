@@ -10,7 +10,7 @@ r"""
 
 import numpy as np
 
-from .._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
+from .._tensor import Tensor, Δ, Δδ, broadcast_to, einsum, f, matmul, δ
 
 dot = matmul
 
@@ -370,3 +370,52 @@ def external(x, function, gradient, hessian, indices="ij", *args, **kwargs):
         )
     else:
         return function(x, *args, **kwargs)
+
+
+def if_else(cond, true, false):
+    "Mask-based Condition for arrays and tensors."
+
+    mask = np.asarray(cond)
+    out = true.copy()
+
+    if isinstance(true, np.ndarray) and isinstance(false, np.ndarray):
+        out = true.copy()
+        out[..., mask] = true[..., mask]
+        out[..., ~mask] = false[..., ~mask]
+
+    elif isinstance(true, Tensor) and isinstance(false, Tensor):
+        shape = np.maximum.reduce(
+            [
+                true.x.shape,
+                true.δx.shape,
+                true.Δx.shape,
+                true.Δδx.shape,
+                false.x.shape,
+                false.δx.shape,
+                false.Δx.shape,
+                false.Δδx.shape,
+            ]
+        )
+
+        out = broadcast_to(true, shape=shape).copy()
+
+        mask = np.broadcast_to(mask, shape)
+        true = broadcast_to(true, shape=shape)
+        false = broadcast_to(false, shape=shape)
+
+        out.x[..., mask] = true.x[..., mask]
+        out.δx[..., mask] = true.δx[..., mask]
+        out.Δx[..., mask] = true.Δx[..., mask]
+        out.Δδx[..., mask] = true.Δδx[..., mask]
+
+        out.x[..., ~mask] = false.x[..., ~mask]
+        out.δx[..., ~mask] = false.δx[..., ~mask]
+        out.Δx[..., ~mask] = false.Δx[..., ~mask]
+        out.Δδx[..., ~mask] = false.Δδx[..., ~mask]
+
+    else:
+        raise NotImplementedError(
+            "`true` and `false` must be both arrays or both tensors."
+        )
+
+    return out
