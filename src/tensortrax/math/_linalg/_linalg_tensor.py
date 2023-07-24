@@ -64,8 +64,11 @@ def inv(A):
         return linalg.inv(A)
 
 
-def eigvalsh(A):
+def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues of a symmetric Tensor."
+
+    A[0, 0] += eps
+    A[1, 1] -= eps
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
     M = einsum("ai...,aj...->aij...", N, N)
@@ -75,23 +78,22 @@ def eigvalsh(A):
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    # Γ = [(1, 2), (2, 0), (0, 1)]
-    Γ = [np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)]
+    # alpha = [0, 1, 2]
+    # beta = [(1, 2), (2, 0), (0, 1)]
+
+    alpha = np.arange(dim)
+    beta = [
+        np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)
+    ]
 
     δN = []
-    for α in range(dim):
+    for α in alpha:
         δNα = []
-        for γ in Γ[α]:
-            Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
-            δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
-            λαγ = λ[α] - λ[γ]
-            λ_equal = np.isclose(λ[α], λ[γ])
-            if np.any(λ_equal):
-                if len(λαγ.shape) == 0:
-                    λαγ = np.inf
-                else:
-                    λαγ[λ_equal] = np.inf
-            δNα.append(1 / λαγ * N[γ] * δAαγ)
+        for β in beta[α]:
+            Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+            δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
+            λαβ = λ[α] - λ[β]
+            δNα.append(1 / λαβ * N[β] * δAαβ)
         δN.append(sum(δNα, axis=0))
 
     δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
@@ -108,8 +110,11 @@ def eigvalsh(A):
     )
 
 
-def eigh(A):
+def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
+
+    A[0, 0] += eps
+    A[1, 1] -= eps
 
     λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
     M = einsum("ai...,aj...->aij...", N, N)
@@ -119,23 +124,22 @@ def eigh(A):
     δλ = einsum("aij...,ij...->a...", M, δ(A))
     Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    # Γ = [(1, 2), (2, 0), (0, 1)]
-    Γ = [np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)]
+    # alpha = [0, 1, 2]
+    # beta = [(1, 2), (2, 0), (0, 1)]
+
+    alpha = np.arange(dim)
+    beta = [
+        np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)
+    ]
 
     δN = []
-    for α in range(dim):
+    for α in alpha:
         δNα = []
-        for γ in Γ[α]:
-            Mαγ = einsum("i...,j...->ij...", N[α], N[γ])
-            δAαγ = einsum("ij...,ij...->...", Mαγ, δ(A))
-            λαγ = λ[α] - λ[γ]
-            λ_equal = np.isclose(λ[α], λ[γ])
-            if np.any(λ_equal):
-                if len(λαγ.shape) == 0:
-                    λαγ = np.inf
-                else:
-                    λαγ[λ_equal] = np.inf
-            δNα.append(1 / λαγ * N[γ] * δAαγ)
+        for β in beta[α]:
+            Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+            δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
+            λαβ = λ[α] - λ[β]
+            δNα.append(1 / λαβ * N[β] * δAαβ)
         δN.append(sum(δNα, axis=0))
 
     δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
