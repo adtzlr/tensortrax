@@ -41,6 +41,8 @@ def test_math():
 
     assert np.allclose(tm.linalg.det(F), tm.linalg.det(T).x)
     assert np.allclose(tm.linalg.inv(F), tm.linalg.inv(T).x)
+    assert np.allclose(tm.linalg.pinv(F), tm.linalg.pinv(T).x)
+    assert np.allclose(tm.linalg.pinv(F), tm.linalg.inv(T).x)
 
     tm.linalg._det(F[:2, :2])
     tm.linalg._det(F[:1, :1])
