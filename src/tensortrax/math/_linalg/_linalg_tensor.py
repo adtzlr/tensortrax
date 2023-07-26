@@ -40,11 +40,11 @@ def det(A):
         return linalg.det(A)
 
 
-def inv(A):
+def inv(A, inverse=linalg.inv):
     "Inverse of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
-        x = linalg.inv(f(A))
-        invA = linalg.inv(f(A))
+        x = inverse(f(A))
+        invA = inverse(f(A))
         δx = -matmul(matmul(invA, δ(A)), invA)
         Δx = -matmul(matmul(invA, Δ(A)), invA)
         Δδx = -(
@@ -62,6 +62,12 @@ def inv(A):
         )
     else:
         return linalg.inv(A)
+
+
+def pinv(A):
+    "Pseudo-Inverse of a 2x2 or 3x3 Tensor."
+
+    return inv(A, inverse=linalg.pinv)
 
 
 def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):

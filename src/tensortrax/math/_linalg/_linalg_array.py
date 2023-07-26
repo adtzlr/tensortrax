@@ -63,3 +63,9 @@ def inv(A):
         detAinvA = detA * np.linalg.inv(A.T).T
 
     return detAinvA / detA
+
+
+def pinv(A, hermitian=False):
+    "Pseudo-inverse of an Array."
+
+    return np.linalg.pinv(A.T, hermitian=hermitian).T
