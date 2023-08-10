@@ -8,7 +8,7 @@ def simple(F):
 
 
 def right_cauchy_green(F):
-    return F.T() @ F
+    return F.T @ F
 
 
 def test_jacobian():

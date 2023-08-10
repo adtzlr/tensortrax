@@ -12,9 +12,9 @@ def test_math():
 
     C = F.T @ F
 
-    assert np.allclose(tr.f(T.T() @ F), C)
+    assert np.allclose(tr.f(T.T @ F), C)
     assert np.allclose(tr.f(F.T @ T), C)
-    assert np.allclose(tr.f(T.T() @ T), C)
+    assert np.allclose(tr.f(T.T @ T), C)
 
     assert T[0].shape == (3,)
 
@@ -180,7 +180,7 @@ def test_eigh():
 def test_triu():
     F = np.tile((np.eye(3) + np.arange(1, 10).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
     V = tr.Tensor(F, F, F, ntrax=1)
-    T = V.T() @ V
+    T = V.T @ V
 
     t = tm.special.triu_1d(T)
     assert t.shape == (6,)
