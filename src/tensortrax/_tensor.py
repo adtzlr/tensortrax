@@ -309,6 +309,7 @@ class Tensor:
         data = self.x.__repr__()
         return "\n".join([header, *metadata, "", data])
 
+    @property
     def T(self):
         return transpose(self)
 

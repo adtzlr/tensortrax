@@ -5,14 +5,14 @@ import tensortrax.math as tm
 
 
 def neo_hooke(F):
-    C = F.T() @ F
+    C = F.T @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
     return (J ** (-2 / 3) * I1 - 3) / 2
 
 
 def neo_hooke_sym(C):
-    C = (C + C.T()) / 2
+    C = (C + C.T) / 2
     I3 = tm.linalg.det(C)
     I1 = tm.trace(C)
     return (I3 ** (-1 / 3) * I1 - 3) / 2
@@ -28,14 +28,14 @@ def neo_hooke_sym_triu(C, statevars):
 
 
 def ogden(F, mu=1, alpha=2):
-    C = F.T() @ F
+    C = F.T @ F
     J = tm.linalg.det(F)
     λ = tm.sqrt(tm.linalg.eigvalsh(J ** (-2 / 3) * C))
     return tm.sum(1 / alpha * (λ**alpha - 1))
 
 
 def trig(F):
-    C = F.T() @ F
+    C = F.T @ F
     I1 = tm.trace(C)
     return tm.sin(I1) + tm.cos(I1) + tm.tan(I1) + tm.tanh(I1)
 

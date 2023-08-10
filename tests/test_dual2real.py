@@ -13,7 +13,7 @@ def test_dual2real():
     F.init(hessian=True)
 
     # perform some math operations
-    C = F.T() @ F
+    C = F.T @ F
     J = tm.linalg.det(F)
     W = tm.trace(J ** (-2 / 3) * C) - 3
     eta = 1 - 1 / 3 * tm.tanh(W / 8)

@@ -5,7 +5,7 @@ import tensortrax.math as tm
 
 
 def neo_hooke(F):
-    C = F.T() @ F
+    C = F.T @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
     return (J ** (-2 / 3) * I1 - 3) / 2, F

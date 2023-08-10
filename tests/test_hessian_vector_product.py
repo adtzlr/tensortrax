@@ -9,14 +9,14 @@ def simple(F):
 
 
 def neo_hooke(F):
-    C = F.T() @ F
+    C = F.T @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
     return (J ** (-2 / 3) * I1 - 3) / 2
 
 
 def ogden(F, mu=1, alpha=2):
-    C = F.T() @ F
+    C = F.T @ F
     J = tm.linalg.det(F)
     λ = tm.sqrt(tm.linalg.eigvalsh(J ** (-2 / 3) * C))
     return tm.sum(1 / alpha * (λ**alpha - 1))

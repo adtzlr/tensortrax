@@ -29,7 +29,7 @@ import tensortrax.math as tm
 
 
 def fun(F, mu=1):
-    C = F.T() @ F
+    C = F.T @ F
     I1 = tm.trace(C)
     J = tm.linalg.det(F)
     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
@@ -67,7 +67,7 @@ J = tr.Tensor(z, ntrax=1)
 
 def neo_hooke(F, mu=1):
     "Strain energy function of the Neo-Hookean material formulation."
-    C = F.T() @ F
+    C = F.T @ F
     I3 = tm.linalg.det(C)
     return mu * (I3 ** (-1 / 3) * tm.trace(C) - 3) / 2
 
@@ -235,7 +235,7 @@ from tensortrax.math import trace
 
 x = np.eye(3) + np.arange(9).reshape(3, 3) / 10
 F = Tensor(x=x, δx=δF_12, Δx=ΔF_23, Δδx=None)
-I1_C = trace(F.T() @ F)
+I1_C = trace(F.T @ F)
 ```
 
 The function as well as the gradient and hessian components are accessible as:
@@ -249,7 +249,7 @@ A_1223 = Δδ(I1_C)
 To obtain full gradients and hessians of scalar-valued functions in one function call, `tensortrax` provides helpers (decorators) which handle the multiple function calls.
 
 ```python
-fun = lambda F: trace(F.T() @ F)
+fun = lambda F: trace(F.T @ F)
 
 func = tr.function(fun)(x)
 grad = tr.gradient(fun)(x)
@@ -259,7 +259,7 @@ hess = tr.hessian(fun)(x)
 For tensor-valued functions, use `jacobian()` instead of `gradient()`.
 
 ```python
-fun = lambda F: F.T() @ F
+fun = lambda F: F.T @ F
 
 jac = tr.jacobian(fun)(x)
 ```
