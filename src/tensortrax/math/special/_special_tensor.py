@@ -1,19 +1,13 @@
-r"""
- _
-| |                          ████████╗██████╗  █████╗ ██╗  ██╗
-| |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
- \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+"""
+tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
 import numpy as np
 
 from ..._tensor import Tensor
 from .. import _math_array as array
-from .._linalg import _linalg_tensor as linalg
 from .._math_tensor import einsum, sqrt, trace, transpose
+from ..linalg import _linalg_tensor as linalg
 
 
 def ddot(A, B):

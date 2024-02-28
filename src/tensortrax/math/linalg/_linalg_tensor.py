@@ -1,11 +1,5 @@
-r"""
- _
-| |                          ████████╗██████╗  █████╗ ██╗  ██╗
-| |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
- \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+"""
+tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
 
@@ -13,7 +7,7 @@ import numpy as np
 
 from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
 from .._math_tensor import exp, sum, transpose
-from .._special._special_tensor import ddot
+from ..special._special_tensor import ddot
 from . import _linalg_array as linalg
 
 dot = matmul

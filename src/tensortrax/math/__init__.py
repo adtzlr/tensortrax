@@ -1,17 +1,10 @@
-r"""
- _
-| |                          ████████╗██████╗  █████╗ ██╗  ██╗
-| |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
- \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+"""
+tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
 from .._tensor import broadcast_to, dual2real, ravel, reshape, squeeze
-from . import _linalg as linalg
 from . import _math_array as base
-from . import _special as special
+from . import linalg, special
 from ._math_tensor import (
     abs,
     array,
