@@ -1,11 +1,5 @@
-r"""
- _
-| |                          ████████╗██████╗  █████╗ ██╗  ██╗
-| |_ ___ _ __  ___  ___  _ __╚══██╔══╝██╔══██╗██╔══██╗╚██╗██╔╝
-| __/ _ \ '_ \/ __|/ _ \| '__|  ██║   ██████╔╝███████║ ╚███╔╝
-| ||  __/ | | \__ \ (_) | |     ██║   ██╔══██╗██╔══██║ ██╔██╗
- \__\___|_| |_|___/\___/|_|     ██║   ██║  ██║██║  ██║██╔╝ ██╗
-                                ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+"""
+tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
 from copy import copy
@@ -15,7 +9,7 @@ import numpy as np
 from joblib import Parallel, cpu_count, delayed
 
 from ._tensor import Tensor, Δδ, broadcast_to, f, δ
-from .math._special import from_triu_1d, from_triu_2d, triu_1d
+from .math.special import from_triu_1d, from_triu_2d, triu_1d
 
 
 def take(fun, item=0):
