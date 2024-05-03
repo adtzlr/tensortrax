@@ -44,7 +44,6 @@ classifiers = [
   "Topic :: Utilities"
 ]
 dynamic = ["version"]
-requires-python = ">=3.8"
 dependencies = ["numpy", "joblib"]
 
 [tool.setuptools.dynamic]
