@@ -305,7 +305,22 @@ def stack(arrays, axis=0):
             ntrax=min([A.ntrax for A in arrays]),
         )
     else:
-        return np.stack(arrays, axis=0)
+        return np.stack(arrays, axis=axis)
+
+
+def concatenate(arrays, axis=0):
+    "Join a sequence of arrays along an existing axis."
+
+    if isinstance(arrays[0], Tensor):
+        return Tensor(
+            x=np.concatenate([f(A) for A in arrays], axis=axis),
+            δx=np.concatenate([δ(A) for A in arrays], axis=axis),
+            Δx=np.concatenate([Δ(A) for A in arrays], axis=axis),
+            Δδx=np.concatenate([Δδ(A) for A in arrays], axis=axis),
+            ntrax=min([A.ntrax for A in arrays]),
+        )
+    else:
+        return np.concatenate(arrays, axis=axis)
 
 
 def split(ary, indices_or_sections, axis=0):
@@ -401,3 +416,21 @@ def if_else(cond, true, false):
         )
 
     return out
+
+
+def maximum(x1, x2):
+    "Element-wise maximum of array elements."
+
+    if isinstance(x1, Tensor):
+        return if_else(x1 > x2, x1, x2)
+    else:
+        return np.maximum(x1, x2)
+
+
+def minimum(x1, x2):
+    "Element-wise minimum of array elements."
+
+    if isinstance(x1, Tensor):
+        return if_else(x1 < x2, x1, x2)
+    else:
+        return np.minimum(x1, x2)

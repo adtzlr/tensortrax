@@ -100,6 +100,7 @@ def test_math():
     assert np.allclose(tm.vstack([T, T]).x, tm.vstack([F, F]))
     assert np.allclose(tm.hstack([T, T]).x, tm.hstack([F, F]))
     assert np.allclose(tm.stack([T, T]).x, tm.stack([F, F]))
+    assert np.allclose(tm.concatenate([T, T]).x, tm.concatenate([F, F]))
     assert np.allclose(tm.repeat(T, 3).x, tm.repeat(F, 3))
     assert np.allclose(tm.tile(T, 3).x, tm.tile(F, 3))
     assert np.allclose(tm.split(T, [1, 2])[1].x, tm.split(F, [1, 2])[1])
@@ -225,6 +226,16 @@ def test_condition():
 
     Y = tm.if_else(F >= G, 2 * F, G / 2)
     Z = tm.if_else(T >= V, 2 * T, V / 2)
+
+    max_array = tm.maximum(F, G)
+    max_tensor = tm.maximum(T, V)
+
+    assert np.allclose(max_array, max_tensor.x)
+
+    min_array = tm.minimum(F, G)
+    min_tensor = tm.minimum(T, V)
+
+    assert np.allclose(min_array, min_tensor.x)
 
     np.allclose(Y, Z.x)
 
