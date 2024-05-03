@@ -50,5 +50,6 @@ dependencies = ["numpy", "joblib"]
 version = {attr = "tensortrax.__about__.__version__"}
 
 [project.urls]
+Homepage = "https://github.com/adtzlr/tensortrax"
 Code = "https://github.com/adtzlr/tensortrax"
 Issues = "https://github.com/adtzlr/tensortrax/issues"
