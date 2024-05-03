@@ -7,12 +7,14 @@ profile = "black"
 
 [project]
 name = "tensortrax"
-authors = [
-  {email = "a.dutzler@gmail.com"},
-  {name = "Andreas Dutzler"}
-]
 description = "Math on (Hyper-Dual) Tensors with Trailing Axes"
 readme = "README.md"
+authors = [
+  {name = "Andreas Dutzler"},
+  {email = "a.dutzler@gmail.com"},
+  
+]
+requires-python = ">=3.8"
 license = {file = "LICENSE"}
 keywords = [
   "python", 
@@ -42,12 +44,12 @@ classifiers = [
   "Topic :: Utilities"
 ]
 dynamic = ["version"]
-requires-python = ">=3.8"
 dependencies = ["numpy", "joblib"]
 
 [tool.setuptools.dynamic]
 version = {attr = "tensortrax.__about__.__version__"}
 
 [project.urls]
+Homepage = "https://github.com/adtzlr/tensortrax"
 Code = "https://github.com/adtzlr/tensortrax"
 Issues = "https://github.com/adtzlr/tensortrax/issues"
