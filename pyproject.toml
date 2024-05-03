@@ -12,6 +12,7 @@ readme = "README.md"
 authors = [
   {name = "Andreas Dutzler"},
   {email = "a.dutzler@gmail.com"},
+  
 ]
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
