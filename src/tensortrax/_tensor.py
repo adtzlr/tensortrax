@@ -317,7 +317,13 @@ class Tensor:
         return squeeze(self, axis=axis)
 
     def dual2real(self, like):
-        return dual2real(self, like=like)
+        return dual_to_real(self, like=like)
+
+    def dual_to_real(self, like):
+        return dual_to_real(self, like=like)
+
+    def real_to_dual(self, x):
+        return real_to_dual(self, x=x)
 
     def astype(self, dtype):
         return Tensor(
@@ -351,7 +357,7 @@ def broadcast_to(A, shape):
         return _broadcast_to(A)
 
 
-def dual2real(A, like=None):
+def dual_to_real(A, like=None):
     """Return a new Tensor with old-dual data as new-real values,
     with `ntrax` derived by `like`."""
 
@@ -359,6 +365,18 @@ def dual2real(A, like=None):
     ntrax = A.ntrax - ndual
 
     return Tensor(x=A.δx, δx=A.Δδx, Δx=A.Δδx, ndual=min(ndual, ntrax), ntrax=ntrax)
+
+
+def real_to_dual(A, x):
+    """Return a new Tensor with old-real data as new-dual values."""
+
+    return Tensor(
+        x=np.nan * f(x),
+        δx=f(A) * δ(x),
+        Δx=f(A) * Δ(x),
+        Δδx=Δ(A) * δ(x) + f(A) * Δδ(x),
+        ntrax=x.ntrax,
+    )
 
 
 def ravel(A, order="C"):
