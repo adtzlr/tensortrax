@@ -6,7 +6,7 @@ import numpy as np
 
 from ..._tensor import Tensor
 from .. import _math_array as array
-from .._math_tensor import einsum, sqrt, trace, transpose
+from .._math_tensor import einsum, sqrt, stack, trace, transpose
 from ..linalg import _linalg_tensor as linalg
 
 
@@ -77,3 +77,11 @@ def from_triu_2d(A):
     "Recover full Tensor from upper triangle entries of a Tensor."
     idx, dim = _from_triu_helper(A)
     return A[idx.ravel()][:, idx.ravel()].reshape(dim, dim, dim, dim, *A.shape[2:])
+
+
+def try_stack(arrays, fallback=None):
+    "Try to unpack and stack the list of tensors and return the fallback otherwise."
+    try:
+        return stack([A for ary in arrays for A in ary])
+    except ValueError:
+        return fallback

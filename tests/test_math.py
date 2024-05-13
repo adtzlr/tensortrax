@@ -246,6 +246,22 @@ def test_condition():
         tm.if_else(T >= G, 2 * T, G / 2)
 
 
+def test_try_stack():
+    x = np.tile((np.eye(3) + np.arange(-2, 7).reshape(3, 3) / 10).reshape(3, 3, 1), 10)
+    F = tr.Tensor(x, ntrax=1)
+
+    C = F.T @ F
+    C6 = tm.special.triu_1d(C)
+    fallback = "my fallback"
+
+    stacked = tm.special.try_stack([C6, C6], fallback=fallback)
+    assert stacked.shape == (12,)
+
+    assert tm.special.try_stack([C, C6], fallback=fallback) == fallback
+    with pytest.raises(ValueError):
+        tm.stack([C, C6])
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -255,3 +271,4 @@ if __name__ == "__main__":
     test_triu()
     test_logical()
     test_condition()
+    test_try_stack()

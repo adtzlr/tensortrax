@@ -10,6 +10,7 @@ from ._special_tensor import (
     sym,
     tresca,
     triu_1d,
+    try_stack,
     von_mises,
 )
 
@@ -21,5 +22,6 @@ __all__ = [
     "sym",
     "tresca",
     "triu_1d",
+    "try_stack",
     "von_mises",
 ]
