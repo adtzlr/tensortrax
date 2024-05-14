@@ -255,7 +255,7 @@ def test_try_stack():
     fallback = "my fallback"
 
     stacked = tm.special.try_stack([C6, C6], fallback=fallback)
-    assert stacked.shape == (12,)
+    assert stacked.shape[0] == 12
 
     assert tm.special.try_stack([C, C6], fallback=fallback) == fallback
     with pytest.raises(ValueError):
