@@ -367,14 +367,27 @@ def dual_to_real(A, like=None):
     return Tensor(x=A.δx, δx=A.Δδx, Δx=A.Δδx, ndual=min(ndual, ntrax), ntrax=ntrax)
 
 
-def real_to_dual(A, x):
-    """Return a new Tensor with old-real data as new-dual values."""
+def real_to_dual(A, x, mul=None):
+    r"""Return a new Tensor with old-real data as new-dual values.
+
+    ..  math::
+
+        \delta W(x) &= A(x)\ \delta x
+
+        \Delta \delta W(x) &= \Delta A(x)\ \delta x + A(x)\ \Delta \delta x
+
+    """
+
+    if mul is None:
+
+        def mul(A, B):
+            return A * B
 
     return Tensor(
-        x=np.nan * f(x),
-        δx=f(A) * δ(x),
-        Δx=f(A) * Δ(x),
-        Δδx=Δ(A) * δ(x) + f(A) * Δδ(x),
+        x=mul(np.nan, f(x)),
+        δx=mul(f(A), δ(x)),
+        Δx=mul(f(A), Δ(x)),
+        Δδx=mul(Δ(A), δ(x)) + mul(f(A), Δδ(x)),
         ntrax=x.ntrax,
     )
 
