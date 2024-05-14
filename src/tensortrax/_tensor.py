@@ -387,7 +387,7 @@ def real_to_dual(A, x, mul=None):
         x=mul(f(A), f(x)) * np.nan,
         δx=mul(f(A), δ(x)),
         Δx=mul(f(A), Δ(x)),
-        Δδx=mul(Δ(A), δ(x)) + mul(f(A), Δδ(x)),
+        Δδx=mul(δ(A), Δ(x)) + mul(f(A), Δδ(x)),
         ntrax=A.ntrax,
     )
 
