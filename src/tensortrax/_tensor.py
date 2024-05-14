@@ -322,8 +322,8 @@ class Tensor:
     def dual_to_real(self, like):
         return dual_to_real(self, like=like)
 
-    def real_to_dual(self, x):
-        return real_to_dual(self, x=x)
+    def real_to_dual(self, x, mul=None):
+        return real_to_dual(self, x=x, mul=mul)
 
     def astype(self, dtype):
         return Tensor(
@@ -384,11 +384,11 @@ def real_to_dual(A, x, mul=None):
             return A * B
 
     return Tensor(
-        x=mul(np.nan, f(x)),
+        x=mul(f(A), f(x)) * np.nan,
         δx=mul(f(A), δ(x)),
         Δx=mul(f(A), Δ(x)),
         Δδx=mul(Δ(A), δ(x)) + mul(f(A), Δδ(x)),
-        ntrax=x.ntrax,
+        ntrax=A.ntrax,
     )
 
 
