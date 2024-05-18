@@ -89,6 +89,7 @@ def test_math():
     assert tm.linalg.eigvalsh(T).shape == (3,)
 
     assert tm.linalg.expm(T).shape == (3, 3)
+    assert tm.linalg.sqrtm(T).shape == (3, 3)
 
     assert tm.base.cross(F, F).shape == F.shape
     assert tm.base.eye(F).shape == F.shape

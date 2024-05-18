@@ -6,7 +6,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 import numpy as np
 
 from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
-from .._math_tensor import exp, sum, transpose
+from .._math_tensor import exp, sqrt, sum, transpose
 from ..special._special_tensor import ddot
 from . import _linalg_array as linalg
 
@@ -169,3 +169,9 @@ def expm(A):
     "Compute the matrix exponential of a symmetric array."
     λ, M = eigh(A)
     return einsum("a...,aij...->ij...", exp(λ), M)
+
+
+def sqrtm(A):
+    "Compute the matrix square root of a symmetric array."
+    λ, M = eigh(A)
+    return einsum("a...,aij...->ij...", sqrt(λ), M)
