@@ -80,8 +80,11 @@ def from_triu_2d(A):
 
 
 def try_stack(arrays, fallback=None):
-    "Try to unpack and stack the list of tensors and return the fallback otherwise."
+    """Try to unpack and stack the list of tensors/arrays and return the fallback array
+    otherwise."""
     try:
-        return stack([A.x for ary in arrays for A in ary])
+        return stack(
+            [A.x if isinstance(A, Tensor) else A for ary in arrays for A in ary]
+        )
     except ValueError:
         return fallback
