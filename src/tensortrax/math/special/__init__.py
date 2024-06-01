@@ -5,6 +5,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 from ._special_tensor import (
     ddot,
     dev,
+    erf,
     from_triu_1d,
     from_triu_2d,
     sym,
@@ -17,6 +18,7 @@ from ._special_tensor import (
 __all__ = [
     "ddot",
     "dev",
+    "erf",
     "from_triu_1d",
     "from_triu_2d",
     "sym",
