@@ -4,6 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 import numpy as np
 
+from ..._helpers import Δ, Δδ, f, δ
 from ..._tensor import Tensor
 from .. import _math_array as array
 from .._math_tensor import einsum, sqrt, stack, trace, transpose
@@ -18,6 +19,23 @@ def dev(A):
     "Deviatoric part of a Tensor."
     dim = A.shape[0]
     return A - trace(A) / dim * array.eye(A)
+
+
+def erf(z):
+    "The (Gauss) error function."
+    from scipy.special import erf
+
+    if isinstance(z, Tensor):
+        derf = 2 / np.sqrt(np.pi) * np.exp(-f(z) ** 2)
+        return Tensor(
+            x=erf(f(z)),
+            δx=derf * δ(z),
+            Δx=derf * Δ(z),
+            Δδx=-2 * f(z) * derf * δ(z) * Δ(z) + derf * Δδ(z),
+            ntrax=z.ntrax,
+        )
+    else:
+        return erf(z)
 
 
 def sym(A):

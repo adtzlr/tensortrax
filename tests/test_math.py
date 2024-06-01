@@ -69,6 +69,7 @@ def test_math():
         tm.ravel,
         tm.abs,
         tm.sign,
+        tm.special.erf,
     ]:
         assert np.allclose(fun(F), fun(T).x)
 
