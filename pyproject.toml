@@ -46,6 +46,9 @@ classifiers = [
 dynamic = ["version"]
 dependencies = ["numpy", "joblib"]
 
+[project.optional-dependencies]
+all = ["scipy"]
+
 [tool.setuptools.dynamic]
 version = {attr = "tensortrax.__about__.__version__"}
 

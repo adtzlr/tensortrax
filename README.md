@@ -21,6 +21,20 @@
 # Motivation
 Gradient and hessian evaluations of functions or functionals based on tensor-valued input arguments are a fundamental repetitive and (error-prone) task in constitutive hyperelastic material formulations used in continuum mechanics of solid bodies. In the worst case, conceptual ideas are impossible to pursue because the required tensorial derivatives are not readily achievable. The Hyper-Dual number approach enables a generalized and systematic way to overcome this deficiency [[2]](https://arc.aiaa.org/doi/abs/10.2514/6.2011-886). Compared to existing Hyper-Dual Number libaries ([[3]](https://github.com/itt-ustutt/num-dual), [[4]](https://github.com/oberbichler/HyperJet)) which introduce a new (hyper-) dual `dtype` (treated as `dtype=object` in NumPy), `tensortrax` relies on its own `Tensor` class. This approach involves a re-definition of all essential math operations (and NumPy-functions), whereas the `dtype`-approach supports most basic math operations out of the box. However, in `tensortrax` NumPy and all its underlying linear algebra functions operate on default data types (e.g. `dtype=float`). This allows to support functions like `np.einsum()`. Beside the differences concerning the underlying `dtype`, `tensortrax` is formulated on easy-to-understand (tensorial) calculus of variation. Hence, gradient- and hessian-vector products are evaluated with very little overhead compared to analytic formulations.
 
+# Installation
+Install `tensortrax` from [PyPI](https://pypi.org/project/tensortrax/), the Python Package Index.
+
+```
+pip install tensortrax[all]
+```
+
+`tensortrax` has minimal requirements, all available at PyPI.
+* [`joblib`](https://github.com/joblib/joblib) for threaded function, gradient, hessian and jacobian evaluations
+* [`numpy`](https://github.com/numpy/numpy) for array operations
+
+To install optional dependencies as well, add `[all]` to the install command: `pip install tensortrax[all]`.
+* [`scipy`](https://github.com/scipy/scipy) for extended math-support
+
 # Usage
 Let's define a scalar-valued function which operates on a tensor. The math module `tensortrax.math` provides some essential NumPy-like functions including linear algebra.
 
