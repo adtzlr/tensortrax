@@ -76,8 +76,11 @@ def test_math():
     C = F.T @ F
     V = tr.Tensor(C)
 
-    for fun in [tm.linalg.det, tm.linalg.inv]:
+    for fun in [tm.linalg.det, tm.linalg.inv, tm.linalg.eigvalsh]:
         assert np.allclose(fun(C), fun(V).x)
+
+    for fun in [tm.linalg.eigh]:
+        assert np.all([np.allclose(x, y.x) for x, y in zip(fun(C), fun(V))])
 
     for fun in [
         tm.special.dev,

@@ -2,7 +2,6 @@
 tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
-
 import numpy as np
 
 from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
@@ -67,130 +66,144 @@ def pinv(A):
 def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues of a symmetric Tensor."
 
-    A[0, 0] += eps
-    A[1, 1] -= eps
+    if isinstance(A, Tensor):
 
-    λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
-    M = einsum("ai...,aj...->aij...", N, N)
+        A[0, 0] += eps
+        A[1, 1] -= eps
 
-    dim = len(λ)
+        λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
+        M = einsum("ai...,aj...->aij...", N, N)
 
-    δλ = einsum("aij...,ij...->a...", M, δ(A))
-    Δλ = einsum("aij...,ij...->a...", M, Δ(A))
+        dim = len(λ)
 
-    # alpha = [0, 1, 2]
-    # beta = [(1, 2), (2, 0), (0, 1)]
+        δλ = einsum("aij...,ij...->a...", M, δ(A))
+        Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
-    alpha = np.arange(dim)
-    beta = [
-        np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)
-    ]
+        # alpha = [0, 1, 2]
+        # beta = [(1, 2), (2, 0), (0, 1)]
 
-    δN = []
-    for α in alpha:
-        δNα = []
-        for β in beta[α]:
-            Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-            δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
-            λαβ = λ[α] - λ[β]
-            δNα.append(1 / λαβ * N[β] * δAαβ)
-        δN.append(sum(δNα, axis=0))
+        alpha = np.arange(dim)
+        beta = [
+            np.concatenate([np.arange(a + 1, dim), np.arange(a)])
+            for a in np.arange(dim)
+        ]
 
-    δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
-    Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
-        "aij...,ij...->a...", M, Δδ(A)
-    )
+        δN = []
+        for α in alpha:
+            δNα = []
+            for β in beta[α]:
+                Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
+                λαβ = λ[α] - λ[β]
+                δNα.append(1 / λαβ * N[β] * δAαβ)
+            δN.append(sum(δNα, axis=0))
 
-    return Tensor(
-        x=λ,
-        δx=δλ,
-        Δx=Δλ,
-        Δδx=Δδλ,
-        ntrax=A.ntrax,
-    )
+        δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
+        Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
+            "aij...,ij...->a...", M, Δδ(A)
+        )
 
-
-def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
-    "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
-
-    A[0, 0] += eps
-    A[1, 1] -= eps
-
-    λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
-    M = einsum("ai...,aj...->aij...", N, N)
-
-    dim = len(λ)
-
-    δλ = einsum("aij...,ij...->a...", M, δ(A))
-    Δλ = einsum("aij...,ij...->a...", M, Δ(A))
-
-    # alpha = [0, 1, 2]
-    # beta = [(1, 2), (2, 0), (0, 1)]
-    alpha = np.arange(dim)
-    beta = [
-        np.concatenate([np.arange(a + 1, dim), np.arange(a)]) for a in np.arange(dim)
-    ]
-
-    δN = []
-    ΔN = []
-    for α in alpha:
-        δNα = []
-        ΔNα = []
-        for β in beta[α]:
-            Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-            δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
-            ΔAαβ = einsum("ij...,ij...->...", Mαβ, Δ(A))
-            λαβ = λ[α] - λ[β]
-            δNα.append(1 / λαβ * N[β] * δAαβ)
-            ΔNα.append(1 / λαβ * N[β] * ΔAαβ)
-        δN.append(sum(δNα, axis=0))
-        ΔN.append(sum(ΔNα, axis=0))
-
-    ΔδN = []
-    for α in alpha:
-        ΔδNα = []
-        for β in beta[α]:
-            Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-            δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
-            ΔδAαβ = einsum("ij...,ij...->...", Mαβ, Δδ(A))
-            λαβ = λ[α] - λ[β]
-            Δλαβ = Δλ[α] - Δλ[β]
-            ΔδNα.append(
-                -(λαβ**-2) * Δλαβ * N[β] * δAαβ
-                + 1 / λαβ * ΔN[β] * δAαβ
-                + 1 / λαβ * N[β] * ΔδAαβ
-            )
-        ΔδN.append(sum(ΔδNα, axis=0))
-
-    δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
-    ΔM = einsum("ai...,aj...->aij...", ΔN, N) + einsum("ai...,aj...->aij...", N, ΔN)
-    Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
-        "aij...,ij...->a...", M, Δδ(A)
-    )
-
-    ΔδM = (
-        einsum("ai...,aj...->aij...", δN, ΔN)
-        + einsum("ai...,aj...->aij...", ΔN, δN)
-        + einsum("ai...,aj...->aij...", ΔδN, N)
-        + einsum("ai...,aj...->aij...", N, ΔδN)
-    )
-
-    return (
-        Tensor(
+        return Tensor(
             x=λ,
             δx=δλ,
             Δx=Δλ,
             Δδx=Δδλ,
             ntrax=A.ntrax,
-        ),
-        Tensor(
-            x=M,
-            δx=δM,
-            Δx=ΔM,
-            Δδx=ΔδM,
-            ntrax=A.ntrax,
-        ),
-    )
+        )
+
+    else:
+        return np.linalg.eigvalsh(A.T).T
+
+
+def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
+    "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
+
+    if isinstance(A, Tensor):
+
+        A[0, 0] += eps
+        A[1, 1] -= eps
+
+        λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
+        M = einsum("ai...,aj...->aij...", N, N)
+
+        dim = len(λ)
+
+        δλ = einsum("aij...,ij...->a...", M, δ(A))
+        Δλ = einsum("aij...,ij...->a...", M, Δ(A))
+
+        # alpha = [0, 1, 2]
+        # beta = [(1, 2), (2, 0), (0, 1)]
+        alpha = np.arange(dim)
+        beta = [
+            np.concatenate([np.arange(a + 1, dim), np.arange(a)])
+            for a in np.arange(dim)
+        ]
+
+        δN = []
+        ΔN = []
+        for α in alpha:
+            δNα = []
+            ΔNα = []
+            for β in beta[α]:
+                Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
+                ΔAαβ = einsum("ij...,ij...->...", Mαβ, Δ(A))
+                λαβ = λ[α] - λ[β]
+                δNα.append(1 / λαβ * N[β] * δAαβ)
+                ΔNα.append(1 / λαβ * N[β] * ΔAαβ)
+            δN.append(sum(δNα, axis=0))
+            ΔN.append(sum(ΔNα, axis=0))
+
+        ΔδN = []
+        for α in alpha:
+            ΔδNα = []
+            for β in beta[α]:
+                Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
+                ΔδAαβ = einsum("ij...,ij...->...", Mαβ, Δδ(A))
+                λαβ = λ[α] - λ[β]
+                Δλαβ = Δλ[α] - Δλ[β]
+                ΔδNα.append(
+                    -(λαβ**-2) * Δλαβ * N[β] * δAαβ
+                    + 1 / λαβ * ΔN[β] * δAαβ
+                    + 1 / λαβ * N[β] * ΔδAαβ
+                )
+            ΔδN.append(sum(ΔδNα, axis=0))
+
+        δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
+        ΔM = einsum("ai...,aj...->aij...", ΔN, N) + einsum("ai...,aj...->aij...", N, ΔN)
+        Δδλ = einsum("aij...,ij...->a...", δM, Δ(A)) + einsum(
+            "aij...,ij...->a...", M, Δδ(A)
+        )
+
+        ΔδM = (
+            einsum("ai...,aj...->aij...", δN, ΔN)
+            + einsum("ai...,aj...->aij...", ΔN, δN)
+            + einsum("ai...,aj...->aij...", ΔδN, N)
+            + einsum("ai...,aj...->aij...", N, ΔδN)
+        )
+
+        return (
+            Tensor(
+                x=λ,
+                δx=δλ,
+                Δx=Δλ,
+                Δδx=Δδλ,
+                ntrax=A.ntrax,
+            ),
+            Tensor(
+                x=M,
+                δx=δM,
+                Δx=ΔM,
+                Δδx=ΔδM,
+                ntrax=A.ntrax,
+            ),
+        )
+
+    else:
+        λ, N = [x.T for x in np.linalg.eigh(A.T)]
+        M = einsum("ai...,aj...->aij...", N, N)
+        return λ, M
 
 
 def expm(A):
