@@ -440,8 +440,8 @@ class Tensor:
             "",
             "Data (first batch):",
         ]
-
-        data = self.x[..., *np.zeros(self.ntrax, dtype=int)].__repr__()
+        first_batch = [0] * self.ntrax
+        data = self.x[..., *first_batch].__repr__()
         return "\n".join([header, *metadata, "", data])
 
     @property
