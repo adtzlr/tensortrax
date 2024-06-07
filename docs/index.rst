@@ -48,6 +48,7 @@ To install optional dependencies as well, add ``[all]`` to the install command: 
    :maxdepth: 1
    :caption: Contents:
    
+   examples/index
    tensortrax
 
 License

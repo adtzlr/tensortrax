@@ -14,6 +14,8 @@ import datetime
 import os
 import sys
 
+from sphinx_gallery.sorting import FileNameSortKey
+
 sys.path.insert(0, os.path.abspath(".."))
 
 
@@ -38,8 +40,23 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_inline_tabs",
     "sphinx_copybutton",
+    "sphinx_gallery.gen_gallery",
     "matplotlib.sphinxext.plot_directive",
 ]
+
+sphinx_gallery_conf = {
+    "examples_dirs": ["../examples"],
+    "gallery_dirs": ["examples"],
+    "image_scrapers": ("matplotlib",),
+    "download_all_examples": False,
+    "remove_config_comments": True,
+    "reset_modules_order": "both",
+    "filename_pattern": "ex.*\\.py",
+    "backreferences_dir": None,
+    "pypandoc": True,
+    "capture_repr": ("_repr_html_",),
+    "within_subsection_order": FileNameSortKey,
+}
 
 intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/stable/", None),

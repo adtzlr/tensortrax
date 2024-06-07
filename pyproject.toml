@@ -54,6 +54,8 @@ docs = [
     "sphinx-inline-tabs",
     "sphinx-copybutton",
     "matplotlib",
+    "sphinx-gallery",
+    "pypandoc",
 ]
 
 [tool.setuptools.dynamic]
