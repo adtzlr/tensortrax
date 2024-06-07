@@ -48,11 +48,18 @@ dependencies = ["numpy", "joblib"]
 
 [project.optional-dependencies]
 all = ["scipy"]
+docs = [
+    "pydata-sphinx-theme",
+    "sphinx-autoapi",
+    "sphinx-inline-tabs",
+    "sphinx-copybutton",
+    "matplotlib",
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "tensortrax.__about__.__version__"}
 
 [project.urls]
-Homepage = "https://github.com/adtzlr/tensortrax"
+Homepage = "https://tensortrax.readthedocs.io/en/latest"
 Code = "https://github.com/adtzlr/tensortrax"
 Issues = "https://github.com/adtzlr/tensortrax/issues"

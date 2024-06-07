@@ -242,7 +242,7 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
 
 def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
-    "Evaluate the jacobian a scalar-valued function."
+    "Evaluate the jacobian of a function."
 
     @wraps(fun)
     def evaluate_jacobian(*args, **kwargs):
