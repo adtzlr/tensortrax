@@ -10,49 +10,187 @@ from ._helpers import Δ, Δδ, f, δ
 
 
 class Tensor:
-    """A (hyper-dual) Tensor with trailing axes.
+    r"""A Hyper-Dual Tensor.
 
-    Attributes
+    Parameters
     ----------
     x : array_like
         The data of the tensor.
-    δx : arrayl_like or None
+    δx : array_like or None, optional
         (Dual) variation data (δ-operator) of the tensor.
-    Δx : arrayl_like or None
+    Δx : array_like or None, optional
         (Dual) variation data (Δ-operator) of the tensor.
-    Δδx : arrayl_like or None
+    Δδx : array_like or None, optional
         (Dual) linearization data (Δδ-operator) of the tensor.
-    ntrax : int
-        Number of trailing axes.
-    shape : tuple
-        Shape of the tensor (without trailing axes).
-    trax : tuple
-        Shape of the trailing axes.
-    size : int
-        Product of shape (without trailing axes) of the tensor.
+    ntrax : int, optional
+        Total number of trailing axes including dual axes (default is 0).
+    ndual : int, optional
+        Number of axes containing dual data (default is 0).
 
+    Examples
+    --------
+    A hyper-dual tensor consists of batches of tensors, where the elementwise-operating
+    batches are located at the last dimensions (trailing axes). For example, consider
+    two second-order tensors in 3d-space as shown in Eq. :eq:`2d-tensors`.
+
+    ..  math::
+        :label: 2d-tensors
+
+        \boldsymbol{T}_1 &= \begin{bmatrix} 
+            0 & 3 & 6 \\
+            1 & 4 & 7 \\
+            2 & 5 & 8
+        \end{bmatrix}
+        
+        \boldsymbol{T}_2 &= \begin{bmatrix} 
+             9 & 12 & 15 \\
+            10 & 13 & 16 \\
+            11 & 14 & 17
+        \end{bmatrix}
+    
+    This tensor is created with one elementwise-operating trailing axis.
+    
+    ..  plot::
+        :context:
+            
+        >>> import tensortrax as tr
+        >>> import numpy as np
+        >>> 
+        >>> T = tr.Tensor(np.arange(18).reshape(2, 3, 3).T, ntrax=1)
+        >>> T
+        <tensortrax tensor object>
+          Shape / size of trailing axes: (2,) / 1
+          Shape / size of tensor: (3, 3) / 9
+        <BLANKLINE>
+        Data (first batch):
+        <BLANKLINE>
+        array([[0, 3, 6],
+               [1, 4, 7],
+               [2, 5, 8]])
+    
+    A tensor, which is created without any dual data, is treated as constant and hence,
+    all dual data arrays are initially filled with zeros.
+    
+    ..  tip::
+        Broadcasting is used to enhance performance and to reduce memory consumption. If
+        no dual data arrays are provided, the trailing axes of the dual arrays are
+        compressed.
+    
+    ..  plot::
+        :context:
+            
+        >>> T.x.shape
+        (3, 3, 2)
+        
+        >>> T.δx.shape
+        (3, 3, 1)
+    
+    If the gradient (or jacobian) w.r.t. this tensor should be recorded, the tensor must
+    be initiated with the argument ``gradient=True``. This will add additional dual axes
+    to the data arrays of the tensor. These axes are used for the gradient dimension.
+    
+    ..  plot::
+        :context:
+            
+        >>> T.init(gradient=True)
+        >>> T
+        <tensortrax tensor object>
+          Shape / size of trailing axes: (1, 1, 2) / 3
+          Shape / size of tensor: (3, 3) / 9
+        <BLANKLINE>
+        Data (first batch):
+        <BLANKLINE>
+        array([[0, 3, 6],
+               [1, 4, 7],
+               [2, 5, 8]])
+    
+    Again, broadcasting is used, see the shapes of the tensor data arrays.
+    
+    ..  plot::
+        :context:
+            
+        >>> T.x.shape
+        (3, 3, 1, 1, 2)
+        
+        >>> T.δx.shape
+        (3, 3, 3, 3, 1)
+    
+    If we look at the dual array, this is the (non-symmetric) fourth-order identity
+    tensor, see Eq. :eq:`dual-identity`. This identity tensor has values of one located
+    at the component to be differentiated and is filled with zeros otherwise.
+    
+    ..  math::
+        :label: dual-identity
+        
+        \frac{\partial T_{ij}}{\partial T_{kl}} = \delta_{ik}\ \delta_{jl}
+    
+    ..  plot::
+        :context:
+        
+        >>> T.δx[0, 1, ..., 0]
+        array([[0., 1., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.]])
+        
+        >>> T.δx[1, 2, ..., 0]
+        array([[0., 0., 0.],
+               [0., 0., 1.],
+               [0., 0., 0.]])
+        
+        >>> T.δx.reshape(9, 9)
+        array([[1., 0., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 1., 0., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 1., 0., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 1., 0., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 1., 0., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 1., 0., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 1., 0., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 1., 0.],
+               [0., 0., 0., 0., 0., 0., 0., 0., 1.]])
+    
+    Now let's perform some math, e.g. the dot product as shown in Eq. :eq:`dot`. Along
+    with the evaluation of the dot-product, the partial derivative of
+    :math:`\boldsymbol{V}` w.r.t. :math:`\boldsymbol{T}` is recorded in the dual data
+    array.
+    
+    ..  math::
+        :label: dot
+        
+        \boldsymbol{V} &= \boldsymbol{T}^T\ \boldsymbol{T}
+        
+        \delta \boldsymbol{V} &=
+            \delta \boldsymbol{T}^T\ \boldsymbol{T} + 
+            \boldsymbol{T}^T\ \delta \boldsymbol{T}
+    
+    ..  plot::
+        :context:
+        
+        >>> V = T.T @ T
+        >>> V
+        <tensortrax tensor object>
+          Shape / size of trailing axes: (1, 1, 2) / 3
+          Shape / size of tensor: (3, 3) / 9
+        <BLANKLINE>
+        Data (first batch):
+        <BLANKLINE>
+        array([[  5,  14,  23],
+               [ 14,  50,  86],
+               [ 23,  86, 149]])
+        
+        >>> V.δx[1, 2, ..., 0]
+        array([[0., 6., 3.],
+               [0., 7., 4.],
+               [0., 8., 5.]])
+    
+    See Also
+    --------
+    tensortrax.function : Evaluate a function.
+    tensortrax.gradient : Evaluate the gradient of a scalar-valued function.
+    tensortrax.jacobian : Evaluate the jacobian of a function.
+    tensortrax.hessian : Evaluate the hessian of a scalar-valued function.
     """
 
     def __init__(self, x, δx=None, Δx=None, Δδx=None, ntrax=0, ndual=0):
-        """Init a Hyper-Dual Tensor with trailing axes.
-
-        Parameters
-        ----------
-        x : array_like
-            The data of the tensor.
-        δx : arrayl_like or None, optional
-            (Dual) variation data (δ-operator) of the tensor.
-        Δx : arrayl_like or None, optional
-            (Dual) variation data (Δ-operator) of the tensor.
-        Δδx : arrayl_like or None, optional
-            (Dual) linearization data (Δδ-operator) of the tensor.
-        ntrax : int, optional
-            Number of trailing axes (default is 0).
-        ndual : int, optional
-            Number of axes containing dual data (default is 0).
-
-        """
-
         self.x = np.asarray(x)
 
         self.ntrax = ntrax
@@ -299,8 +437,11 @@ class Tensor:
         metadata = [
             f"  Shape / size of trailing axes: {self.trax} / {self.ntrax}",
             f"  Shape / size of tensor: {self.shape} / {self.size}",
+            "",
+            "Data (first batch):",
         ]
-        data = self.x.__repr__()
+        first_batch = (0,) * self.ntrax
+        data = self.x[(..., *first_batch)].__repr__()
         return "\n".join([header, *metadata, "", data])
 
     @property
