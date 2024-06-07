@@ -26,9 +26,7 @@ The :math:`P_{ij}` - component of the jacobian :math:`\boldsymbol{P}` is now num
 .. math::
    :label: variation-tensor-component
 
-   \delta \boldsymbol{F}_{(12)} &= \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
-
-   \delta_{(12)} \psi &= \frac{\partial \psi}{\partial F_{12}} &= 2 \ \boldsymbol{F} : \delta \boldsymbol{F}_{(12)} = 2 \ \boldsymbol{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+   \delta_{(12)} \psi = \frac{\partial \psi}{\partial F_{12}} &= 2 \ \boldsymbol{F} : \delta \boldsymbol{F}_{(12)} = 2 \ \boldsymbol{F} : \begin{bmatrix} 0 & 1 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
 
 The second order variation, i.e. a variation applied on another variation of a function is evaluated in the same way as a first order variation, see Eq. :eq:`variation-tensor-second`.
 
