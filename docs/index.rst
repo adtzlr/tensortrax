@@ -10,7 +10,7 @@ Highlights
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
-- Stable gradient and hessian of eigenvalues obtained from `eigvalsh` in case of repeated equal eigenvalues
+- Stable gradient and hessian of eigenvalues obtained from ``eigvalsh`` in case of repeated equal eigenvalues
 
 Installation
 ------------
