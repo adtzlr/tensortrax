@@ -49,6 +49,7 @@ To install optional dependencies as well, add ``[all]`` to the install command: 
    :caption: Contents:
    
    examples/index
+   knowledge
    tensortrax
 
 License
