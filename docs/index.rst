@@ -3,6 +3,7 @@ tensortrax documentation
 
 Highlights
 ----------
+- Write differentiable code with Tensors based on NumPy arrays
 - Designed to operate on input arrays with (elementwise-operating) trailing axes
 - Essential vector/tensor Hyper-Dual number math, including limited support for ``einsum`` (restricted to max. three operands)
 - Math is limited but similar to NumPy, try to use ``import tensortrax.math as tm`` instead of ``import numpy as np`` inside functions to be differentiated
