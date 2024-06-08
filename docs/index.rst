@@ -1,28 +1,28 @@
-Documentation
-=============
-
 .. figure:: _static/logo.png
    :align: center
 
    Differentiable Tensors based on NumPy Arrays.
 
-Highlights
-----------
-- Write differentiable code with Tensors based on NumPy arrays
-- Designed to operate on input arrays with (elementwise-operating) trailing axes
-- Essential vector/tensor Hyper-Dual number math, including limited support for ``einsum`` (restricted to max. three operands)
-- Math is limited but similar to NumPy, try to use ``import tensortrax.math as tm`` instead of ``import numpy as np`` inside functions to be differentiated
-- Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
-- Create functions in terms of Hyper-Dual Tensors
-- Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
-- Straight-forward definition of custom functions in variational-calculus notation
-- Stable gradient and hessian of eigenvalues obtained from ``eigvalsh`` in case of repeated equal eigenvalues
+Documentation
+=============
+
+.. admonition:: Highlights
+
+   - Write differentiable code with Tensors based on NumPy arrays
+   - Designed to operate on input arrays with (elementwise-operating) trailing axes
+   - Essential vector/tensor Hyper-Dual number math, including limited support for ``einsum`` (restricted to max. three operands)
+   - Math is limited but similar to NumPy, try to use ``import tensortrax.math as tm`` instead of ``import numpy as np`` inside functions to be differentiated
+   - Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
+   - Create functions in terms of Hyper-Dual Tensors
+   - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
+   - Straight-forward definition of custom functions in variational-calculus notation
+   - Stable gradient and hessian of eigenvalues obtained from ``eigvalsh`` in case of repeated equal eigenvalues
 
 Motivation
 ----------
 Gradient and hessian evaluations of functions or functionals based on tensor-valued input arguments are a fundamental repetitive and (error-prone) task in constitutive hyperelastic material formulations used in continuum mechanics of solid bodies. In the worst case, conceptual ideas are impossible to pursue because the required tensorial derivatives are not readily achievable. The Hyper-Dual number approach enables a generalized and systematic way to overcome this deficiency [2]_. Compared to existing Hyper-Dual Number libaries ([3]_, [4]_) which introduce a new (hyper-) dual ``dtype`` (treated as ``dtype=object`` in NumPy), ``tensortrax`` relies on its own ``Tensor`` class. This approach involves a re-definition of all essential math operations (and NumPy-functions), whereas the ``dtype``-approach supports most basic math operations out of the box. However, in ``tensortrax``, NumPy and all its underlying linear algebra functions operate on default data types (e.g. ``dtype=float``). This allows to support functions like ``np.einsum()``. Beside the differences concerning the underlying ``dtype``, ``tensortrax`` is formulated on easy-to-understand (tensorial) calculus of variation. Hence, gradient- and hessian-vector products are evaluated with very little overhead compared to analytic formulations.
 
-.. note::
+.. important::
    Please keep in mind that ``tensortrax`` is not imitating a 100% full-featured NumPy, e.g. like https://github.com/HIPS/autograd [1]_. No arbitrary-order gradients or gradients-of-gradients are supported. The capability is limited to first- and second order gradients of a given function. Also, ``tensortrax`` provides no support for ``dtype=complex`` and ``out``-keywords are not supported.
 
 Installation
