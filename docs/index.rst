@@ -1,7 +1,7 @@
-tensortrax documentation
-========================
+Documentation
+=============
 
-.. topic:: tensortrax
+.. tip:: tensortrax
    Differentiable Tensors based on NumPy Arrays.
 
 Highlights
