@@ -1,7 +1,7 @@
 Documentation
 =============
 
-.. image:: logo.png
+.. figure:: logo.png
    :align: center
    :caption: Differentiable Tensors based on NumPy Arrays.
 
