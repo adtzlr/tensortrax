@@ -24,8 +24,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.1260382"
-     inkscape:cx="310.82428"
-     inkscape:cy="74.597827"
+     inkscape:cx="310.82427"
+     inkscape:cy="74.597824"
      inkscape:window-width="1920"
      inkscape:window-height="1008"
      inkscape:window-x="0"
@@ -182,13 +182,13 @@
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:21.1667px;line-height:1.25;font-family:sans-serif;letter-spacing:-0.79375px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:21.1667px;line-height:1.25;font-family:sans-serif;letter-spacing:-0.79375px;fill:#666666;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="40.6478"
        y="20.906561"
        id="text10118"><tspan
          sodipodi:role="line"
          id="tspan10116"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.1667px;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;stroke-width:0.264583"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.1667px;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;stroke-width:0.264583;fill:#666666;fill-opacity:1"
          x="40.6478"
          y="20.906561">tensortrax</tspan></text>
   </g>
