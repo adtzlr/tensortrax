@@ -118,7 +118,7 @@ html_theme_options = {
     ],
     "use_edit_page_button": True,
 }
-
+html_logo = "_static/logo.png"
 html_context = {
     "github_user": "adtzlr",
     "github_repo": "tensortrax",
