@@ -2,9 +2,9 @@ r"""
 Numeric calculus of variation
 -----------------------------
 Each Tensor has four attributes: the (real) tensor array and the (hyper-dual)
-variational arrays. To obtain the above mentioned :math:`12` - component of the gradient
-and the :math:`1223` - component of the hessian, a tensor has to be created with the
-appropriate small-changes of the tensor components (dual arrays).
+variational arrays. To obtain the :math:`12` - component of the gradient and the
+:math:`1223` - component of the hessian, a tensor has to be created with the appropriate
+small-changes of the tensor components (dual arrays).
 """
 import numpy as np
 
