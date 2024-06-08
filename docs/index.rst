@@ -3,7 +3,8 @@ Documentation
 
 .. figure:: logo.png
    :align: center
-   :caption: Differentiable Tensors based on NumPy Arrays.
+
+   Differentiable Tensors based on NumPy Arrays.
 
 Highlights
 ----------
