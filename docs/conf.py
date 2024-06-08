@@ -117,8 +117,12 @@ html_theme_options = {
         },
     ],
     "use_edit_page_button": True,
+    "logo": {
+        "text": "tensortrax",
+        "image_light": "logo_without_text.png",
+        "image_dark": "logo_without_text.png",
+    },
 }
-html_logo = "_static/logo.png"
 html_context = {
     "github_user": "adtzlr",
     "github_repo": "tensortrax",
