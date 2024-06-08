@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/adtzlr/tensortrax/assets/5793153/7dd2f76d-aa3c-494d-935c-bdd8e945c692" height="80px"/>
-  <p align="center">Math on (Hyper-Dual) Tensors with Trailing Axes.</p>
+  <p align="center">Differentiable Tensors based on NumPy Arrays.</p>
 </p>
 
 [![PyPI version shields.io](https://img.shields.io/pypi/v/tensortrax.svg)](https://pypi.python.org/pypi/tensortrax/) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Documentation Status](https://readthedocs.org/projects/tensortrax/badge/?version=latest)](https://tensortrax.readthedocs.io/en/latest/?badge=latest) ![PyPI - Downloads](https://img.shields.io/pypi/dm/tensortrax) ![Codestyle black](https://img.shields.io/badge/code%20style-black-black) [![DOI](https://zenodo.org/badge/570708066.svg)](https://zenodo.org/badge/latestdoi/570708066) [![codecov](https://codecov.io/github/adtzlr/tensortrax/branch/main/graph/badge.svg?token=7DTH0HKYO9)](https://codecov.io/github/adtzlr/tensortrax)

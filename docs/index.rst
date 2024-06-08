@@ -1,6 +1,9 @@
 tensortrax documentation
 ========================
 
+.. topic:: tensortrax
+   Differentiable Tensors based on NumPy Arrays.
+
 Highlights
 ----------
 - Write differentiable code with Tensors based on NumPy arrays

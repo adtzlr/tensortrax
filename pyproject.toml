@@ -7,7 +7,7 @@ profile = "black"
 
 [project]
 name = "tensortrax"
-description = "Math on (Hyper-Dual) Tensors with Trailing Axes"
+description = "MDifferentiable Tensors based on NumPy Arrays"
 readme = "README.md"
 authors = [
   {name = "Andreas Dutzler"},
