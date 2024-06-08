@@ -1,7 +1,7 @@
 Documentation
 =============
 
-.. figure:: logo.png
+.. figure:: _static/logo.png
    :align: center
 
    Differentiable Tensors based on NumPy Arrays.
