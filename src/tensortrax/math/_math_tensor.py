@@ -41,14 +41,17 @@ def array(object, dtype=None, like=None, shape=None):
 
 
 def trace(A):
+    "Return the sum along diagonals of the array."
     return einsum("ii...->...", A)
 
 
 def transpose(A):
+    "Returns an array with axes transposed."
     return einsum("ij...->ji...", A)
 
 
 def sum(A, axis=0):
+    "Sum of array elements over a given axis."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.sum(f(A), axis=axis),
@@ -62,6 +65,7 @@ def sum(A, axis=0):
 
 
 def sign(A):
+    "Returns an element-wise indication of the sign of a number."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.sign(f(A)),
@@ -75,6 +79,7 @@ def sign(A):
 
 
 def abs(A):
+    "Calculate the absolute value element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.abs(f(A)),
@@ -95,6 +100,7 @@ def sqrt(A):
 
 
 def sin(A):
+    "Trigonometric sine, element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.sin(f(A)),
@@ -108,6 +114,7 @@ def sin(A):
 
 
 def cos(A):
+    "Cosine element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.cos(f(A)),
@@ -121,6 +128,7 @@ def cos(A):
 
 
 def tan(A):
+    "Compute tangent element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.tan(f(A)),
@@ -135,6 +143,7 @@ def tan(A):
 
 
 def sinh(A):
+    "Hyperbolic sine, element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.sinh(f(A)),
@@ -148,6 +157,7 @@ def sinh(A):
 
 
 def cosh(A):
+    "Hyperbolic cosine, element-wise."
     if isinstance(A, Tensor):
         return Tensor(
             x=np.cosh(f(A)),
@@ -161,6 +171,7 @@ def cosh(A):
 
 
 def tanh(A):
+    "Compute hyperbolic tangent element-wise."
     if isinstance(A, Tensor):
         x = np.tanh(f(A))
         return Tensor(
@@ -175,6 +186,7 @@ def tanh(A):
 
 
 def exp(A):
+    "Calculate the exponential of all elements in the input array."
     if isinstance(A, Tensor):
         x = np.exp(f(A))
         return Tensor(
@@ -189,6 +201,7 @@ def exp(A):
 
 
 def log(A):
+    "Natural logarithm, element-wise."
     if isinstance(A, Tensor):
         x = np.log(f(A))
         return Tensor(
@@ -203,6 +216,7 @@ def log(A):
 
 
 def log10(A):
+    "Return the base 10 logarithm of the input array, element-wise."
     if isinstance(A, Tensor):
         x = np.log10(f(A))
         return Tensor(
