@@ -227,7 +227,7 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     parallel : bool, optional
         Flag to evaluate the gradient in parallel (threaded).
     full_output: bool, optional
-        Return the function and the gradient (default is False).
+        Return the gradient and the function (default is False).
     sym : bool, optional
         Apply the variations only on the upper-triangle entries of a symmetric second
         order tensor. This is a performance feature and requires no modification of the
@@ -309,7 +309,7 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     parallel : bool, optional
         Flag to evaluate the Hessian in parallel (threaded).
     full_output: bool, optional
-        Return the function and the gradient (default is False).
+        Return the hessian, the gradient and the function (default is False).
     sym : bool, optional
         Apply the variations only on the upper-triangle entries of a symmetric second
         order tensor. This is a performance feature and requires no modification of the
@@ -398,6 +398,8 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the Jacobian in parallel (threaded).
+    full_output: bool, optional
+        Return the Jacobian and the function (default is False).
 
     Returns
     -------
@@ -459,7 +461,9 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
     Parameters
     ----------
     fun : callable
-        The function to be evaluated.
+        The function to be evaluated. Its signature is extended to
+        :func:`fun(*args, δx, **kwargs)`, where the added ``δx``-argument is the vector
+        of the gradient-vector product.
     wrt : int or str, optional
         The input argument which will be treated as :class:`~tensortrax.Tensor` (default
         is 0). The gradient-vector-product is carried out with respect to this argument.
@@ -520,7 +524,60 @@ def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
 
 
 def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate the hessian-vector-product of a function."
+    r"""Evaluate the Hessian-vector-product of a scalar-valued function.
+
+    Parameters
+    ----------
+    fun : callable
+        The function to be evaluated. Its signature is extended to
+        :func:`fun(*args, δx, **kwargs)`, where the added ``δx``-argument is the vector
+        of the Hessian-vector product.
+    wrt : int or str, optional
+        The input argument which will be treated as :class:`~tensortrax.Tensor` (default
+        is 0). The Hessian-vector-product is carried out with respect to this argument.
+    ntrax : int, optional
+        Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
+    parallel : bool, optional
+        Flag to evaluate the gradient-vector-product in parallel (threaded).
+
+    Returns
+    -------
+    ndarray
+        NumPy array containing the Hessian-vector-product result.
+
+    Notes
+    -----
+    The *vector* :math:`\delta x` and the tensor-argument ``wrt`` must have equal or
+    broadcast-compatible shapes. This means that the *vector* is not restricted to be a
+    one-dimensional array but must be an array with compatible shape instead.
+
+    Examples
+    --------
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def fun(F, mu=1):
+    >>>     C = F.T @ F
+    >>>     I1 = tm.trace(C)
+    >>>     J = tm.linalg.det(F)
+    >>>     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
+    >>>
+    >>> np.random.seed(125161)
+    >>> F = (np.eye(3) + np.random.rand(20, 8, 3, 3) / 10).T
+    >>> F.shape
+    (3, 3, 8, 20)
+
+    >>> np.random.seed(63254)
+    >>> δF = np.random.rand(3, 3, 8, 20) / 10
+    >>> δF.shape
+    (3, 3, 8, 20)
+
+    >>> dP = tr.hessian_vector_product(fun, wrt=0, ntrax=2)(F, δx=δF)
+    >>> dP.shape
+    >>> (3, 3, 8, 20)
+    """
 
     @wraps(fun)
     def evaluate_hessian_vector_product(*args, δx, **kwargs):
@@ -535,7 +592,67 @@ def hessian_vector_product(fun, wrt=0, ntrax=0, parallel=False):
 
 
 def hessian_vectors_product(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate the hessian-vectors-product of a function."
+    r"""Evaluate the vector-Hessian-vector- or Hessian-vectors-product of a scalar-
+    valued function.
+
+    Parameters
+    ----------
+    fun : callable
+        The function to be evaluated. Its signature is extended to
+        :func:`fun(*args, δx, Δx, **kwargs)`, where the added ``δx``- and ``Δx``-
+        arguments are the vectors of the Hessian-vectors product.
+    wrt : int or str, optional
+        The input argument which will be treated as :class:`~tensortrax.Tensor` (default
+        is 0). The Hessian-vectors-product is carried out with respect to this argument.
+    ntrax : int, optional
+        Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
+    parallel : bool, optional
+        Flag to evaluate the gradient-vector-product in parallel (threaded).
+
+    Returns
+    -------
+    ndarray
+        NumPy array containing the Hessian-vectors-product result.
+
+    Notes
+    -----
+    The *vectors* :math:`\delta x` and :math:`\Delta x` as well as the tensor-argument
+    ``wrt`` must have equal or broadcast-compatible shapes. This means that the
+    *vectors* are not restricted to be one-dimensional arrays but must be arrays with
+    compatible shapes instead.
+
+    Examples
+    --------
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def fun(F, mu=1):
+    >>>     C = F.T @ F
+    >>>     I1 = tm.trace(C)
+    >>>     J = tm.linalg.det(F)
+    >>>     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
+    >>>
+    >>> np.random.seed(125161)
+    >>> F = (np.eye(3) + np.random.rand(20, 8, 3, 3) / 10).T
+    >>> F.shape
+    (3, 3, 8, 20)
+
+    >>> np.random.seed(63254)
+    >>> δF = np.random.rand(3, 3, 8, 20) / 10
+    >>> δF.shape
+    (3, 3, 8, 20)
+
+    >>> np.random.seed(85476)
+    >>> ΔF = np.random.rand(3, 3, 8, 20) / 10
+    >>> ΔF.shape
+    (3, 3, 8, 20)
+
+    >>> ΔδW = tr.hessian_vectors_product(fun, wrt=0, ntrax=2)(F, δx=δF, Δx=ΔF)
+    >>> ΔδW.shape
+    >>> (8, 20)
+    """
 
     @wraps(fun)
     def evaluate_hessian_vectors_product(*args, δx, Δx, **kwargs):
