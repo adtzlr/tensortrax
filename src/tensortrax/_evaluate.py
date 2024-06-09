@@ -226,11 +226,14 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the gradient in parallel (threaded).
+    full_output: bool, optional
+        Return the function and the gradient (default is False).
 
     Returns
     -------
-    ndarray
-        NumPy array containing the gradient result.
+    ndarray or list of ndarray
+        NumPy array containing the gradient result. If ``full_output=True``, the
+        function is also returned.
 
     Examples
     --------
