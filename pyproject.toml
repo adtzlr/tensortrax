@@ -7,7 +7,7 @@ profile = "black"
 
 [project]
 name = "tensortrax"
-description = "MDifferentiable Tensors based on NumPy Arrays"
+description = "Differentiable Tensors based on NumPy Arrays"
 readme = "README.md"
 authors = [
   {name = "Andreas Dutzler"},
