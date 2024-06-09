@@ -371,7 +371,49 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
 
 
 def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
-    "Evaluate the jacobian of a function."
+    r"""Evaluate the Jacobian of a tensor-valued function.
+
+    Parameters
+    ----------
+    fun : callable
+        The function to be evaluated.
+    wrt : int or str, optional
+        The input argument which will be treated as :class:`~tensortrax.Tensor` (default
+        is 0). The Jacobian is carried out with respect to this argument.
+    ntrax : int, optional
+        Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
+    parallel : bool, optional
+        Flag to evaluate the Jacobian in parallel (threaded).
+
+    Returns
+    -------
+    ndarray
+        NumPy array containing the Jacobian result.
+
+    Examples
+    --------
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def fun(C, mu=1):
+    >>>     I3 = tm.linalg.det(C)
+    >>>     return mu * tm.special.dev(I3 ** (-1 / 3) * C) @ tm.linalg.inv(C)
+    >>>
+    >>> np.random.seed(125161)
+    >>> F = (np.eye(3) + np.random.rand(20, 8, 3, 3) / 10).T
+    >>> C = np.einsum("ki...,kj...->ij...", F, F)
+    >>>
+    >>> C.shape
+    (3, 3, 8, 20)
+
+    >>> dSdC = tr.jacobian(fun, wrt=0, ntrax=2)(C)
+    >>> dSdC = tr.jacobian(fun, wrt="C", ntrax=2)(C=C)
+    >>>
+    >>> dSdC.shape
+    >>> (3, 3, 3, 3, 8, 20)
+    """
 
     @wraps(fun)
     def evaluate_jacobian(*args, **kwargs):
