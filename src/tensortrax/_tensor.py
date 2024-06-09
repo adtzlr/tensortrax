@@ -449,12 +449,15 @@ class Tensor:
         return transpose(self)
 
     def ravel(self, order="C"):
+        "Return a contiguous flattened array."
         return ravel(self, order=order)
 
     def reshape(self, *shape, order="C"):
+        "Gives a new shape to an array without changing its data."
         return reshape(self, newshape=shape, order=order)
 
     def squeeze(self, axis=None):
+        "Remove axes of length one."
         return squeeze(self, axis=axis)
 
     def dual2real(self, like):
@@ -534,6 +537,7 @@ def real_to_dual(A, x, mul=None):
 
 
 def ravel(A, order="C"):
+    "Return a contiguous flattened array."
     if isinstance(A, Tensor):
         δtrax = δ(A).shape[len(A.shape) :]
         Δtrax = Δ(A).shape[len(A.shape) :]
@@ -550,6 +554,7 @@ def ravel(A, order="C"):
 
 
 def squeeze(A, axis=None):
+    "Remove axes of length one."
     if isinstance(A, Tensor):
         if axis is None:
             if 1 in A.shape:
@@ -568,6 +573,7 @@ def squeeze(A, axis=None):
 
 
 def reshape(A, newshape, order="C"):
+    "Gives a new shape to an array without changing its data."
     if isinstance(A, Tensor):
         δtrax = δ(A).shape[len(A.shape) :]
         Δtrax = Δ(A).shape[len(A.shape) :]
@@ -749,12 +755,14 @@ def einsum(subscripts, *operands):
 
 
 def transpose(A):
+    "Returns an array with axes transposed."
     ij = "abcdefghijklmnopqrstuvwxyz"[: len(A.shape)]
     ji = ij[::-1]
     return einsum(f"{ij}...->{ji}...", A)
 
 
 def matmul(A, B):
+    "Matrix product of two arrays."
     ik = "ik"[2 - len(A.shape) :]
     kj = "kj"[: len(B.shape)]
     ij = (ik + kj).replace("k", "")
