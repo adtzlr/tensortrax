@@ -228,6 +228,10 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         Flag to evaluate the gradient in parallel (threaded).
     full_output: bool, optional
         Return the function and the gradient (default is False).
+    sym : bool, optional
+        Apply the variations only on the upper-triangle entries of a symmetric second
+        order tensor. This is a performance feature and requires no modification of the
+        callable ``fun`` and the input arguments, including ``wrt``. Default is False.
 
     Returns
     -------
