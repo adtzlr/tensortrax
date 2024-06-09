@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/adtzlr/tensortrax/assets/5793153/445eedc1-295a-4c1e-b3f9-6f037887dd86g" height="65px"/>
+  <img src="https://github.com/adtzlr/tensortrax/assets/5793153/445eedc1-295a-4c1e-b3f9-6f037887dd86" height="65px"/>
   <p align="center">Differentiable Tensors based on NumPy Arrays.</p>
 </p>
 
