@@ -1,8 +1,8 @@
 .. _api-math-linalg:
 
-Math (Linear Algebra)
-~~~~~~~~~~~~~~~~~~~~~
-This module provides NumPy-like linear algebra functions.
+Linear Algebra
+~~~~~~~~~~~~~~
+This module provides NumPy-like linear algebra math functions.
 
 .. currentmodule:: tensortrax.math.linalg
 
