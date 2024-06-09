@@ -143,7 +143,50 @@ def concatenate_results(res, axis, full_output):
 
 
 def function(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate a function."
+    r"""Evaluate a function.
+
+    Parameters
+    ----------
+    fun : callable
+        The function to be evaluated.
+    wrt : int or str, optional
+        The input argument which will be treated as :class:`~tensortrax.Tensor` (default
+        is 0).
+    ntrax : int, optional
+        Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
+    parallel : bool, optional
+        Flag to evaluate the function in parallel (threaded).
+
+    Returns
+    -------
+    ndarray
+        NumPy array containing the function result.
+
+    Examples
+    --------
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def fun(F, mu=1):
+    >>>     C = F.T @ F
+    >>>     I1 = tm.trace(C)
+    >>>     J = tm.linalg.det(F)
+    >>>     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
+    >>>
+    >>> np.random.seed(125161)
+    >>> F = (np.eye(3) + np.random.rand(50, 8, 3, 3) / 10).T
+    >>>
+    >>> F.shape
+    (3, 3, 8, 50)
+
+    >>> W = tr.function(fun, wrt=0, ntrax=2)(F)
+    >>> W = tr.function(fun, wrt="F", ntrax=2)(F=F)
+    >>>
+    >>> W.shape
+    >>> (8, 50)
+    """
 
     @wraps(fun)
     def evaluate_function(*args, **kwargs):
