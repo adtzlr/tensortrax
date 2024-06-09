@@ -1,10 +1,25 @@
 r"""
 Quickstart
 ----------
-Let's define a scalar-valued function which operates on a tensor. The math module
-:mod:`tensortrax.math` provides some essential NumPy-like functions including linear
-algebra.
+Let's define a scalar-valued function which operates on a :class:`tensortrax.Tensor`.
+The math module :mod:`tensortrax.math` provides some essential NumPy-like functions
+including linear algebra. We take the strain energy density function of the Neo-Hookean
+isotropic hyperelastic material formulation as a reference example, see Eq.
+:eq:`tutorial-nh`.
+
+..  math::
+    :label: tutorial-nh
+
+    C &= \boldsymbol{F}^T \boldsymbol{F}
+    
+    I_1 &= \text{tr} (\boldsymbol{C})
+    
+    J &= \det (\boldsymbol{F})
+
+    \psi(\boldsymbol{F}) &= \frac{\mu}{2} \left( J^{-2/3}\ I_1 - 3 \right)
+
 """
+
 import tensortrax as tr
 import tensortrax.math as tm
 
@@ -83,7 +98,7 @@ dWdpdJ = tr.Δδ(W(F, p, J))
 
 # %%
 # In a similar way, the gradient may be obtained by initiating a Tensor with the
-# gradient argument.
+# gradient instead of the hessian argument.
 
 # init Tensors to be used with first partial derivatives
 F.init(gradient=True, δx=False)
