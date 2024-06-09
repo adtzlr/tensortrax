@@ -15,6 +15,7 @@ function.
    gradient
    hessian
    jacobian
+   gradient_vector_product
 
 
 **Detailed API Reference**
@@ -26,3 +27,5 @@ function.
 .. autofunction:: tensortrax.hessian
 
 .. autofunction:: tensortrax.jacobian
+
+.. autofunction:: tensortrax.gradient_vector_product
