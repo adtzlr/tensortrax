@@ -19,11 +19,6 @@ function.
 
 **Detailed API Reference**
 
-.. autoclass:: tensortrax.Tensor
-   :members:
-   :undoc-members:
-   :inherited-members:
-
 .. autofunction:: tensortrax.function
 
 .. autofunction:: tensortrax.gradient
