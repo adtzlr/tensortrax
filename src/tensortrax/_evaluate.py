@@ -440,7 +440,58 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
 
 
 def gradient_vector_product(fun, wrt=0, ntrax=0, parallel=False):
-    "Evaluate the gradient-vector-product of a function."
+    r"""Evaluate the gradient-vector-product of a scalar-valued function.
+
+    Parameters
+    ----------
+    fun : callable
+        The function to be evaluated.
+    wrt : int or str, optional
+        The input argument which will be treated as :class:`~tensortrax.Tensor` (default
+        is 0). The gradient-vector-product is carried out with respect to this argument.
+    ntrax : int, optional
+        Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
+    parallel : bool, optional
+        Flag to evaluate the gradient-vector-product in parallel (threaded).
+
+    Returns
+    -------
+    ndarray
+        NumPy array containing the gradient-vector-product result.
+
+    Notes
+    -----
+    The *vector* :math:`\delta x` and the tensor-argument ``wrt`` must have equal or
+    broadcast-compatible shapes. This means that the *vector* is not restricted to be a
+    one-dimensional array but must be an array with compatible shape instead.
+
+    Examples
+    --------
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def fun(F, mu=1):
+    >>>     C = F.T @ F
+    >>>     I1 = tm.trace(C)
+    >>>     J = tm.linalg.det(F)
+    >>>     return mu / 2 * (J ** (-2 / 3) * I1 - 3)
+    >>>
+    >>> np.random.seed(125161)
+    >>> F = (np.eye(3) + np.random.rand(20, 8, 3, 3) / 10).T
+    >>> F.shape
+    (3, 3, 8, 20)
+
+    >>> np.random.seed(63254)
+    >>> δF = np.random.rand(3, 3, 8, 20) / 10
+    >>> δF.shape
+    (3, 3, 8, 20)
+
+    >>> dW = tr.gradient_vector_product(fun, wrt=0, ntrax=2)(F, δx=δF)
+    >>> dW.shape
+    >>> (8, 20)
+    """
 
     @wraps(fun)
     def evaluate_gradient_vector_product(*args, δx, **kwargs):
