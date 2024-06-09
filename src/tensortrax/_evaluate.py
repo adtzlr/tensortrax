@@ -308,11 +308,18 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the Hessian in parallel (threaded).
+    full_output: bool, optional
+        Return the function and the gradient (default is False).
+    sym : bool, optional
+        Apply the variations only on the upper-triangle entries of a symmetric second
+        order tensor. This is a performance feature and requires no modification of the
+        callable ``fun`` and the input arguments, including ``wrt``. Default is False.
 
     Returns
     -------
-    ndarray
-        NumPy array containing the Hessian result.
+    ndarray or list of ndarray
+        NumPy array containing the Hessian result. If ``full_output=True``, the
+        gradient and the function are also returned.
 
     Examples
     --------
