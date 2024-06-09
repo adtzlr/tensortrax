@@ -8,3 +8,4 @@ API Reference
    :caption: Modules:
 
    tensortrax/tensor
+   tensortrax/evaluate
