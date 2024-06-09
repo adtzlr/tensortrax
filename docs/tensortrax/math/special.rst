@@ -21,5 +21,5 @@ This module provides special (linear algebra) functions.
 
 **Detailed API Reference**
 
-.. automodule:: tensortrax.math
+.. automodule:: tensortrax.math.special
    :members: ddot, dev, erf, from_triu_1d, from_triu_2d, sym, tresca, triu_1d, try_stack, von_mises

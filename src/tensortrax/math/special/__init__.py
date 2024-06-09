@@ -1,7 +1,3 @@
-"""
-tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
-"""
-
 from ._special_tensor import (
     ddot,
     dev,

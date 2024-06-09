@@ -1,7 +1,3 @@
-"""
-tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
-"""
-
 from .._tensor import broadcast_to
 from .._tensor import dual_to_real
 from .._tensor import dual_to_real as dual2real

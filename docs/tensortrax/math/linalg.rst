@@ -18,5 +18,5 @@ This module provides NumPy-like linear algebra functions.
 
 **Detailed API Reference**
 
-.. automodule:: tensortrax.math
+.. automodule:: tensortrax.math.linalg
    :members: det, eigh, eigvalsh, expm, inv, pinv, sqrtm
