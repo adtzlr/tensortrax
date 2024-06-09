@@ -1,8 +1,8 @@
 .. _api-math-special:
 
-Math (Special)
-~~~~~~~~~~~~~~
-This module provides special (linear algebra) functions.
+Special
+~~~~~~~
+This module provides special (linear algebra) math functions.
 
 .. currentmodule:: tensortrax.math.special
 
