@@ -4,7 +4,12 @@ Math
 ~~~~
 This module provides NumPy-like math functions.
 
-**Core**
+.. toctree::
+   :maxdepth: 1
+   :caption: Modules:
+
+   math/linalg
+   math/special
 
 .. currentmodule:: tensortrax.math
 
