@@ -1,7 +1,7 @@
 r"""
 Quickstart
 ----------
-Let's define a scalar-valued function which operates on a :class:`tensortrax.Tensor`.
+Let's define a scalar-valued function which operates on a :class:`~tensortrax.Tensor`.
 The math module :mod:`tensortrax.math` provides some essential NumPy-like functions
 including linear algebra. We take the strain energy density function of the Neo-Hookean
 isotropic hyperelastic material formulation as a reference example, see Eq.
