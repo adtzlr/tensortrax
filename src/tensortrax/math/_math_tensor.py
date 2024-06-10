@@ -9,7 +9,28 @@ dot = matmul
 
 
 def array(object, dtype=None, like=None, shape=None):
-    "Create an array."
+    """Create a tensor or an array from another tensor, an array or from a list/tuple of
+    tensors or arrays.
+
+    Parameters
+    ----------
+    object : tensortrax.Tensor, array_like, list or tuple of tensortrax.Tensor or list or tuple of array_like
+        The object from which the array is created.
+    dtype : data-type or None, optional
+        Data-type of the array(s). Default is None.
+    like : tensortrax.Tensor or None, optional
+        Reference tensor for shape and (number of) trailing axes. Default is None. Only
+        considered if ``object`` is not a tensor.
+    shape : tuple of int or None, optional
+        The shape of the data of the tensor (without shape of trailing axes). If None,
+        the shape is taken from ``like``. . Only considered if ``object`` is not a
+        tensor.
+
+    Returns
+    -------
+    tensortrax.Tensor or ndarray
+        The return type depends on the type of ``object``.
+    """
 
     if isinstance(object, Tensor):
         return Tensor(
@@ -93,6 +114,7 @@ def abs(A):
 
 
 def sqrt(A):
+    "Return the non-negative square-root of an array, element-wise."
     if isinstance(A, Tensor):
         return A**0.5
     else:
