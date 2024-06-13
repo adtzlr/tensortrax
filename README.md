@@ -7,10 +7,10 @@
 
 # Highlights
 - Write differentiable code with Tensors based on NumPy arrays
+- Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Efficient evaluation of batches by elementwise-operating trailing axes
 - Essential vector/tensor Hyper-Dual number math, including limited support for `einsum` (restricted to max. four operands)
 - Math is limited but similar to NumPy, try to use `import tensortrax.math as tm` instead of `import numpy as np` inside functions to be differentiated
-- Forward Mode Automatic Differentiation (AD) using Hyper-Dual Tensors, up to second order derivatives
 - Create functions in terms of Hyper-Dual Tensors
 - Evaluate the function, the gradient (jacobian) and the hessian of scalar-valued functions or functionals on given input arrays
 - Straight-forward definition of custom functions in variational-calculus notation
