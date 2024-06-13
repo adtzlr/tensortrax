@@ -142,6 +142,7 @@ def test_einsum():
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, F, F, T)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, F, T, F)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, F, F)
+    tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", F, T, T, F)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", F, T, T, T)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, F, T, T)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, F, T)
