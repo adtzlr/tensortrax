@@ -131,7 +131,7 @@ def test_einsum():
     tm.einsum("ij...,kl...,mn...->ijklmn...", T, F, T)
     tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, F)
     tm.einsum("ij...,kl...,mn...->ijklmn...", T, T, T)
-    
+
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", F, F, F, F)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", F, F, F, T)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", F, F, T, F)
@@ -147,8 +147,7 @@ def test_einsum():
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, F, T)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, F)
     tm.einsum("ij...,kl...,mn...,pq...->ijklmnpq...", T, T, T, T)
-    
-    
+
     with pytest.raises(NotImplementedError):
         tm.einsum("ij...,kl...,mn...,pq...,rs...->ijklmnpqrs...", T, T, T, T, T)
 
