@@ -115,7 +115,7 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
 
 
 def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
-    "Eigenvalues and -bases of a symmetric Tensor (only first derivative)."
+    "Eigenvalues and -bases of a symmetric Tensor."
 
     if isinstance(A, Tensor):
         A[0, 0] += eps
