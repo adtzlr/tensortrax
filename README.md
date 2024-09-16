@@ -325,8 +325,8 @@ y = sin(Tensor(x))
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ZAARAOUI999"><img src="https://avatars.githubusercontent.com/u/115699524?v=4?s=100" width="100px;" alt="Mohamed ZAARAOUI"/><br /><sub><b>Mohamed ZAARAOUI</b></sub></a><br /><a href="#ideas-ZAARAOUI999" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/adtzlr"><img src="https://avatars.githubusercontent.com/u/5793153?v=4?s=100" width="100px;" alt="Andreas Dutzler"/><br /><sub><b>Andreas Dutzler</b></sub></a><br /><a href="#code-adtzlr" title="Code">💻</a> <a href="#example-adtzlr" title="Examples">💡</a> <a href="#doc-adtzlr" title="Documentation">📖</a> <a href="#ideas-adtzlr" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ZAARAOUI999"><img src="https://avatars.githubusercontent.com/u/115699524?v=4?s=100" width="100px;" alt="Mohamed ZAARAOUI"/><br /><sub><b>Mohamed ZAARAOUI</b></sub></a><br /><a href="#ideas-ZAARAOUI999" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
