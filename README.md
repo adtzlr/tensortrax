@@ -3,7 +3,7 @@
   <p align="center">Differentiable Tensors based on NumPy Arrays.</p>
 </p>
 
-[![PyPI version shields.io](https://img.shields.io/pypi/v/tensortrax.svg)](https://pypi.python.org/pypi/tensortrax/) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Documentation Status](https://readthedocs.org/projects/tensortrax/badge/?version=latest)](https://tensortrax.readthedocs.io/en/latest/?badge=latest) ![PyPI - Downloads](https://img.shields.io/pypi/dm/tensortrax) ![Codestyle black](https://img.shields.io/badge/code%20style-black-black) [![DOI](https://zenodo.org/badge/570708066.svg)](https://zenodo.org/badge/latestdoi/570708066) [![codecov](https://codecov.io/github/adtzlr/tensortrax/branch/main/graph/badge.svg?token=7DTH0HKYO9)](https://codecov.io/github/adtzlr/tensortrax)
+[![PyPI version shields.io](https://img.shields.io/pypi/v/tensortrax.svg)](https://pypi.python.org/pypi/tensortrax/) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Documentation Status](https://readthedocs.org/projects/tensortrax/badge/?version=latest)](https://tensortrax.readthedocs.io/en/latest/?badge=latest) ![PyPI - Downloads](https://img.shields.io/pypi/dm/tensortrax) ![Codestyle black](https://img.shields.io/badge/code%20style-black-black) [![DOI](https://zenodo.org/badge/570708066.svg)](https://zenodo.org/badge/latestdoi/570708066) [![codecov](https://codecov.io/github/adtzlr/tensortrax/branch/main/graph/badge.svg?token=7DTH0HKYO9)](https://codecov.io/github/adtzlr/tensortrax) [![All Contributors](https://img.shields.io/github/all-contributors/adtzlr/tensortrax?color=ee8449&style=flat-square)](#contributors)
 
 # Highlights
 - Write differentiable code with Tensors based on NumPy arrays
@@ -316,6 +316,17 @@ y = sin(Tensor(x))
 
 > [!TIP]
 > *Feel free to [contribute](https://github.com/adtzlr/tensortrax/fork) missing math-functions to [`src/tensortrax/math/_math_tensor.py`](https://github.com/adtzlr/tensortrax/blob/main/src/tensortrax/math/_math_tensor.py)* :page_with_curl: :pencil2:.
+
+# Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 # References
 1. D. Maclaurin, D. Duvenaud, M. Johnson and J. Townsend, *Autograd*. [Online]. Available: https://github.com/HIPS/autograd.
