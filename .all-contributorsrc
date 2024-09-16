@@ -1,4 +1,21 @@
 {
   "projectName": "tensortrax",
-  "projectOwner": "adtzlr"
+  "projectOwner": "adtzlr",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "ZAARAOUI999",
+      "name": "Mohamed ZAARAOUI",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115699524?v=4",
+      "profile": "https://github.com/ZAARAOUI999",
+      "contributions": [
+        "ideas"
+      ]
+    }
+  ]
 }
