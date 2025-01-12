@@ -242,38 +242,23 @@ class Tensor:
         """Re-Initialize tensor with dual values to keep track of the
         hessian and/or the gradient."""
 
-        # if gradient and not hessian:
-        #     # add additional element-wise acting axes for dual values
-        #     self._add(ndual=len(self.shape))
-
-        #     # create the dual values
-        #     if δx is None or isinstance(δx, bool):
-        #         shape = (*self.shape, *self.shape)
-        #         if len(shape) == 0:
-        #             shape = (1,)
-        #         if δx is False:
-        #             δx = np.zeros(self.size**2).reshape(shape)
-        #         else:
-        #             δx = np.eye(self.size).reshape(shape)
-        #         Δx = δx.copy()
-
-        if gradient:
-            # add additional trailing axes for dual values
+        if gradient and not hessian:
+            # add additional element-wise acting axes for dual values
             self._add(ndual=len(self.shape))
 
             # create the dual values
-            ones = np.ones(len(self.shape), dtype=int)
-
             if δx is None or isinstance(δx, bool):
-                shape = (*self.shape, *ones)
+                shape = (*self.shape, *self.shape)
                 if len(shape) == 0:
                     shape = (1,)
                 if δx is False:
-                    δx = np.zeros(self.size).reshape(shape)
+                    δx = np.zeros(self.size**2).reshape(shape)
                 else:
                     δx = np.eye(self.size).reshape(shape)
+                
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
+                Δx = δx.copy()
 
         elif hessian:
             # add additional trailing axes for dual values
