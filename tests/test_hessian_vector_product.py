@@ -50,5 +50,17 @@ def test_hvp():
             assert not np.any(np.isnan(hvp))
 
 
+def test_gvp():
+    F = np.diag([2, 1.15, 1.15])
+    F[:, 0] += np.array([0, -0.15, -0.15])
+    δF = np.vstack([np.zeros(3), np.zeros(3), np.array([-0.04, 0.04, 0.04])])
+
+    δψ = tr.gradient_vector_product(neo_hooke)(F, δx=δF)
+    δψ_reference = tm.special.ddot(tr.gradient(neo_hooke)(F), δF)
+
+    assert np.isclose(δψ, δψ_reference)
+
+
 if __name__ == "__main__":
     test_hvp()
+    test_gvp()

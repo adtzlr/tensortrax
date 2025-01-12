@@ -242,20 +242,38 @@ class Tensor:
         """Re-Initialize tensor with dual values to keep track of the
         hessian and/or the gradient."""
 
-        if gradient and not hessian:
-            # add additional element-wise acting axes for dual values
+        # if gradient and not hessian:
+        #     # add additional element-wise acting axes for dual values
+        #     self._add(ndual=len(self.shape))
+
+        #     # create the dual values
+        #     if δx is None or isinstance(δx, bool):
+        #         shape = (*self.shape, *self.shape)
+        #         if len(shape) == 0:
+        #             shape = (1,)
+        #         if δx is False:
+        #             δx = np.zeros(self.size**2).reshape(shape)
+        #         else:
+        #             δx = np.eye(self.size).reshape(shape)
+        #         Δx = δx.copy()
+
+        if gradient:
+            # add additional trailing axes for dual values
             self._add(ndual=len(self.shape))
 
             # create the dual values
+            ones = np.ones(len(self.shape), dtype=int)
+
             if δx is None or isinstance(δx, bool):
-                shape = (*self.shape, *self.shape)
+                shape = (*self.shape, *ones)
                 if len(shape) == 0:
                     shape = (1,)
                 if δx is False:
-                    δx = np.zeros(self.size**2).reshape(shape)
+                    δx = np.zeros(self.size).reshape(shape)
                 else:
                     δx = np.eye(self.size).reshape(shape)
-                Δx = δx.copy()
+            else:
+                δx = δx.reshape(*self.shape, *self.trax)
 
         elif hessian:
             # add additional trailing axes for dual values
@@ -454,7 +472,7 @@ class Tensor:
 
     def reshape(self, *shape, order="C"):
         "Gives a new shape to an array without changing its data."
-        return reshape(self, newshape=shape, order=order)
+        return reshape(self, shape, order=order)
 
     def squeeze(self, axis=None):
         "Remove axes of length one."
@@ -572,21 +590,21 @@ def squeeze(A, axis=None):
         return np.squeeze(A, axis=axis)
 
 
-def reshape(A, newshape, order="C"):
+def reshape(A, shape, order="C"):
     "Gives a new shape to an array without changing its data."
     if isinstance(A, Tensor):
         δtrax = δ(A).shape[len(A.shape) :]
         Δtrax = Δ(A).shape[len(A.shape) :]
         Δδtrax = Δδ(A).shape[len(A.shape) :]
         return Tensor(
-            x=f(A).reshape(*newshape, *A.trax, order=order),
-            δx=δ(A).reshape(*newshape, *δtrax, order=order),
-            Δx=Δ(A).reshape(*newshape, *Δtrax, order=order),
-            Δδx=Δδ(A).reshape(*newshape, *Δδtrax, order=order),
+            x=f(A).reshape(*shape, *A.trax, order=order),
+            δx=δ(A).reshape(*shape, *δtrax, order=order),
+            Δx=Δ(A).reshape(*shape, *Δtrax, order=order),
+            Δδx=Δδ(A).reshape(*shape, *Δδtrax, order=order),
             ntrax=A.ntrax,
         )
     else:
-        return np.reshape(A, newshape=newshape, order=order)
+        return np.reshape(A, shape, order=order)
 
 
 def einsum4(subscripts, *operands):
