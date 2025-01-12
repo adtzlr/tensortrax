@@ -255,10 +255,11 @@ class Tensor:
                     δx = np.zeros(self.size**2).reshape(shape)
                 else:
                     δx = np.eye(self.size).reshape(shape)
-                
+
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
-                Δx = δx.copy()
+
+            Δx = δx.copy()
 
         elif hessian:
             # add additional trailing axes for dual values
