@@ -5,7 +5,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 import numpy as np
 
 from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
-from .._math_tensor import exp, sqrt, sum, transpose
+from .._math_tensor import exp, sign, sqrt, sum, transpose
 from ..special._special_tensor import ddot
 from . import _linalg_array as linalg
 
@@ -63,13 +63,10 @@ def pinv(A):
     return inv(A, inverse=linalg.pinv)
 
 
-def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
+def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps) ** 0.5):
     "Eigenvalues of a symmetric Tensor."
 
     if isinstance(A, Tensor):
-        A[0, 0] += eps
-        A[1, 1] -= eps
-
         λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
         M = einsum("ai...,aj...->aij...", N, N)
 
@@ -94,7 +91,9 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 λαβ = λ[α] - λ[β]
-                δNα.append(1 / λαβ * N[β] * δAαβ)
+                λαβ_sign = np.where(λαβ >= 0, 1.0, -1.0)
+                λαβ_nonzero = np.where(np.abs(λαβ) < eps, λαβ_sign * eps, λαβ)
+                δNα.append(1 / λαβ_nonzero * N[β] * δAαβ)
             δN.append(sum(δNα, axis=0))
 
         δM = einsum("ai...,aj...->aij...", δN, N) + einsum("ai...,aj...->aij...", N, δN)
@@ -114,13 +113,10 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
         return np.linalg.eigvalsh(A.T).T
 
 
-def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
+def eigh(A, eps=np.sqrt(np.finfo(float).eps) ** 0.5):
     "Eigenvalues and -bases of a symmetric Tensor."
 
     if isinstance(A, Tensor):
-        A[0, 0] += eps
-        A[1, 1] -= eps
-
         λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
         M = einsum("ai...,aj...->aij...", N, N)
 
@@ -147,8 +143,10 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 ΔAαβ = einsum("ij...,ij...->...", Mαβ, Δ(A))
                 λαβ = λ[α] - λ[β]
-                δNα.append(1 / λαβ * N[β] * δAαβ)
-                ΔNα.append(1 / λαβ * N[β] * ΔAαβ)
+                λαβ_sign = np.where(λαβ >= 0, 1.0, -1.0)
+                λαβ_nonzero = np.where(np.abs(λαβ) < eps, λαβ_sign * eps, λαβ)
+                δNα.append(1 / λαβ_nonzero * N[β] * δAαβ)
+                ΔNα.append(1 / λαβ_nonzero * N[β] * ΔAαβ)
             δN.append(sum(δNα, axis=0))
             ΔN.append(sum(ΔNα, axis=0))
 
@@ -160,11 +158,13 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 ΔδAαβ = einsum("ij...,ij...->...", Mαβ, Δδ(A))
                 λαβ = λ[α] - λ[β]
+                λαβ_sign = np.where(λαβ >= 0, 1.0, -1.0)
+                λαβ_nonzero = np.where(np.abs(λαβ) < eps, λαβ_sign * eps, λαβ)
                 Δλαβ = Δλ[α] - Δλ[β]
                 ΔδNα.append(
-                    -(λαβ**-2) * Δλαβ * N[β] * δAαβ
-                    + 1 / λαβ * ΔN[β] * δAαβ
-                    + 1 / λαβ * N[β] * ΔδAαβ
+                    -(λαβ_nonzero**-2) * Δλαβ * N[β] * δAαβ
+                    + 1 / λαβ_nonzero * ΔN[β] * δAαβ
+                    + 1 / λαβ_nonzero * N[β] * ΔδAαβ
                 )
             ΔδN.append(sum(ΔδNα, axis=0))
 

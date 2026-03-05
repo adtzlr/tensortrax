@@ -1,6 +1,7 @@
 """
 tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
+
 import numpy as np
 
 from .._tensor import Tensor, Δ, Δδ, broadcast_to, einsum, f, matmul, δ
@@ -470,3 +471,17 @@ def minimum(x1, x2):
         return if_else(x1 < x2, x1, x2)
     else:
         return np.minimum(x1, x2)
+
+
+def ones_like(A):
+    "Ones like a Tensor."
+    if isinstance(A, Tensor):
+        return Tensor(
+            x=np.ones_like(f(A)),
+            δx=0 * δ(A),
+            Δx=0 * Δ(A),
+            Δδx=0 * Δδ(A),
+            ntrax=A.ntrax,
+        )
+    else:
+        return np.ones_like(A)

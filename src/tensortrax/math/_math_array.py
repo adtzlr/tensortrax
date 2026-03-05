@@ -1,6 +1,7 @@
 """
 tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
+
 import numpy as np
 
 from .._tensor import Tensor, f
