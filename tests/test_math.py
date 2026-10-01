@@ -310,6 +310,31 @@ def test_inputs_not_modified():
     assert np.all(tr.function(fun2, ntrax=1)(C) == 0)
 
 
+def test_setitem():
+    I = np.eye(3)
+
+    def advanced_index(C):  # overwritten entries are constants
+        D = C * 1.0
+        D[[0, 1], [0, 1]] = 0.0
+        return D[0, 0] + D[1, 1]
+
+    def aliased(C):  # writing into D must not change C
+        D = C + 1.0
+        D[0, 0] = C[1, 1] * 2
+        return tm.trace(C)
+
+    def componentwise(C):  # W = C11**2 + 6 C00
+        D = C * 0.0
+        D[0, 0] = C[1, 1] ** 2
+        D[[1, 2], [1, 2]] = C[0, 0] * 3
+        return tm.trace(D)
+
+    assert np.allclose(tr.gradient(advanced_index)(I), 0)
+    assert np.allclose(tr.gradient(aliased)(I), I)
+    assert np.allclose(tr.gradient(componentwise)(I), np.diag([6.0, 2.0, 0.0]))
+    assert tr.hessian(componentwise)(I)[1, 1, 1, 1] == 2.0
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -321,3 +346,4 @@ if __name__ == "__main__":
     test_condition()
     test_try_stack()
     test_inputs_not_modified()
+    test_setitem()
