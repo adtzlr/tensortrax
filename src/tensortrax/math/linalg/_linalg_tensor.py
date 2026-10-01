@@ -155,6 +155,7 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
             ΔN.append(sum(ΔNα, axis=0))
 
         ΔδN = []
+        δAsym = (δ(A) + transpose(δ(A))) / 2
         for α in alpha:
             ΔδNα = []
             for β in beta[α]:
@@ -164,7 +165,7 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
                     "i...,j...->ij...", N[α], ΔN[β]
                 )
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
-                ΔδAαβ = einsum("ij...,ij...->...", ΔMαβ, δ(A)) + einsum(
+                ΔδAαβ = einsum("ij...,ij...->...", ΔMαβ, δAsym) + einsum(
                     "ij...,ij...->...", Mαβ, Δδ(A)
                 )
                 λαβ = λ[α] - λ[β]
