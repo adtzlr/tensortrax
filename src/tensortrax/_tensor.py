@@ -378,11 +378,20 @@ class Tensor:
 
     def __pow__(self, p):
         A = self
-        x = f(A) ** p
-        δx = p * f(A) ** (p - 1) * δ(A)
-        Δx = p * f(A) ** (p - 1) * Δ(A)
-        Δδx = p * f(A) ** (p - 1) * Δδ(A) + p * (p - 1) * f(A) ** (p - 2) * δ(A) * Δ(A)
-        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
+        x = f(A)
+
+        # derivative coefficients of x**p; where a coefficient vanishes (p = 0 or 1),
+        # its exponent is set to zero to avoid 0 * inf = nan at x = 0
+        dx = p * x ** np.where(p == 0, 0, p - 1)
+        d2x = p * (p - 1) * x ** np.where(p * (p - 1) == 0, 0, p - 2)
+
+        return Tensor(
+            x=x**p,
+            δx=dx * δ(A),
+            Δx=dx * Δ(A),
+            Δδx=dx * Δδ(A) + d2x * δ(A) * Δ(A),
+            ntrax=A.ntrax,
+        )
 
     def __gt__(self, B):
         A = self
