@@ -60,10 +60,14 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues of a symmetric Tensor."
 
     if isinstance(A, Tensor):
-        A[0, 0] += eps
-        A[1, 1] -= eps
 
-        λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
+        # perturb a copy of the values to separate repeated eigenvalues
+        # (the argument and its dual data must not be modified)
+        x = f(A).copy()
+        x[0, 0] += eps
+        x[1, 1] -= eps
+
+        λ, N = [y.T for y in np.linalg.eigh(x.T)]
         M = einsum("ai...,aj...->aij...", N, N)
 
         dim = len(λ)
@@ -111,10 +115,13 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues and -bases of a symmetric Tensor."
 
     if isinstance(A, Tensor):
-        A[0, 0] += eps
-        A[1, 1] -= eps
+        # perturb a copy of the values to separate repeated eigenvalues
+        # (the argument and its dual data must not be modified)
+        x = f(A).copy()
+        x[0, 0] += eps
+        x[1, 1] -= eps
 
-        λ, N = [x.T for x in np.linalg.eigh(f(A).T)]
+        λ, N = [y.T for y in np.linalg.eigh(x.T)]
         M = einsum("ai...,aj...->aij...", N, N)
 
         dim = len(λ)

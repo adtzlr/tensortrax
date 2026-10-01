@@ -288,6 +288,28 @@ def test_try_stack():
         tm.stack([C, C6])
 
 
+def test_inputs_not_modified():
+    F = np.eye(3)[..., None] + 0.2 * np.random.rand(3, 3, 4)
+    C = np.einsum("ki...,kj...->ij...", F, F)
+    C0 = C.copy()
+
+    def fun(C):
+        λ = tm.linalg.eigvalsh(C)
+        λ, M = tm.linalg.eigh(C)
+        return tm.sum(λ) * tm.linalg.det(C)
+
+    for evaluate in [tr.function, tr.gradient, tr.hessian, tr.jacobian]:
+        evaluate(fun, ntrax=1)(C)
+        assert np.array_equal(C, C0)
+
+    def fun2(C):  # eigvalsh must not change C for later operations
+        a = tm.linalg.det(C)
+        tm.linalg.eigvalsh(C)
+        return tm.linalg.det(C) - a
+
+    assert np.all(tr.function(fun2, ntrax=1)(C) == 0)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -298,3 +320,4 @@ if __name__ == "__main__":
     test_logical()
     test_condition()
     test_try_stack()
+    test_inputs_not_modified()

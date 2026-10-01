@@ -41,7 +41,8 @@ def add_tensor(
             f"Type of wrt not supported. type(wrt) is {type(wrt)} (must be str or int)."
         )
 
-    x = args_old[wrt]
+    # copy the input: the function must not modify the user's array
+    x = np.array(args_old[wrt], copy=True)
 
     if sym:
         x = triu_1d(x)
