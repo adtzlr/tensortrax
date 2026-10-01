@@ -428,22 +428,26 @@ class Tensor:
 
     def __setitem__(self, key, value):
         if isinstance(value, Tensor):
-            shape = (*self.shape, *self.trax)
-            self.x[key] = f(value)
-            if self.δx[key].shape != δ(value).shape:
-                self.δx = broadcast_to(self.δx, shape).copy()
-            if self.Δx[key].shape != Δ(value).shape:
-                self.Δx = broadcast_to(self.Δx, shape).copy()
-            if self.Δδx[key].shape != Δδ(value).shape:
-                self.Δδx = broadcast_to(self.Δδx, shape).copy()
-            self.δx[key] = δ(value)
-            self.Δx[key] = Δ(value)
-            self.Δδx[key] = Δδ(value)
+            values = (f(value), δ(value), Δ(value), Δδ(value))
+            ndim = len(value.shape)
         else:
-            self.x[key] = value
-            self.δx[key].fill(0)
-            self.Δx[key].fill(0)
-            self.Δδx[key].fill(0)
+            values = (value, 0, 0, 0)  # a constant has no dual data
+            ndim = None
+
+        def setitem(a, b):
+            # copy-on-write: the arrays may be shared with other tensors (e.g. the
+            # dual arrays of ``A + 1.0`` are those of ``A``)
+            a = np.array(a)
+            if ndim is not None and a[key].shape != np.shape(b):
+                # broadcast the trailing axes to hold those of the value
+                trax = np.broadcast_shapes(a.shape[len(self.shape) :], b.shape[ndim:])
+                a = np.array(np.broadcast_to(a, (*self.shape, *trax)))
+            a[key] = b
+            return a
+
+        self.x, self.δx, self.Δx, self.Δδx = [
+            setitem(a, b) for a, b in zip((self.x, self.δx, self.Δx, self.Δδx), values)
+        ]
 
     def __repr__(self):
         header = "<tensortrax tensor object>"
