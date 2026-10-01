@@ -33,26 +33,16 @@ def det(A):
         return linalg.det(A)
 
 
-def inv(A, inverse=linalg.inv):
+def inv(A, inverse=None):
     "Inverse of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
-        x = inverse(f(A))
-        invA = inverse(f(A))
-        δx = -matmul(matmul(invA, δ(A)), invA)
-        Δx = -matmul(matmul(invA, Δ(A)), invA)
-        Δδx = -(
-            matmul(matmul(Δx, δ(A)), invA)
-            + matmul(matmul(invA, δ(A)), Δx)
-            + matmul(matmul(invA, Δδ(A)), invA)
-        )
-
-        return Tensor(
-            x=x,
-            δx=δx,
-            Δx=Δx,
-            Δδx=Δδx,
-            ntrax=A.ntrax,
-        )
+        x = linalg.det(f(A))
+        cof = transpose(linalg.adj(f(A)))  # dxdA
+        Δcof = transpose(linalg.adj_variation(f(A), Δ(A)))  # Δ(dxdA)
+        δx = ddot(cof, δ(A))
+        Δx = ddot(cof, Δ(A))
+        Δδx = ddot(Δcof, δ(A)) + ddot(cof, Δδ(A))
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
     else:
         return linalg.inv(A)
 
