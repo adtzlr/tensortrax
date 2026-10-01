@@ -47,6 +47,10 @@ def test_math():
     tm.linalg._det(F[:2, :2])
     tm.linalg._det(F[:1, :1])
 
+    tm.linalg.det(tr.Tensor(np.eye(4)))
+    tm.linalg.det(T[:2, :2])
+    tm.linalg.det(T[:1, :1])
+
     tm.linalg._inv(F[:2, :2])
     tm.linalg._inv(F[:1, :1])
 

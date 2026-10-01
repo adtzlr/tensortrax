@@ -16,19 +16,12 @@ def det(A):
     "Determinant of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
         x = linalg.det(f(A))
-        B = transpose(linalg.inv(f(A)))
-        δx = x * ddot(B, δ(A))
-        Δx = x * ddot(B, Δ(A))
-
-        ΔB = -matmul(matmul(B, transpose(Δ(A))), B)
-        Δδx = Δx * δx / x + x * ddot(ΔB, δ(A)) + x * ddot(B, Δδ(A))
-        return Tensor(
-            x=x,
-            δx=δx,
-            Δx=Δx,
-            Δδx=Δδx,
-            ntrax=A.ntrax,
-        )
+        cof = transpose(linalg.adj(f(A)))  # dxdA
+        Δcof = transpose(linalg.adj_variation(f(A), Δ(A)))  # Δ(dxdA)
+        δx = ddot(cof, δ(A))
+        Δx = ddot(cof, Δ(A))
+        Δδx = ddot(Δcof, δ(A)) + ddot(cof, Δδ(A))
+        return Tensor(x=x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax)
     else:
         return linalg.det(A)
 
