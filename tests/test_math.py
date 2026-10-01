@@ -335,6 +335,35 @@ def test_setitem():
     assert tr.hessian(componentwise)(I)[1, 1, 1, 1] == 2.0
 
 
+def test_sum_axis():
+    T = tr.Tensor(np.ones((3, 2, 4)), ntrax=1)
+
+    assert tm.sum(T).shape == (2,)
+    assert tm.sum(T, axis=1).shape == (3,)
+    assert tm.sum(T, axis=-1).shape == (3,)  # last tensor axis, not a trailing axis
+    assert tm.sum(T, axis=(0, -1)).shape == ()
+    assert np.allclose(tm.sum(T, axis=None).x, 6)  # all tensor axes
+    assert np.allclose(tm.sum(tm.trace(T[:2]), axis=None).x, 2)  # scalar: unchanged
+
+    for axis in [2, -3, (0, 2)]:
+        with pytest.raises(IndexError):
+            tm.sum(T, axis=axis)
+
+    with pytest.raises(IndexError):
+        tm.sum(tm.trace(T[:2]))  # a scalar tensor has no axis 0
+
+    # gradient of sum_i (sum_j C_ij)^2 = 2 (sum_k C_ik) for each column j
+    C = np.random.rand(3, 3)
+    for axis in [1, -1]:
+        g = tr.gradient(lambda C: tm.sum(tm.sum(C, axis=axis) ** 2))(C)
+        assert np.allclose(g, 2 * np.sum(C, axis=1)[:, None] * np.ones((1, 3)))
+
+    # gradient of (sum_ij C_ij)^2 = 2 sum(C) for all entries, also with trailing axes
+    X = np.random.rand(3, 3, 4)
+    g = tr.gradient(lambda C: tm.sum(C, axis=None) ** 2, ntrax=1)(X)
+    assert np.allclose(g, 2 * np.sum(X, axis=(0, 1)) * np.ones((3, 3, 1)))
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -347,3 +376,4 @@ if __name__ == "__main__":
     test_try_stack()
     test_inputs_not_modified()
     test_setitem()
+    test_sum_axis()
