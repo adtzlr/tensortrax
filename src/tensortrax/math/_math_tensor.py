@@ -256,17 +256,22 @@ def log10(A):
 def diagonal(A, offset=0, axis1=0, axis2=1):
     "Return specified diagonals."
 
-    kwargs = dict(offset=offset, axis1=axis1, axis2=axis2)
+    def _diagonal(a):
+        # np.diagonal appends the diagonal as last axis -> move it to the front,
+        # keep the order of all other (tensor and trailing) axes
+        d = np.diagonal(a, offset=offset, axis1=axis1, axis2=axis2)
+        return np.moveaxis(d, -1, 0)
+
     if isinstance(A, Tensor):
         return Tensor(
-            x=np.diagonal(f(A), **kwargs).T,
-            δx=np.diagonal(δ(A), **kwargs).T,
-            Δx=np.diagonal(Δ(A), **kwargs).T,
-            Δδx=np.diagonal(Δδ(A), **kwargs).T,
+            x=_diagonal(f(A)),
+            δx=_diagonal(δ(A)),
+            Δx=_diagonal(Δ(A)),
+            Δδx=_diagonal(Δδ(A)),
             ntrax=A.ntrax,
         )
     else:
-        return np.diagonal(A, **kwargs).T
+        return _diagonal(A)
 
 
 def tile(A, reps):
