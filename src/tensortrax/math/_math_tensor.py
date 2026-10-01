@@ -75,6 +75,12 @@ def transpose(A):
 def sum(A, axis=0):
     "Sum of array elements over a given axis."
     if isinstance(A, Tensor):
+        # map the axis argument to the tensor axes (negative values count from the
+        # last tensor axis), the trailing (dual and batch) axes are never summed
+        axes = np.arange(len(A.shape))
+        if axis is not None:
+            axes = axes[np.asarray(axis)]
+        axis = tuple(np.atleast_1d(axes).tolist())
         return Tensor(
             x=np.sum(f(A), axis=axis),
             δx=np.sum(δ(A), axis=axis),
