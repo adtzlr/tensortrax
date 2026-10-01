@@ -89,6 +89,7 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
             δNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 λαβ = λ[α] - λ[β]
                 δNα.append(1 / λαβ * N[β] * δAαβ)
@@ -144,6 +145,7 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
             ΔNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 ΔAαβ = einsum("ij...,ij...->...", Mαβ, Δ(A))
                 λαβ = λ[α] - λ[β]
@@ -153,15 +155,17 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
             ΔN.append(sum(ΔNα, axis=0))
 
         ΔδN = []
+        δAsym = (δ(A) + transpose(δ(A))) / 2
         for α in alpha:
             ΔδNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
                 ΔMαβ = einsum("i...,j...->ij...", ΔN[α], N[β]) + einsum(
                     "i...,j...->ij...", N[α], ΔN[β]
                 )
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
-                ΔδAαβ = einsum("ij...,ij...->...", ΔMαβ, δ(A)) + einsum(
+                ΔδAαβ = einsum("ij...,ij...->...", ΔMαβ, δAsym) + einsum(
                     "ij...,ij...->...", Mαβ, Δδ(A)
                 )
                 λαβ = λ[α] - λ[β]

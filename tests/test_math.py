@@ -364,6 +364,28 @@ def test_sum_axis():
     assert np.allclose(g, 2 * np.sum(X, axis=(0, 1)) * np.ones((3, 3, 1)))
 
 
+def test_eig_nonsymmetric_variations():
+    "With sym=False, eigvalsh and eigh must only depend on the symmetric part."
+    np.random.seed(4)
+    F = np.eye(3) + 0.2 * np.random.uniform(-1, 1, (3, 3))
+    S = lambda C: (C + C.T) / 2
+
+    for C in [F.T @ F, np.diag([2.25, 1 / 1.5, 1 / 1.5])]:  # distinct, repeated
+        H = tr.hessian(lambda C: tm.sum(tm.linalg.eigvalsh(C)))(C)  # = tr(C)
+        assert np.allclose(H, 0, atol=1e-6)
+
+        H = tr.hessian(lambda C: tm.sum(tm.linalg.eigvalsh(C) ** 2))(C)  # = S:S
+        Href = tr.hessian(lambda C: tm.special.ddot(S(C), S(C)))(C)
+        assert np.allclose(H, Href, atol=1e-6)
+
+    H = tr.hessian(lambda C: tm.sum(tm.linalg.eigvalsh(C) ** 1.5))(F.T @ F)
+    assert np.allclose(H, np.transpose(H, (2, 3, 0, 1)))  # major symmetry
+
+    sqrtm = tm.linalg.sqrtm
+    H = tr.hessian(lambda C: tm.trace(sqrtm(C) @ sqrtm(C)))(F.T @ F)  # = tr(C)
+    assert np.allclose(H, 0, atol=1e-6)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -377,3 +399,4 @@ if __name__ == "__main__":
     test_inputs_not_modified()
     test_setitem()
     test_sum_axis()
+    test_eig_nonsymmetric_variations()
