@@ -89,6 +89,7 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
             δNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
+                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 λαβ = λ[α] - λ[β]
                 δNα.append(1 / λαβ * N[β] * δAαβ)
