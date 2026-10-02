@@ -19,6 +19,10 @@ def _dense(func, a):
     return a
 
 
+# default number of points per chunk (cache blocking)
+CHUNKSIZE = 8192
+
+
 def take(fun, item=0):
     "Evaluate the function and take only the selected item."
 
@@ -67,34 +71,35 @@ def add_tensor(
     return args_out, kwargs_out, tensor.shape, trax
 
 
-def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=None):
+def partition(args, kwargs, wrt, ntrax, parallel, chunksize=None, batch=100, axis=None):
     """Partition function (keyword) arguments into a list of (keyword) arguments. Only
-    top-level args and kwargs with equal shapes to be splitted are allowed."""
+    top-level args and kwargs with equal shapes to be splitted are allowed. The trailing
+    axes are splitted into chunks of about ``chunksize`` points (cache blocking) and
+    into (at least) one chunk per CPU for a parallel evaluation. Each chunk has at least
+    ``batch`` items along the split axis."""
 
-    # deactivate parallel evaluation if no trailing axes are present
-    if ntrax == 0:
-        parallel = False
+    chunks = 1
 
-    # get shape of trailing axes, define axis and chunks
-    # if size of chosen axis is below batch, deactivate parallel evaluation
-    if parallel:
-        # get shape of trailing axes
+    if ntrax > 0:
+        # get shape of trailing axes and select the axis to be splitted
         trax = (kwargs[wrt] if isinstance(wrt, str) else args[wrt]).shape[-ntrax:]
 
-        # select axis
         if axis is None:
             axis = -(1 + np.argmax(trax[::-1]))
 
-        # define chunks
-        if chunks is None:
-            if (trax[axis] // batch) > 0:
-                chunks = min(trax[axis] // batch, cpu_count())
-            else:
-                parallel = False
+        # define the number of chunks
+        if chunksize is not None:
+            chunks = -(-int(np.prod(trax)) // chunksize)
 
-    if not parallel:
+        if parallel:
+            chunks = max(chunks, cpu_count())
+
+        chunks = max(1, min(chunks, trax[axis] // batch))
+
+    n_jobs = min(chunks, cpu_count()) if parallel else 1
+
+    if chunks == 1:
         list_of_args_kwargs = [(args, kwargs)]
-        chunks = 1
         axis = -1
 
     else:
@@ -133,7 +138,7 @@ def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=N
             for key, value in kwargs_partitioned:
                 list_of_args_kwargs[i][1][key] = value[i]
 
-    return list_of_args_kwargs, chunks, axis
+    return list_of_args_kwargs, n_jobs, axis
 
 
 def concatenate_results(res, axis, full_output):
@@ -155,7 +160,21 @@ def concatenate_results(res, axis, full_output):
         return concat(res, axis=axis)
 
 
-def function(fun, wrt=0, ntrax=0, parallel=False):
+def evaluate_chunks(kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_output):
+    "Evaluate the kernel for all chunks of the arguments and concatenate the results."
+
+    list_of_args_kwargs, n_jobs, axis = partition(
+        args, kwargs, wrt, ntrax, parallel, chunksize
+    )
+
+    res = Parallel(n_jobs=n_jobs, prefer="threads")(
+        delayed(kernel)(*args_chunk) for args_chunk in list_of_args_kwargs
+    )
+
+    return concatenate_results(res=res, axis=axis, full_output=full_output)
+
+
+def function(fun, wrt=0, ntrax=0, parallel=False, chunksize=CHUNKSIZE):
     r"""Evaluate a function.
 
     Parameters
@@ -169,6 +188,10 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the function in parallel (threaded).
+    chunksize : int or None, optional
+        Evaluate the function for chunks of (about) ``chunksize`` points of the
+        trailing axes (cache blocking). Default is 8192. ``None`` evaluates all
+        points at once.
 
     Returns
     -------
@@ -212,20 +235,22 @@ def function(fun, wrt=0, ntrax=0, parallel=False):
                 func = f(func)
             return func
 
-        list_of_args_kwargs, chunks, axis = partition(
-            args, kwargs, wrt, ntrax, parallel
+        return evaluate_chunks(
+            kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_output=False
         )
-
-        res = Parallel(n_jobs=chunks, prefer="threads")(
-            delayed(kernel)(*args_chunk) for args_chunk in list_of_args_kwargs
-        )
-
-        return concatenate_results(res=res, axis=axis, full_output=False)
 
     return evaluate_function
 
 
-def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
+def gradient(
+    fun,
+    wrt=0,
+    ntrax=0,
+    parallel=False,
+    full_output=False,
+    sym=False,
+    chunksize=CHUNKSIZE,
+):
     r"""Evaluate the gradient of a scalar-valued function.
 
     Parameters
@@ -239,6 +264,10 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the gradient in parallel (threaded).
+    chunksize : int or None, optional
+        Evaluate the function for chunks of (about) ``chunksize`` points of the
+        trailing axes (cache blocking). Default is 8192. ``None`` evaluates all
+        points at once.
     full_output: bool, optional
         Return the gradient and the function (default is False).
     sym : bool, optional
@@ -299,18 +328,22 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
             else:
                 return grad
 
-        list_of_args, chunks, axis = partition(args, kwargs, wrt, ntrax, parallel)
-
-        res = Parallel(n_jobs=chunks, prefer="threads")(
-            delayed(kernel)(*args_chunk) for args_chunk in list_of_args
+        return evaluate_chunks(
+            kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_output
         )
-
-        return concatenate_results(res=res, axis=axis, full_output=full_output)
 
     return evaluate_gradient
 
 
-def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
+def hessian(
+    fun,
+    wrt=0,
+    ntrax=0,
+    parallel=False,
+    full_output=False,
+    sym=False,
+    chunksize=CHUNKSIZE,
+):
     r"""Evaluate the Hessian of a scalar-valued function.
 
     Parameters
@@ -324,6 +357,10 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the Hessian in parallel (threaded).
+    chunksize : int or None, optional
+        Evaluate the function for chunks of (about) ``chunksize`` points of the
+        trailing axes (cache blocking). Default is 8192. ``None`` evaluates all
+        points at once.
     full_output: bool, optional
         Return the hessian, the gradient and the function (default is False).
     sym : bool, optional
@@ -393,18 +430,16 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
             else:
                 return hess
 
-        list_of_args, chunks, axis = partition(args, kwargs, wrt, ntrax, parallel)
-
-        res = Parallel(n_jobs=chunks, prefer="threads")(
-            delayed(kernel)(*args_chunk) for args_chunk in list_of_args
+        return evaluate_chunks(
+            kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_output
         )
-
-        return concatenate_results(res=res, axis=axis, full_output=full_output)
 
     return evaluate_hessian
 
 
-def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
+def jacobian(
+    fun, wrt=0, ntrax=0, parallel=False, full_output=False, chunksize=CHUNKSIZE
+):
     r"""Evaluate the Jacobian of a tensor-valued function.
 
     Parameters
@@ -418,6 +453,10 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
         Number of elementwise-operating trailing axes (batch dimensions). Default is 0.
     parallel : bool, optional
         Flag to evaluate the Jacobian in parallel (threaded).
+    chunksize : int or None, optional
+        Evaluate the function for chunks of (about) ``chunksize`` points of the
+        trailing axes (cache blocking). Default is 8192. ``None`` evaluates all
+        points at once.
     full_output: bool, optional
         Return the Jacobian and the function (default is False).
 
@@ -466,13 +505,9 @@ def jacobian(fun, wrt=0, ntrax=0, parallel=False, full_output=False):
             else:
                 return jac
 
-        list_of_args, chunks, axis = partition(args, kwargs, wrt, ntrax, parallel)
-
-        res = Parallel(n_jobs=chunks, prefer="threads")(
-            delayed(kernel)(*args_chunk) for args_chunk in list_of_args
+        return evaluate_chunks(
+            kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_output
         )
-
-        return concatenate_results(res=res, axis=axis, full_output=full_output)
 
     return evaluate_jacobian
 

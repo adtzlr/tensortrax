@@ -230,6 +230,40 @@ def test_structural_zeros_mixed():
     assert np.allclose(tr.function(maximum, ntrax=1)(C), w * np.trace(C))
 
 
+def test_chunksize():
+    "Results must not depend on the chunks (cache blocking)."
+    np.random.seed(2)
+    q, c = 2, 1000
+    F = np.eye(3)[..., None, None] + 0.1 * np.random.uniform(-1, 1, (3, 3, q, c))
+    C = np.einsum("ki...,kj...->ij...", F, F)
+
+    def neo_hooke(C, mu):
+        return mu * (tm.linalg.det(C) ** (-1 / 3) * tm.trace(C) - 3)
+
+    for mu in [1.5, np.random.rand(q, c), np.random.rand(1, c)]:
+        for parallel in [False, True]:
+            kwargs = dict(ntrax=2, parallel=parallel)
+            for evaluate, kw in [
+                (tr.function, {}),
+                (tr.gradient, dict(sym=True, full_output=True)),
+                (tr.hessian, dict(sym=True, full_output=True)),
+            ]:
+                ref = evaluate(neo_hooke, chunksize=None, **kwargs, **kw)(C, mu=mu)
+                res = evaluate(neo_hooke, chunksize=256, **kwargs, **kw)(C, mu=mu)
+                if evaluate is tr.function:
+                    ref, res = [ref], [res]
+                for a, b in zip(ref, res):
+                    assert a.shape == b.shape
+                    assert np.array_equal(a, b)
+
+    # compressed results (constant derivatives) and jacobian
+    for evaluate, fun in [(tr.hessian, tm.trace), (tr.jacobian, lambda C: C @ C)]:
+        ref = evaluate(fun, ntrax=2, chunksize=None)(C)
+        res = evaluate(fun, ntrax=2, chunksize=256)(C)
+        assert ref.shape == res.shape
+        assert np.array_equal(ref, res)
+
+
 if __name__ == "__main__":
     test_function_gradient_hessian()
     test_repeated_eigvals()
@@ -238,3 +272,4 @@ if __name__ == "__main__":
     test_parallel()
     test_structural_zeros()
     test_structural_zeros_mixed()
+    test_chunksize()
