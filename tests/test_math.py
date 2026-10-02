@@ -386,6 +386,33 @@ def test_eig_nonsymmetric_variations():
     assert np.allclose(H, 0, atol=1e-6)
 
 
+def test_repeated_eigenvalues_45deg():
+    "Repeated eigenvalue, distinct eigenvector along (1, -1, 0) (uniaxial at 45°)."
+    a = np.array([1.0, -1.0, 0.0]) / np.sqrt(2)
+    C = (2.25 - 1 / 1.5) * np.outer(a, a) + np.eye(3) / 1.5
+
+    ogden = lambda C: tm.sum(tm.linalg.det(C) ** (-1 / 3) * tm.linalg.eigvalsh(C))
+    neo_hooke = lambda C: tm.linalg.det(C) ** (-1 / 3) * tm.trace(C)  # = ogden
+
+    H = tr.hessian(ogden, sym=True)(C)
+    assert np.allclose(H, tr.hessian(neo_hooke, sym=True)(C), atol=1e-7)
+
+
+def test_eigvalsh_scale():
+    "The perturbation is relative to the magnitude of the tensor."
+    a = np.ones(3) / np.sqrt(3)
+    B = (2.25 - 1 / 1.5) * np.outer(a, a) + np.eye(3) / 1.5
+
+    for scale in [1e-6, 1e6]:
+        C = scale * B
+        λ = tr.function(tm.linalg.eigvalsh)(C)
+        assert np.allclose(λ, np.linalg.eigvalsh(C), rtol=1e-7, atol=0)
+
+        H = tr.hessian(lambda C: tm.sum(tm.linalg.eigvalsh(C) ** 2), sym=True)(C)
+        Href = tr.hessian(lambda C: tm.special.ddot(C, C), sym=True)(C)
+        assert np.allclose(H, Href, rtol=1e-7)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -400,3 +427,5 @@ if __name__ == "__main__":
     test_setitem()
     test_sum_axis()
     test_eig_nonsymmetric_variations()
+    test_repeated_eigenvalues_45deg()
+    test_eigvalsh_scale()
