@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 import tensortrax as tr
 import tensortrax.math as tm
@@ -172,6 +173,20 @@ def test_structural_zeros():
     assert duals[0] == ("Zero", "Zero", "Zero")
     assert duals[1] == ("ndarray", "Zero", "Zero")
     assert duals[2] == ("ndarray", "ndarray", "Zero")
+
+    zero = tr._tensor.Zero()
+    repr(zero)
+
+    with pytest.raises(TypeError):
+        np.array(zero)
+
+    zero - 3
+    3 - zero
+    C * zero
+    zero * C
+
+    new_zero = tm.einsum("ij...,ij...,ij...,...->...", C, C, C, zero)
+    assert isinstance(new_zero, type(zero))
 
 
 def test_structural_zeros_mixed():
