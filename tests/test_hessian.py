@@ -188,6 +188,9 @@ def test_structural_zeros():
     tm.diagonal(zero)
     tm.diagonal(C * zero)
 
+    I1 = tm.trace(tr.Tensor(C))
+    I1.real_to_dual(I1, mul=lambda A, x: A * x)
+
     new_zero = tm.einsum("ij...,ij...,ij...,...->...", C, C, C, zero)
     assert isinstance(new_zero, type(zero))
 
