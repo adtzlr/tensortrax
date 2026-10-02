@@ -185,6 +185,9 @@ def test_structural_zeros():
     C * zero
     zero * C
 
+    tm.diagonal(zero)
+    tm.diagonal(C * zero)
+
     new_zero = tm.einsum("ij...,ij...,ij...,...->...", C, C, C, zero)
     assert isinstance(new_zero, type(zero))
 
