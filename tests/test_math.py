@@ -263,13 +263,17 @@ def test_condition():
 
     assert np.allclose(min_array, min_tensor.x)
 
-    np.allclose(Y, Z.x)
+    assert np.allclose(Y, Z.x)
+
+    # a constant (array or scalar) is a tensor without dual data
+    assert np.allclose(Y, tm.if_else(F >= V, 2 * F, V / 2).x)
+    assert np.allclose(Y, tm.if_else(T >= G, 2 * T, G / 2).x)
+    assert np.allclose(np.maximum(F, 0.5), tm.maximum(T, 0.5).x)
+    assert np.allclose(np.minimum(0.5, F), tm.minimum(0.5, T).x)
+    assert np.allclose(np.maximum(F, np.eye(3)[..., None]), tm.maximum(T, np.eye(3)).x)
 
     with pytest.raises(NotImplementedError):
-        tm.if_else(F >= T, 2 * F, V / 2)
-
-    with pytest.raises(NotImplementedError):
-        tm.if_else(T >= G, 2 * T, G / 2)
+        tm.if_else(F >= G, 2.0, G / 2)
 
 
 def test_try_stack():
@@ -544,6 +548,32 @@ def test_constant_arrays_more():
         T**T
 
 
+def test_maximum_constant():
+    "Macaulay bracket: maximum and minimum of a tensor and a scalar."
+    np.random.seed(4)
+    F = np.eye(3)[..., None] + 0.15 * np.random.uniform(-1, 1, (3, 3, 20))
+    C = np.einsum("ki...,kj...->ij...", F, F)
+    I1 = np.trace(C)
+    H = I1 > 3  # step function
+    I = np.eye(3)[..., None]
+    II = np.einsum("ij,kl->ijkl", np.eye(3), np.eye(3))[..., None]
+
+    macaulay = [
+        lambda C: tm.maximum(tm.trace(C) - 3, 0.0) ** 2,
+        lambda C: tm.maximum(0.0, tm.trace(C) - 3) ** 2,
+        lambda C: tm.if_else(tm.trace(C) > 3, tm.trace(C) - 3, 0.0) ** 2,
+        lambda C: (tm.trace(C) - 3) ** 2 - tm.minimum(tm.trace(C) - 3, 0) ** 2,
+    ]
+
+    for fun in macaulay:
+        assert np.allclose(tr.function(fun, ntrax=1)(C), H * (I1 - 3) ** 2)
+        for sym in [False, True]:
+            dWdC = tr.gradient(fun, ntrax=1, sym=sym)(C)
+            d2WdCdC = tr.hessian(fun, ntrax=1, sym=sym)(C)
+            assert np.allclose(dWdC, 2 * H * (I1 - 3) * I)
+            assert np.allclose(d2WdCdC, 2 * H * II)
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -564,3 +594,4 @@ if __name__ == "__main__":
     test_batch_arrays()
     test_if_else()
     test_constant_arrays_more()
+    test_maximum_constant()
