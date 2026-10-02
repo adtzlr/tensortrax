@@ -131,8 +131,34 @@ def test_sym():
     assert np.allclose(D, d)
 
 
+def test_parallel():
+    "parallel=True must give the same results as parallel=False (needs >= 2 cores)."
+    np.random.seed(0)
+    q, c = 4, 500
+    F = np.eye(3)[..., None, None] + 0.1 * np.random.uniform(-1, 1, (3, 3, q, c))
+    C = np.einsum("ki...,kj...->ij...", F, F)
+
+    def neo_hooke(C, mu):
+        return mu * (tm.linalg.det(C) ** (-1 / 3) * tm.trace(C) - 3)
+
+    for mu in [1.5, np.random.rand(q, c), np.random.rand(1, c), np.random.rand(c)]:
+        for evaluate in [tr.function, tr.gradient, tr.hessian]:
+            serial = evaluate(neo_hooke, ntrax=2)(C, mu=mu)
+            parallel = evaluate(neo_hooke, ntrax=2, parallel=True)(C, mu=mu)
+            assert serial.shape == parallel.shape
+            assert np.allclose(serial, parallel)
+
+    # constant derivatives are compressed along the batch axes
+    for evaluate, fun in [(tr.hessian, tm.trace), (tr.jacobian, lambda C: 2 * C)]:
+        serial = evaluate(fun, ntrax=2)(C)
+        parallel = evaluate(fun, ntrax=2, parallel=True)(C)
+        assert serial.shape == parallel.shape
+        assert np.allclose(serial, parallel)
+
+
 if __name__ == "__main__":
     test_function_gradient_hessian()
     test_repeated_eigvals()
     test_trig()
     test_sym()
+    test_parallel()
