@@ -232,7 +232,9 @@ def gradient(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     sym : bool, optional
         Apply the variations only on the upper-triangle entries of a symmetric second
         order tensor. This is a performance feature and requires no modification of the
-        callable ``fun`` and the input arguments, including ``wrt``. Default is False.
+        callable ``fun`` and the input arguments, including ``wrt``. The lower-triangle
+        entries of ``wrt`` are not used and not checked, i.e. ``wrt`` must be symmetric.
+        Default is False.
 
     Returns
     -------
@@ -314,7 +316,9 @@ def hessian(fun, wrt=0, ntrax=0, parallel=False, full_output=False, sym=False):
     sym : bool, optional
         Apply the variations only on the upper-triangle entries of a symmetric second
         order tensor. This is a performance feature and requires no modification of the
-        callable ``fun`` and the input arguments, including ``wrt``. Default is False.
+        callable ``fun`` and the input arguments, including ``wrt``. The lower-triangle
+        entries of ``wrt`` are not used and not checked, i.e. ``wrt`` must be symmetric.
+        Default is False.
 
     Returns
     -------

@@ -9,6 +9,29 @@ import numpy as np
 from ._helpers import Δ, Δδ, f, δ
 
 
+def _align(A, B):
+    """Return the values of B, aligned with the axes of the tensor A.
+
+    An array whose leading axes are equal to the tensor axes of A (e.g. ``np.eye(3)``
+    for a 3x3 tensor) gets the trailing axes of A inserted after its tensor axes. Any
+    remaining axes of the array are aligned with the last trailing axes (batch axes).
+    Other arrays (and scalars) are broadcasted as before.
+    """
+
+    if isinstance(B, Tensor):
+        return f(B)
+
+    ndim = len(A.shape)
+    shape = np.shape(B)
+    nbatch = len(shape) - ndim
+
+    if ndim > 0 and shape[:ndim] == A.shape and 0 <= nbatch <= A.ntrax:
+        ones = np.ones(A.ntrax - nbatch, dtype=int)
+        B = np.reshape(B, (*A.shape, *ones, *shape[ndim:]))
+
+    return B
+
+
 class Tensor:
     r"""A Hyper-Dual Tensor.
 
@@ -326,6 +349,7 @@ class Tensor:
             Δδx = Δδ(A) + Δδ(B)
             ntrax = min(A.ntrax, B.ntrax)
         else:
+            B = _align(A, B)
             x = f(A) + B
             δx = δ(A)
             Δx = Δ(A)
@@ -342,6 +366,7 @@ class Tensor:
             Δδx = Δδ(A) - Δδ(B)
             ntrax = min(A.ntrax, B.ntrax)
         else:
+            B = _align(A, B)
             x = f(A) - B
             δx = δ(A)
             Δx = Δ(A)
@@ -361,6 +386,7 @@ class Tensor:
             Δδx = Δ(A) * δ(B) + δ(A) * Δ(B) + Δδ(A) * f(B) + f(A) * Δδ(B)
             ntrax = min(A.ntrax, B.ntrax)
         else:
+            B = _align(A, B)
             x = f(A) * B
             δx = δ(A) * B
             Δx = Δ(A) * B
@@ -395,23 +421,23 @@ class Tensor:
 
     def __gt__(self, B):
         A = self
-        return f(A) > (f(B) if isinstance(B, Tensor) else B)
+        return f(A) > _align(A, B)
 
     def __lt__(self, B):
         A = self
-        return f(A) < (f(B) if isinstance(B, Tensor) else B)
+        return f(A) < _align(A, B)
 
     def __ge__(self, B):
         A = self
-        return f(A) >= (f(B) if isinstance(B, Tensor) else B)
+        return f(A) >= _align(A, B)
 
     def __le__(self, B):
         A = self
-        return f(A) <= (f(B) if isinstance(B, Tensor) else B)
+        return f(A) <= _align(A, B)
 
     def __eq__(self, B):
         A = self
-        return f(A) == (f(B) if isinstance(B, Tensor) else B)
+        return f(A) == _align(A, B)
 
     def __matmul__(self, B):
         return matmul(self, B)
