@@ -156,9 +156,64 @@ def test_parallel():
         assert np.allclose(serial, parallel)
 
 
+def test_structural_zeros():
+    "Dual data which is not required is not tracked (structural zeros)."
+    C = np.random.rand(3, 3, 4) + 2 * np.eye(3)[..., None]
+    duals = []
+
+    def fun(C):
+        duals.append(tuple(type(a).__name__ for a in (C.δx, C.Δx, C.Δδx)))
+        return tm.trace(C)
+
+    tr.function(fun, ntrax=1)(C)
+    tr.gradient(fun, ntrax=1)(C)
+    tr.hessian(fun, ntrax=1)(C)
+
+    assert duals[0] == ("Zero", "Zero", "Zero")
+    assert duals[1] == ("ndarray", "Zero", "Zero")
+    assert duals[2] == ("ndarray", "ndarray", "Zero")
+
+
+def test_structural_zeros_mixed():
+    "Structural zeros combined with tensors with arrays of zeros as dual data."
+    np.random.seed(1)
+    C = np.random.rand(3, 3, 4) + 2 * np.eye(3)[..., None]
+    w = np.random.rand(4) + 10  # larger than tr(C)
+
+    def stack(C):
+        return tm.sum(tm.stack([C[0, 0], C[1, 1]]) ** 2)
+
+    def stack_ref(C):
+        return C[0, 0] ** 2 + C[1, 1] ** 2
+
+    def setitem(C):
+        D = C * 1.0
+        D[0, 0] = tm.array(w, like=tm.trace(C))
+        return tm.special.ddot(D, C)
+
+    def maximum(C):
+        return tm.maximum(tm.trace(C), tm.array(w, like=tm.trace(C))) * tm.trace(C)
+
+    I = np.eye(3)[..., None]
+    E00 = np.zeros((3, 3, 1))
+    E00[0, 0] = 1
+
+    for evaluate in [tr.function, tr.gradient, tr.hessian]:
+        assert np.allclose(evaluate(stack, ntrax=1)(C), evaluate(stack_ref, ntrax=1)(C))
+
+    # setitem: 2 C, except the entry 00 (w)
+    assert np.allclose(tr.gradient(setitem, ntrax=1)(C), (2 * C) * (1 - E00) + w * E00)
+
+    # maximum: w I (w > tr(C))
+    assert np.allclose(tr.gradient(maximum, ntrax=1)(C), w * I)
+    assert np.allclose(tr.function(maximum, ntrax=1)(C), w * np.trace(C))
+
+
 if __name__ == "__main__":
     test_function_gradient_hessian()
     test_repeated_eigvals()
     test_trig()
     test_sym()
     test_parallel()
+    test_structural_zeros()
+    test_structural_zeros_mixed()
