@@ -454,6 +454,39 @@ def test_batch_arrays():
         assert np.allclose(tr.gradient(fun, ntrax=1, sym=sym)(C, w), tr.gradient(ref, ntrax=1, sym=sym)(C, w))
 
 
+def test_if_else():
+    "if_else selects values and dual data, without broadcasting them to each other."
+    np.random.seed(5)
+    F = np.eye(3)[..., None] + 0.1 * np.random.uniform(-1, 1, (3, 3, 100))
+    C = np.einsum("ki...,kj...->ij...", F, F)
+    I1 = np.trace(C)
+    w = np.full_like(I1, np.median(I1))
+    shapes = []
+
+    def fun(C):
+        I1 = tm.trace(C)
+        I1max = tm.maximum(I1, tm.array(w, like=I1))
+        shapes.append((I1.x.shape, I1max.x.shape))
+        return I1max**2
+
+    assert np.allclose(tr.function(fun, ntrax=1)(C), np.maximum(I1, w) ** 2)
+
+    dWdC = tr.gradient(fun, ntrax=1, sym=True)(C)
+    assert np.allclose(dWdC, 2 * I1 * (I1 > w) * np.eye(3)[..., None])
+
+    d2WdCdC = tr.hessian(fun, ntrax=1, sym=True)(C)
+    II = np.einsum("ij,kl->ijkl", np.eye(3), np.eye(3))[..., None]
+    assert np.allclose(d2WdCdC, 2 * (I1 > w) * II)
+
+    # the values of the selection are not broadcasted to the dual data
+    assert all(before == after for before, after in shapes)
+
+    # arrays: the mask is broadcasted
+    a, b = np.random.rand(3, 3, 5), np.random.rand(3, 3, 5)
+    assert np.allclose(tm.if_else(a > b, a, b), np.maximum(a, b))
+    assert np.allclose(tm.if_else((a > b)[..., :1], a, b), np.where((a > b)[..., :1], a, b))
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -472,3 +505,4 @@ if __name__ == "__main__":
     test_eigvalsh_scale()
     test_constant_arrays()
     test_batch_arrays()
+    test_if_else()
