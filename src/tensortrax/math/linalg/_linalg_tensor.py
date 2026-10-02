@@ -12,6 +12,28 @@ from . import _linalg_array as linalg
 dot = matmul
 
 
+# Perturbation to separate repeated eigenvalues. A fixed perturbation can't separate
+# a repeated eigenvalue if its eigenspace is a plane on which the perturbation is
+# isotropic. For diag(1, -1, 0), these are the planes with normals (1, +/-1, 0), e.g.
+# uniaxial loading at 45° in the xy-plane. This generic matrix with eigenvalues
+# (-1, 0, 1) moves these planes to directions without any symmetry.
+PERTURBATION = np.array(
+    [
+        [0.03, 0.44, -0.66],
+        [0.44, 0.55, -0.24],
+        [-0.66, -0.24, -0.58],
+    ]
+)
+
+
+def perturb(x, eps):
+    "Add a relative perturbation (scaled by the norm of x) to x, in-place."
+    dim = x.shape[0]
+    norm = np.sqrt(np.einsum("ij...,ij...->...", x, x))
+    scale = eps * np.where(norm > 0, norm, 1.0)
+    x += scale * PERTURBATION[:dim, :dim].reshape(dim, dim, *np.ones(x.ndim - 2, int))
+
+
 def det(A):
     "Determinant of a 2x2 or 3x3 Tensor."
     if isinstance(A, Tensor):
@@ -64,8 +86,7 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
         # perturb a copy of the values to separate repeated eigenvalues
         # (the argument and its dual data must not be modified)
         x = f(A).copy()
-        x[0, 0] += eps
-        x[1, 1] -= eps
+        perturb(x, eps)
 
         λ, N = [y.T for y in np.linalg.eigh(x.T)]
         M = einsum("ai...,aj...->aij...", N, N)
@@ -119,8 +140,7 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
         # perturb a copy of the values to separate repeated eigenvalues
         # (the argument and its dual data must not be modified)
         x = f(A).copy()
-        x[0, 0] += eps
-        x[1, 1] -= eps
+        perturb(x, eps)
 
         λ, N = [y.T for y in np.linalg.eigh(x.T)]
         M = einsum("ai...,aj...->aij...", N, N)
