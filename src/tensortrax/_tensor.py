@@ -9,6 +9,66 @@ import numpy as np
 from ._helpers import Δ, Δδ, f, δ
 
 
+class Zero:
+    """A structural zero for dual data which is not tracked. It absorbs products and
+    vanishes in sums, without allocating (and computing with) arrays of zeros."""
+
+    __array_ufunc__ = None  # numpy operators defer to the methods of this class
+    shape = ()
+    ndim = 0
+
+    def __array__(self, *args, **kwargs):
+        raise TypeError("A structural zero can't be converted to an array.")
+
+    def __repr__(self):
+        return "Zero"
+
+    def __neg__(self):
+        return self
+
+    def __add__(self, other):
+        return other
+
+    def __sub__(self, other):
+        return -other
+
+    def __rsub__(self, other):
+        return other
+
+    def __mul__(self, other):
+        return self
+
+    def __getitem__(self, key):
+        return self
+
+    def reshape(self, *args, **kwargs):
+        return self
+
+    def __deepcopy__(self, memo):
+        return self
+
+    __radd__ = __add__
+    __rmul__ = __truediv__ = __mul__
+    sum = squeeze = astype = copy = __copy__ = reshape
+
+
+ZERO = Zero()
+
+
+def dense(A):
+    "Return the tensor with arrays of zeros for its structural zeros of dual data."
+
+    duals = (A.δx, A.Δx, A.Δδx)
+
+    if not any(isinstance(a, Zero) for a in duals):
+        return A
+
+    shape = (*A.shape, *np.ones(A.ntrax, dtype=int))
+    δx, Δx, Δδx = [np.zeros(shape) if isinstance(a, Zero) else a for a in duals]
+
+    return Tensor(x=A.x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax, ndual=A.ndual)
+
+
 def _align(A, B):
     """Return the values of B, aligned with the axes of the tensor A.
 
@@ -282,7 +342,7 @@ class Tensor:
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
 
-            Δx = δx.copy()
+            Δx = ZERO  # not required for the gradient (or the jacobian)
 
         elif hessian:
             # add additional trailing axes for dual values
@@ -317,12 +377,17 @@ class Tensor:
             if sym:
                 idx_off_diag = {1: None, 3: [1], 6: [1, 2, 4]}[self.size]
                 δx[idx_off_diag] /= 2
-                Δx[idx_off_diag] /= 2
+                if not isinstance(Δx, Zero):
+                    Δx[idx_off_diag] /= 2
 
             # re-init the tensor
-            self.__init__(self.x, δx=δx, Δx=Δx, ntrax=self.ntrax, ndual=self.ndual)
+            self.__init__(
+                self.x, δx=δx, Δx=Δx, Δδx=ZERO, ntrax=self.ntrax, ndual=self.ndual
+            )
 
     def _init_and_reshape(self, value):
+        if isinstance(value, Zero):
+            return value
         if value is None:
             value = np.zeros(self.shape)
         else:
@@ -461,12 +526,19 @@ class Tensor:
             ndim = None
 
         def setitem(a, b):
+            if isinstance(b, Zero):
+                b = 0
+            if isinstance(a, Zero):
+                if np.ndim(b) == 0 and b == 0:
+                    return a  # zero remains zero
+                a = np.zeros((*self.shape, *np.ones(self.ntrax, dtype=int)))
             # copy-on-write: the arrays may be shared with other tensors (e.g. the
             # dual arrays of ``A + 1.0`` are those of ``A``)
             a = np.array(a)
             if ndim is not None and a[key].shape != np.shape(b):
                 # broadcast the trailing axes to hold those of the value
-                trax = np.broadcast_shapes(a.shape[len(self.shape) :], b.shape[ndim:])
+                trax = a.shape[len(self.shape) :]
+                trax = np.broadcast_shapes(trax, np.shape(b)[ndim:])
                 a = np.array(np.broadcast_to(a, (*self.shape, *trax)))
             a[key] = b
             return a
@@ -530,7 +602,7 @@ def broadcast_to(A, shape):
     "Broadcast Array or Tensor to a new shape."
 
     def _broadcast_to(a):
-        return np.broadcast_to(a, shape=shape)
+        return a if isinstance(a, Zero) else np.broadcast_to(a, shape=shape)
 
     if isinstance(A, Tensor):
         return Tensor(
@@ -548,6 +620,7 @@ def dual_to_real(A, like=None):
     """Return a new Tensor with old-dual data as new-real values,
     with `ntrax` derived by `like`."""
 
+    A = dense(A)
     ndual = like.ndual - len(like.shape)
     ntrax = A.ntrax - ndual
 
@@ -569,6 +642,9 @@ def real_to_dual(A, x, mul=None):
 
         def mul(A, B):
             return A * B
+
+    else:
+        A, x = dense(A), dense(x)  # a custom ``mul`` may not support structural zeros
 
     return Tensor(
         x=mul(f(A), f(x)) * np.nan,
@@ -637,6 +713,8 @@ def einsum4(subscripts, *operands):
     A, B, C, D = operands
 
     def _einsum(*operands):
+        if any(isinstance(o, Zero) for o in operands):
+            return ZERO
         return np.einsum(subscripts, *operands)
 
     if (
@@ -944,6 +1022,8 @@ def einsum3(subscripts, *operands):
     A, B, C = operands
 
     def _einsum(*operands):
+        if any(isinstance(o, Zero) for o in operands):
+            return ZERO
         return np.einsum(subscripts, *operands)
 
     if isinstance(A, Tensor) and isinstance(B, Tensor) and isinstance(C, Tensor):
@@ -1044,6 +1124,8 @@ def einsum2(subscripts, *operands):
     A, B = operands
 
     def _einsum(*operands):
+        if any(isinstance(o, Zero) for o in operands):
+            return ZERO
         return np.einsum(subscripts, *operands)
 
     if isinstance(A, Tensor) and isinstance(B, Tensor):
@@ -1080,6 +1162,8 @@ def einsum1(subscripts, *operands):
     A = operands[0]
 
     def _einsum(*operands):
+        if any(isinstance(o, Zero) for o in operands):
+            return ZERO
         return np.einsum(subscripts, *operands)
 
     if isinstance(A, Tensor):

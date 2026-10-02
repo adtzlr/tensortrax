@@ -4,7 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 import numpy as np
 
-from ..._tensor import Tensor, Δ, Δδ, einsum, f, matmul, δ
+from ..._tensor import ZERO, Tensor, Zero, Δ, Δδ, dense, einsum, f, matmul, δ
 from .._math_tensor import exp, sqrt, sum, transpose
 from ..special._special_tensor import ddot
 from . import _linalg_array as linalg
@@ -39,7 +39,10 @@ def det(A):
     if isinstance(A, Tensor):
         x = linalg.det(f(A))
         cof = transpose(linalg.adj(f(A)))  # dxdA
-        Δcof = transpose(linalg.adj_variation(f(A), Δ(A)))  # Δ(dxdA)
+        if isinstance(Δ(A), Zero):
+            Δcof = ZERO
+        else:
+            Δcof = transpose(linalg.adj_variation(f(A), Δ(A)))  # Δ(dxdA)
         δx = ddot(cof, δ(A))
         Δx = ddot(cof, Δ(A))
         Δδx = ddot(Δcof, δ(A)) + ddot(cof, Δδ(A))
@@ -96,6 +99,10 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
         δλ = einsum("aij...,ij...->a...", M, δ(A))
         Δλ = einsum("aij...,ij...->a...", M, Δ(A))
 
+        if isinstance(Δ(A), Zero) and isinstance(Δδ(A), Zero):
+            # no second variation required
+            return Tensor(x=λ, δx=δλ, Δx=ZERO, Δδx=ZERO, ntrax=A.ntrax)
+
         # alpha = [0, 1, 2]
         # beta = [(1, 2), (2, 0), (0, 1)]
 
@@ -137,6 +144,7 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
     "Eigenvalues and -bases of a symmetric Tensor."
 
     if isinstance(A, Tensor):
+        A = dense(A)
         # perturb a copy of the values to separate repeated eigenvalues
         # (the argument and its dual data must not be modified)
         x = f(A).copy()

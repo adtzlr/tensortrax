@@ -4,7 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 import numpy as np
 
-from .._tensor import Tensor, Δ, Δδ, broadcast_to, einsum, f, matmul, δ
+from .._tensor import Tensor, Zero, Δ, Δδ, broadcast_to, dense, einsum, f, matmul, δ
 
 dot = matmul
 
@@ -34,6 +34,7 @@ def array(object, dtype=None, like=None, shape=None):
     """
 
     if isinstance(object, Tensor):
+        object = dense(object)
         return Tensor(
             x=np.array(f(object), dtype=dtype),
             δx=np.array(δ(object), dtype=dtype),
@@ -43,6 +44,7 @@ def array(object, dtype=None, like=None, shape=None):
         )
     elif isinstance(object, list) or isinstance(object, tuple):
         if isinstance(object[0], Tensor):
+            object = [dense(o) for o in object]
             return Tensor(
                 x=np.array([f(o) for o in object], dtype=dtype),
                 δx=np.array([δ(o) for o in object], dtype=dtype),
@@ -266,6 +268,8 @@ def diagonal(A, offset=0, axis1=0, axis2=1):
     def _diagonal(a):
         # np.diagonal appends the diagonal as last axis -> move it to the front,
         # keep the order of all other (tensor and trailing) axes
+        if isinstance(a, Zero):
+            return a
         d = np.diagonal(a, offset=offset, axis1=axis1, axis2=axis2)
         return np.moveaxis(d, -1, 0)
 
@@ -285,6 +289,7 @@ def tile(A, reps):
     "Construct an array by repeating A the number of times given by reps."
 
     if isinstance(A, Tensor):
+        A = dense(A)
         return Tensor(
             x=np.tile(f(A), reps=reps),
             δx=np.tile(δ(A), reps=reps),
@@ -300,6 +305,7 @@ def repeat(a, repeats, axis=None):
     "Repeat elements of an array."
 
     if isinstance(a, Tensor):
+        a = dense(a)
         return Tensor(
             x=np.repeat(f(a), repeats=repeats, axis=axis),
             δx=np.repeat(δ(a), repeats=repeats, axis=axis),
@@ -315,6 +321,7 @@ def hstack(tup):
     "Stack arrays in sequence horizontally (column wise)."
 
     if isinstance(tup[0], Tensor):
+        tup = [dense(A) for A in tup]
         return Tensor(
             x=np.hstack([f(A) for A in tup]),
             δx=np.hstack([δ(A) for A in tup]),
@@ -330,6 +337,7 @@ def vstack(tup):
     "Stack arrays in sequence vertically (row wise)."
 
     if isinstance(tup[0], Tensor):
+        tup = [dense(A) for A in tup]
         return Tensor(
             x=np.vstack([f(A) for A in tup]),
             δx=np.vstack([δ(A) for A in tup]),
@@ -345,6 +353,7 @@ def stack(arrays, axis=0):
     "Join a sequence of arrays along a new axis."
 
     if isinstance(arrays[0], Tensor):
+        arrays = [dense(A) for A in arrays]
         return Tensor(
             x=np.stack([f(A) for A in arrays], axis=axis),
             δx=np.stack([δ(A) for A in arrays], axis=axis),
@@ -360,6 +369,7 @@ def concatenate(arrays, axis=0):
     "Join a sequence of arrays along an existing axis."
 
     if isinstance(arrays[0], Tensor):
+        arrays = [dense(A) for A in arrays]
         return Tensor(
             x=np.concatenate([f(A) for A in arrays], axis=axis),
             δx=np.concatenate([δ(A) for A in arrays], axis=axis),
@@ -375,6 +385,7 @@ def split(ary, indices_or_sections, axis=0):
     "Split an array into multiple sub-arrays as views into ary."
 
     if isinstance(ary, Tensor):
+        ary = dense(ary)
         xs = np.split(f(ary), indices_or_sections=indices_or_sections, axis=axis)
         δxs = np.split(δ(ary), indices_or_sections=indices_or_sections, axis=axis)
         Δxs = np.split(Δ(ary), indices_or_sections=indices_or_sections, axis=axis)
@@ -440,6 +451,7 @@ def if_else(cond, true, false):
         out[..., ~mask] = false[..., ~mask]
 
     elif isinstance(true, Tensor) and isinstance(false, Tensor):
+        true, false = dense(true), dense(false)
         shape = np.maximum.reduce(
             [
                 true.x.shape,
