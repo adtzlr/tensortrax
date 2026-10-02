@@ -423,17 +423,28 @@ def test_constant_arrays():
 
     eye, ddot = tm.base.eye, tm.special.ddot
     cases = [
-        (lambda C: ddot(C - np.eye(3), C - np.eye(3)), lambda C: ddot(C - eye(C), C - eye(C))),
+        (
+            lambda C: ddot(C - np.eye(3), C - np.eye(3)),
+            lambda C: ddot(C - eye(C), C - eye(C)),
+        ),
         (lambda C: ddot(np.eye(3) - C, C), lambda C: ddot(eye(C) - C, C)),
-        (lambda C: tm.sum(tm.sum(C * M)) ** 2, lambda C: tm.einsum("ij...,ij->...", C, M) ** 2),
-        (lambda C: ddot(C * W, C), lambda C: tm.einsum("ij...,ij...,ij...->...", C, W, C)),
+        (
+            lambda C: tm.sum(tm.sum(C * M)) ** 2,
+            lambda C: tm.einsum("ij...,ij->...", C, M) ** 2,
+        ),
+        (
+            lambda C: ddot(C * W, C),
+            lambda C: tm.einsum("ij...,ij...,ij...->...", C, W, C),
+        ),
     ]
 
     for fun, ref in cases:
         for ntrax, X in [(0, C[..., 0]), (1, C)]:
             if ntrax == 0 and fun is cases[3][0]:
                 continue
-            assert np.allclose(tr.function(fun, ntrax=ntrax)(X), tr.function(ref, ntrax=ntrax)(X))
+            assert np.allclose(
+                tr.function(fun, ntrax=ntrax)(X), tr.function(ref, ntrax=ntrax)(X)
+            )
             for sym in [False, True]:
                 for evaluate in [tr.gradient, tr.hessian]:
                     a = evaluate(fun, ntrax=ntrax, sym=sym)(X)
@@ -451,7 +462,10 @@ def test_batch_arrays():
     fun = lambda C, w: tm.special.ddot(C * w, C)
     ref = lambda C, w: tm.einsum("ij...,...,ij...->...", C, w, C)
     for sym in [False, True]:
-        assert np.allclose(tr.gradient(fun, ntrax=1, sym=sym)(C, w), tr.gradient(ref, ntrax=1, sym=sym)(C, w))
+        assert np.allclose(
+            tr.gradient(fun, ntrax=1, sym=sym)(C, w),
+            tr.gradient(ref, ntrax=1, sym=sym)(C, w),
+        )
 
 
 def test_if_else():
@@ -484,7 +498,9 @@ def test_if_else():
     # arrays: the mask is broadcasted
     a, b = np.random.rand(3, 3, 5), np.random.rand(3, 3, 5)
     assert np.allclose(tm.if_else(a > b, a, b), np.maximum(a, b))
-    assert np.allclose(tm.if_else((a > b)[..., :1], a, b), np.where((a > b)[..., :1], a, b))
+    assert np.allclose(
+        tm.if_else((a > b)[..., :1], a, b), np.where((a > b)[..., :1], a, b)
+    )
 
 
 if __name__ == "__main__":
