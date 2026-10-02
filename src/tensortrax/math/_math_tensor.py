@@ -4,7 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 import numpy as np
 
-from .._tensor import Tensor, Zero, Δ, Δδ, dense, einsum, f, matmul, δ
+from .._tensor import ZERO, Tensor, Zero, Δ, Δδ, _align, dense, einsum, f, matmul, δ
 
 dot = matmul
 
@@ -452,10 +452,18 @@ def if_else(cond, true, false):
         b = 0 if isinstance(b, Zero) else b
         return np.where(mask, a, b)
 
+    def as_tensor(a, like):
+        "A constant (scalar or array) is a tensor without dual data."
+        if isinstance(a, Tensor):
+            return a
+        return Tensor(x=_align(like, a), δx=ZERO, Δx=ZERO, Δδx=ZERO, ntrax=like.ntrax)
+
     if isinstance(true, np.ndarray) and isinstance(false, np.ndarray):
         return where(true, false)
 
-    elif isinstance(true, Tensor) and isinstance(false, Tensor):
+    elif isinstance(true, Tensor) or isinstance(false, Tensor):
+        like = true if isinstance(true, Tensor) else false
+        true, false = as_tensor(true, like), as_tensor(false, like)
         return Tensor(
             x=where(f(true), f(false)),
             δx=where(δ(true), δ(false)),
@@ -466,14 +474,14 @@ def if_else(cond, true, false):
 
     else:
         raise NotImplementedError(
-            "`true` and `false` must be both arrays or both tensors."
+            "`true` and `false` must be arrays if none of them is a tensor."
         )
 
 
 def maximum(x1, x2):
     "Element-wise maximum of array elements."
 
-    if isinstance(x1, Tensor):
+    if isinstance(x1, Tensor) or isinstance(x2, Tensor):
         return if_else(x1 > x2, x1, x2)
     else:
         return np.maximum(x1, x2)
@@ -482,7 +490,7 @@ def maximum(x1, x2):
 def minimum(x1, x2):
     "Element-wise minimum of array elements."
 
-    if isinstance(x1, Tensor):
+    if isinstance(x1, Tensor) or isinstance(x2, Tensor):
         return if_else(x1 < x2, x1, x2)
     else:
         return np.minimum(x1, x2)
