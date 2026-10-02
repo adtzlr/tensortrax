@@ -461,7 +461,7 @@ class Tensor:
 
     def __truediv__(self, B):
         A = self
-        return A * B**-1
+        return A * B**-1.0  # a float exponent, also for integer arrays
 
     def __rtruediv__(self, B):
         A = self
@@ -470,6 +470,10 @@ class Tensor:
     def __pow__(self, p):
         A = self
         x = f(A)
+
+        if isinstance(p, Tensor):
+            raise TypeError("Tensor-valued exponents are not supported.")
+        p = _align(A, p)
 
         # derivative coefficients of x**p; where a coefficient vanishes (p = 0 or 1),
         # its exponent is set to zero to avoid 0 * inf = nan at x = 0
@@ -504,6 +508,10 @@ class Tensor:
         A = self
         return f(A) == _align(A, B)
 
+    def __ne__(self, B):
+        A = self
+        return f(A) != _align(A, B)
+
     def __matmul__(self, B):
         return matmul(self, B)
 
@@ -522,6 +530,7 @@ class Tensor:
             values = (f(value), δ(value), Δ(value), Δδ(value))
             ndim = len(value.shape)
         else:
+            value = _align(self[key], value)  # align with the indexed sub-tensor
             values = (value, 0, 0, 0)  # a constant has no dual data
             ndim = None
 

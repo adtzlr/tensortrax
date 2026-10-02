@@ -503,6 +503,47 @@ def test_if_else():
     )
 
 
+def test_constant_arrays_more():
+    "Constant arrays are aligned in pow, setitem, truediv and ne (here with 3 points)."
+    np.random.seed(3)
+    F = np.eye(3)[..., None] + 0.2 * np.random.uniform(-1, 1, (3, 3, 3))
+    C = np.einsum("ki...,kj...->ij...", F, F)
+    λ = tm.linalg.eigvalsh
+    p = np.array([1.0, 2.0, 3.0])
+    w = np.array([[1, 2, 3]] * 3)  # integers
+
+    def set_row(C):
+        D = C * 1.0
+        D[2] = np.array([0.0, 0.0, 1.0])
+        return tm.special.ddot(D, C)
+
+    def set_row_ref(C):
+        D = C * 1.0
+        D[2, 0], D[2, 1], D[2, 2] = 0.0, 0.0, 1.0
+        return tm.special.ddot(D, C)
+
+    cases = [
+        (lambda C: tm.sum(λ(C) ** p), lambda C: λ(C)[0] + λ(C)[1] ** 2 + λ(C)[2] ** 3),
+        (set_row, set_row_ref),
+        (lambda C: tm.sum(tm.sum(C / w)), lambda C: tm.sum(tm.sum(C * (1 / w)))),
+        (lambda C: tm.trace(C) / np.int64(2), lambda C: tm.trace(C) / 2),
+    ]
+
+    for fun, ref in cases:
+        assert np.allclose(tr.function(fun, ntrax=1)(C), tr.function(ref, ntrax=1)(C))
+        for sym in [False, True]:
+            for evaluate in [tr.gradient, tr.hessian]:
+                a = evaluate(fun, ntrax=1, sym=sym)(C)
+                b = evaluate(ref, ntrax=1, sym=sym)(C)
+                assert np.allclose(*np.broadcast_arrays(a, b))
+
+    T = tr.Tensor(C, ntrax=1)
+    assert np.array_equal(T != np.eye(3), C != np.eye(3)[..., None])
+
+    with pytest.raises(TypeError):  # tensor-valued exponents are not supported
+        T**T
+
+
 if __name__ == "__main__":
     test_math()
     test_einsum()
@@ -522,3 +563,4 @@ if __name__ == "__main__":
     test_constant_arrays()
     test_batch_arrays()
     test_if_else()
+    test_constant_arrays_more()
