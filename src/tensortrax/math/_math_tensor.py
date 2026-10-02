@@ -4,7 +4,7 @@ tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 
 import numpy as np
 
-from .._tensor import Tensor, Zero, Δ, Δδ, broadcast_to, dense, einsum, f, matmul, δ
+from .._tensor import Tensor, Zero, Δ, Δδ, dense, einsum, f, matmul, δ
 
 dot = matmul
 
@@ -443,39 +443,31 @@ def if_else(cond, true, false):
     "Mask-based Condition for arrays and tensors."
 
     mask = np.asarray(cond)
-    out = true.copy()
+
+    def where(a, b):
+        "Select items of a or b by the mask, structural zeros remain zero."
+        if isinstance(a, Zero) and isinstance(b, Zero):
+            return a
+        a = 0 if isinstance(a, Zero) else a
+        b = 0 if isinstance(b, Zero) else b
+        return np.where(mask, a, b)
 
     if isinstance(true, np.ndarray) and isinstance(false, np.ndarray):
-        out = true.copy()
-        out[..., mask] = true[..., mask]
-        out[..., ~mask] = false[..., ~mask]
+        return where(true, false)
 
     elif isinstance(true, Tensor) and isinstance(false, Tensor):
-        true, false = dense(true), dense(false)
-        shape = np.maximum.reduce(
-            [
-                true.x.shape,
-                true.δx.shape,
-                true.Δx.shape,
-                true.Δδx.shape,
-                false.x.shape,
-                false.δx.shape,
-                false.Δx.shape,
-                false.Δδx.shape,
-            ]
+        return Tensor(
+            x=where(f(true), f(false)),
+            δx=where(δ(true), δ(false)),
+            Δx=where(Δ(true), Δ(false)),
+            Δδx=where(Δδ(true), Δδ(false)),
+            ntrax=true.ntrax,
         )
-
-        out = broadcast_to(true, shape=shape).copy()
-
-        mask = np.broadcast_to(mask, shape)
-        out[..., ~mask] = broadcast_to(false, shape=shape)[..., ~mask]
 
     else:
         raise NotImplementedError(
             "`true` and `false` must be both arrays or both tensors."
         )
-
-    return out
 
 
 def maximum(x1, x2):
