@@ -94,9 +94,13 @@ def partition(args, kwargs, wrt, ntrax, parallel, chunks=None, batch=100, axis=N
         # generate list with args and kwargs for chunks
         list_of_args_kwargs = [[list(args), {**kwargs}] for chunk in range(chunks)]
 
-        # test if object has attribute shape (is tensor or array)
+        # split arrays with the full length of the wrt-argument along the split axis
         def isactive(x):
-            return hasattr(x, "shape") and np.all(np.isin(trax, x.shape[-ntrax:]))
+            return (
+                hasattr(x, "shape")
+                and len(x.shape) >= -axis
+                and x.shape[axis] == trax[axis]
+            )
 
         # iterate through args and split tensor-like objects
         args_partitioned = []
@@ -129,10 +133,11 @@ def concatenate_results(res, axis, full_output):
     "Concatenate results (with optional full output) on existing axis."
 
     def concat(arrays, axis):
-        "Concatenate arrays, fall-back to first item if shape of first array is zero."
+        """Concatenate arrays, fall-back to the first item for scalars, a single chunk
+        or arrays compressed along the split axis."""
 
-        if len(arrays[0].shape) == 0 or len(arrays) == 1:
-            return arrays[0]
+        if len(arrays[0].shape) == 0 or len(arrays) == 1 or arrays[0].shape[axis] == 1:
+            return arrays[0]  # scalar, single chunk or compressed along the split axis
         else:
             return np.concatenate(arrays, axis=axis)
 
