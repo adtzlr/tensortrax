@@ -31,9 +31,9 @@ def cpu_count():
     "Return the number of CPUs usable by the current process."
     if hasattr(os, "process_cpu_count"):  # Python >= 3.13
         return os.process_cpu_count() or 1
-    if hasattr(os, "sched_getaffinity"):  # Linux
+    if hasattr(os, "sched_getaffinity"):  # pragma: no cover (Linux, Python < 3.13)
         return len(os.sched_getaffinity(0))
-    return os.cpu_count() or 1
+    return os.cpu_count() or 1  # pragma: no cover (fallback)
 
 
 def take(fun, item=0):
