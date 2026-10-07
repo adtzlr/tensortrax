@@ -44,7 +44,7 @@ classifiers = [
   "Topic :: Utilities"
 ]
 dynamic = ["version"]
-dependencies = ["numpy", "joblib"]
+dependencies = ["numpy"]
 
 [project.optional-dependencies]
 all = ["scipy"]
