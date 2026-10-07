@@ -72,7 +72,9 @@ def adj_variation(A, dA):
             "Variation of A[i, j] * A[k, l]."
             return A[i, j] * dA[k, l] + dA[i, j] * A[k, l]
 
-        dadjA = np.zeros(np.broadcast_shapes(A.shape, dA.shape))
+        dadjA = np.zeros(
+            np.broadcast_shapes(A.shape, dA.shape), dtype=np.result_type(A, dA)
+        )
 
         dadjA[0, 0] = minor(1, 1, 2, 2) - minor(1, 2, 2, 1)
         dadjA[1, 1] = minor(0, 0, 2, 2) - minor(0, 2, 2, 0)

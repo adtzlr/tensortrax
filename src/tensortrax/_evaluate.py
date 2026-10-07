@@ -15,7 +15,10 @@ from .math.special import from_triu_1d, from_triu_2d, triu_1d
 def _dense(func, a):
     "Return an array of zeros for a structural zero of dual data of a tensor."
     if isinstance(a, Zero):
-        return np.zeros((*func.shape, *np.ones(func.ntrax, dtype=int)))
+        return np.zeros(
+            (*func.shape, *np.ones(func.ntrax, dtype=int)),
+            dtype=np.result_type(func.x, 1.0),
+        )
     return a
 
 
