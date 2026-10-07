@@ -2,11 +2,12 @@
 tensorTRAX: Math on (Hyper-Dual) Tensors with Trailing Axes.
 """
 
+import os
+from concurrent.futures import ThreadPoolExecutor
 from copy import copy
 from functools import wraps
 
 import numpy as np
-from joblib import Parallel, cpu_count, delayed
 
 from ._tensor import ZERO, Tensor, Zero, Δδ, broadcast_to, f, δ
 from .math.special import from_triu_1d, from_triu_2d, triu_1d
@@ -24,6 +25,15 @@ def _dense(func, a):
 
 # default number of points per chunk (cache blocking)
 CHUNKSIZE = 8192
+
+
+def cpu_count():
+    "Return the number of CPUs usable by the current process."
+    if hasattr(os, "process_cpu_count"):  # Python >= 3.13
+        return os.process_cpu_count() or 1
+    if hasattr(os, "sched_getaffinity"):  # pragma: no cover (Linux, Python < 3.13)
+        return len(os.sched_getaffinity(0))
+    return os.cpu_count() or 1  # pragma: no cover (fallback)
 
 
 def take(fun, item=0):
@@ -170,9 +180,15 @@ def evaluate_chunks(kernel, args, kwargs, wrt, ntrax, parallel, chunksize, full_
         args, kwargs, wrt, ntrax, parallel, chunksize
     )
 
-    res = Parallel(n_jobs=n_jobs, prefer="threads")(
-        delayed(kernel)(*args_chunk) for args_chunk in list_of_args_kwargs
-    )
+    if n_jobs == 1:
+        res = [kernel(*args_chunk) for args_chunk in list_of_args_kwargs]
+    else:
+        with ThreadPoolExecutor(max_workers=n_jobs) as executor:
+            futures = [
+                executor.submit(kernel, *args_chunk)
+                for args_chunk in list_of_args_kwargs
+            ]
+            res = [future.result() for future in futures]
 
     return concatenate_results(res=res, axis=axis, full_output=full_output)
 

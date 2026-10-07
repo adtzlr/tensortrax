@@ -30,7 +30,6 @@ pip install tensortrax[all]
 ```
 
 `tensortrax` has minimal requirements, all available at PyPI.
-* [`joblib`](https://github.com/joblib/joblib) for threaded function, gradient, hessian and jacobian evaluations
 * [`numpy`](https://github.com/numpy/numpy) for array operations
 
 To install optional dependencies as well, add `[all]` to the install command: `pip install tensortrax[all]`.

@@ -43,8 +43,6 @@ Install ``tensortrax`` from `PyPI <https://pypi.org/project/tensortrax/>`_, the 
       - Usage
     * - `numpy <https://github.com/numpy/numpy>`_
       - for array operations
-    * - `joblib <https://github.com/joblib/joblib>`_
-      - for threaded function, gradient, hessian and jacobian evaluations
 
 To install optional dependencies as well, add ``[all]`` to the install command: ``pip install tensortrax[all]``.
 
