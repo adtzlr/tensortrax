@@ -11,9 +11,9 @@ isotropic hyperelastic material formulation as a reference example, see Eq.
     :label: tutorial-nh
 
     C &= \boldsymbol{F}^T \boldsymbol{F}
-    
+
     I_1 &= \text{tr} (\boldsymbol{C})
-    
+
     J &= \det (\boldsymbol{F})
 
     \psi(\boldsymbol{F}) &= \frac{\mu}{2} \left( J^{-2/3}\ I_1 - 3 \right)

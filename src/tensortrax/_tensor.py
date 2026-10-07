@@ -63,8 +63,11 @@ def dense(A):
     if not any(isinstance(a, Zero) for a in duals):
         return A
 
+    dtype = np.result_type(A.x, 1.0)
     shape = (*A.shape, *np.ones(A.ntrax, dtype=int))
-    δx, Δx, Δδx = [np.zeros(shape) if isinstance(a, Zero) else a for a in duals]
+    δx, Δx, Δδx = [
+        np.zeros(shape, dtype=dtype) if isinstance(a, Zero) else a for a in duals
+    ]
 
     return Tensor(x=A.x, δx=δx, Δx=Δx, Δδx=Δδx, ntrax=A.ntrax, ndual=A.ndual)
 
@@ -325,6 +328,8 @@ class Tensor:
         """Re-Initialize tensor with dual values to keep track of the
         hessian and/or the gradient."""
 
+        dtype = np.result_type(self.x.dtype, 1.0)
+
         if gradient and not hessian:
             # add additional element-wise acting axes for dual values
             self._add(ndual=len(self.shape))
@@ -335,9 +340,9 @@ class Tensor:
                 if len(shape) == 0:
                     shape = (1,)
                 if δx is False:
-                    δx = np.zeros(self.size**2).reshape(shape)
+                    δx = np.zeros(self.size**2, dtype=dtype).reshape(shape)
                 else:
-                    δx = np.eye(self.size).reshape(shape)
+                    δx = np.eye(self.size, dtype=dtype).reshape(shape)
 
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
@@ -356,9 +361,9 @@ class Tensor:
                 if len(shape) == 0:
                     shape = (1,)
                 if δx is False:
-                    δx = np.zeros(self.size**2).reshape(shape)
+                    δx = np.zeros(self.size**2, dtype=dtype).reshape(shape)
                 else:
-                    δx = np.eye(self.size).reshape(shape)
+                    δx = np.eye(self.size, dtype=dtype).reshape(shape)
             else:
                 δx = δx.reshape(*self.shape, *self.trax)
 
@@ -367,9 +372,9 @@ class Tensor:
                 if len(shape) == 0:
                     shape = (1,)
                 if Δx is False:
-                    Δx = np.zeros(self.size**2).reshape(shape)
+                    Δx = np.zeros(self.size**2, dtype=dtype).reshape(shape)
                 else:
-                    Δx = np.eye(self.size).reshape(shape)
+                    Δx = np.eye(self.size, dtype=dtype).reshape(shape)
             else:
                 Δx = Δx.reshape(*self.shape, *self.trax)
 
@@ -389,7 +394,7 @@ class Tensor:
         if isinstance(value, Zero):
             return value
         if value is None:
-            value = np.zeros(self.shape)
+            value = np.zeros(self.shape, dtype=np.result_type(self.x, 1.0))
         else:
             value = np.asarray(value)
         if len(value.shape) != len(self.x.shape):
@@ -477,8 +482,9 @@ class Tensor:
 
         # derivative coefficients of x**p; where a coefficient vanishes (p = 0 or 1),
         # its exponent is set to zero to avoid 0 * inf = nan at x = 0
-        dx = p * x ** np.where(p == 0, 0, p - 1)
-        d2x = p * (p - 1) * x ** np.where(p * (p - 1) == 0, 0, p - 2)
+        dtype = np.result_type(x, p)
+        dx = (p * x ** np.where(p == 0, 0, p - 1)).astype(dtype)
+        d2x = (p * (p - 1) * x ** np.where(p * (p - 1) == 0, 0, p - 2)).astype(dtype)
 
         return Tensor(
             x=x**p,
@@ -540,7 +546,10 @@ class Tensor:
             if isinstance(a, Zero):
                 if np.ndim(b) == 0 and b == 0:
                     return a  # zero remains zero
-                a = np.zeros((*self.shape, *np.ones(self.ntrax, dtype=int)))
+                a = np.zeros(
+                    (*self.shape, *np.ones(self.ntrax, dtype=int)),
+                    dtype=np.result_type(self.x, 1.0),
+                )
             # copy-on-write: the arrays may be shared with other tensors (e.g. the
             # dual arrays of ``A + 1.0`` are those of ``A``)
             a = np.array(a)

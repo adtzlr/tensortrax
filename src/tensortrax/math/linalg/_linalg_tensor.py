@@ -81,7 +81,7 @@ def pinv(A):
     return inv(A, inverse=linalg.pinv)
 
 
-def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
+def eigvalsh(A, eps=None):
     "Eigenvalues of a symmetric Tensor."
 
     if isinstance(A, Tensor):
@@ -89,6 +89,10 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
         # perturb a copy of the values to separate repeated eigenvalues
         # (the argument and its dual data must not be modified)
         x = f(A).copy()
+
+        if eps is None:
+            eps = np.sqrt(np.finfo(A.x.dtype).eps)
+
         perturb(x, eps)
 
         λ, N = [y.T for y in np.linalg.eigh(x.T)]
@@ -117,7 +121,9 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
             δNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
+                Mαβ = (
+                    Mαβ + transpose(Mαβ)
+                ) / 2  # A is symmetric -> only sym. variations
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 λαβ = λ[α] - λ[β]
                 δNα.append(1 / λαβ * N[β] * δAαβ)
@@ -140,7 +146,7 @@ def eigvalsh(A, eps=np.sqrt(np.finfo(float).eps)):
         return np.linalg.eigvalsh(A.T).T
 
 
-def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
+def eigh(A, eps=None):
     "Eigenvalues and -bases of a symmetric Tensor."
 
     if isinstance(A, Tensor):
@@ -148,6 +154,10 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
         # perturb a copy of the values to separate repeated eigenvalues
         # (the argument and its dual data must not be modified)
         x = f(A).copy()
+
+        if eps is None:
+            eps = np.sqrt(np.finfo(A.x.dtype).eps)
+
         perturb(x, eps)
 
         λ, N = [y.T for y in np.linalg.eigh(x.T)]
@@ -173,7 +183,9 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
             ΔNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
+                Mαβ = (
+                    Mαβ + transpose(Mαβ)
+                ) / 2  # A is symmetric -> only sym. variations
                 δAαβ = einsum("ij...,ij...->...", Mαβ, δ(A))
                 ΔAαβ = einsum("ij...,ij...->...", Mαβ, Δ(A))
                 λαβ = λ[α] - λ[β]
@@ -188,7 +200,9 @@ def eigh(A, eps=np.sqrt(np.finfo(float).eps)):
             ΔδNα = []
             for β in beta[α]:
                 Mαβ = einsum("i...,j...->ij...", N[α], N[β])
-                Mαβ = (Mαβ + transpose(Mαβ)) / 2  # A is symmetric -> only sym. variations
+                Mαβ = (
+                    Mαβ + transpose(Mαβ)
+                ) / 2  # A is symmetric -> only sym. variations
                 ΔMαβ = einsum("i...,j...->ij...", ΔN[α], N[β]) + einsum(
                     "i...,j...->ij...", N[α], ΔN[β]
                 )

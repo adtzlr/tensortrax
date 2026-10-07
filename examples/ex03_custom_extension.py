@@ -2,8 +2,9 @@ r"""
 Custom Extensions
 -----------------
 Custom functions (extensions) are easy to implement in `tensortrax`. Beside the function
-expression, three additional (dual) variation expressions have to be defined. 
+expression, three additional (dual) variation expressions have to be defined.
 """
+
 import numpy as np
 
 from tensortrax import Tensor, Δ, Δδ, f, δ

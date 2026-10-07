@@ -6,6 +6,7 @@ variational arrays. To obtain the :math:`12` - component of the gradient and the
 :math:`1223` - component of the hessian, a tensor has to be created with the appropriate
 small-changes of the tensor components (dual arrays).
 """
+
 import numpy as np
 
 import tensortrax as tr
