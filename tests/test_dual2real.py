@@ -56,7 +56,7 @@ def test_real_to_dual():
     W = tm.trace(J ** (-2 / 3) * C) - 3
     η = 1 - 1 / 3 * tm.tanh(W / 8)
 
-    # set the variation to δη * W (and the linearization to Δη * δW + η * ΔδW)
+    # set the variation to η * δW (and the linearization to Δη * δW + η * ΔδW)
     P = tr.δ(η.real_to_dual(W))
     assert P.shape == (3, 3)
 

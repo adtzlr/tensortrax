@@ -34,6 +34,7 @@ This module provides NumPy-like math functions.
    matmul
    maximum
    minimum
+   no_variation
    ravel
    real_to_dual
    repeat
@@ -57,4 +58,4 @@ This module provides NumPy-like math functions.
 **Detailed API Reference**
 
 .. automodule:: tensortrax.math
-   :members: abs, array, broadcast_to, concatenate, cos, cosh, diagonal, dot, dual_to_real, einsum, exp, external, hstack, if_else, log, log10, matmul, maximum, minimum, ravel, real_to_dual, repeat, reshape, sign, sin, sinh, split, squeeze, sqrt, stack, sum, tan, tanh, tile, trace, transpose, vstack
+   :members: abs, array, broadcast_to, concatenate, cos, cosh, diagonal, dot, dual_to_real, einsum, exp, external, hstack, if_else, log, log10, matmul, maximum, minimum, no_variation, ravel, real_to_dual, repeat, reshape, sign, sin, sinh, split, squeeze, sqrt, stack, sum, tan, tanh, tile, trace, transpose, vstack

@@ -52,6 +52,7 @@ class Zero:
     sum = squeeze = astype = copy = __copy__ = reshape
 
 
+#: A structural zero for dual data which is not tracked.
 ZERO = Zero()
 
 
@@ -602,6 +603,9 @@ class Tensor:
     def real_to_dual(self, x, mul=None):
         return real_to_dual(self, x=x, mul=mul)
 
+    def no_variation(self):
+        return no_variation(self)
+
     def astype(self, dtype):
         return Tensor(
             x=self.x.astype(dtype),
@@ -671,6 +675,91 @@ def real_to_dual(A, x, mul=None):
         Δδx=mul(Δ(A), δ(x)) + mul(f(A), Δδ(x)),
         ntrax=A.ntrax,
     )
+
+
+def no_variation(A):
+    r"""Return a new Tensor without the variation, i.e. the Tensor is constant in the
+    variation but not in the linearization.
+
+    ..  math::
+
+        \delta A &= \boldsymbol{0}
+
+        \Delta \delta A &= \boldsymbol{0}
+
+    The (real) values and the linearization :math:`\Delta A` of the Tensor are kept.
+    This is useful for internal (state) variables, which are updated by an evolution
+    equation, e.g. :math:`\boldsymbol{C}_i(\boldsymbol{C})`. The gradient of a function
+    :math:`\psi(\boldsymbol{C}, \boldsymbol{C}_i)` is the partial derivative at fixed
+    internal variables and the hessian is its consistent linearization.
+
+    ..  math::
+
+        \delta \psi &= \frac{\partial \psi}{\partial \boldsymbol{C}} : \delta
+            \boldsymbol{C}
+
+        \Delta \delta \psi &= \delta \boldsymbol{C} : \left(
+            \frac{\partial^2 \psi}{\partial \boldsymbol{C}\ \partial \boldsymbol{C}} :
+            \Delta \boldsymbol{C} + \frac{\partial^2 \psi}{\partial \boldsymbol{C}\
+            \partial \boldsymbol{C}_i} : \Delta \boldsymbol{C}_i \right) +
+            \frac{\partial \psi}{\partial \boldsymbol{C}} : \Delta \delta \boldsymbol{C}
+
+    Parameters
+    ----------
+    A : Tensor or ndarray
+        The tensor. An array is returned unchanged, because it has no variation.
+
+    Returns
+    -------
+    Tensor or ndarray
+        The tensor with the values and the linearization of ``A`` and a structural zero
+        :data:`~tensortrax.ZERO` as variation (and as second-order variation).
+
+    Notes
+    -----
+    In contrast to the real values ``A.x`` (or ``f(A)``), which are constant in both
+    the variation and the linearization (like ``detach()`` in PyTorch), the
+    linearization of the Tensor is kept. The result of
+    :func:`~tensortrax.math.real_to_dual` equals ``mul(no_variation(A), x)`` in the
+    variation and the linearization.
+
+    Examples
+    --------
+    The strain energy function of a finite strain viscoelastic material formulation
+    is evaluated at fixed inelastic right Cauchy-Green deformation tensor for the
+    gradient. The update of the inelastic right Cauchy-Green deformation tensor is
+    considered in the hessian.
+
+    >>> import numpy as np
+    >>> import tensortrax as tr
+    >>> import tensortrax.math as tm
+    >>>
+    >>> def viscoelastic(C, mu, eta, dtime):
+    ...     Cu = tm.linalg.det(C) ** (-1 / 3) * C
+    ...     Ci = tm.base.eye(C) + mu / eta * dtime * Cu
+    ...     Ci = tm.linalg.det(Ci) ** (-1 / 3) * Ci
+    ...     Ci = tm.no_variation(Ci)
+    ...     return mu / 2 * (tm.trace(Cu @ tm.linalg.inv(Ci)) - 3)
+    >>>
+    >>> np.random.seed(5)
+    >>> F = np.eye(3).reshape(3, 3, 1) + np.random.rand(3, 3, 8) / 10
+    >>> C = np.einsum("ki...,kj...->ij...", F, F)
+    >>>
+    >>> dWdC = tr.gradient(viscoelastic, ntrax=1)(C, mu=1.0, eta=1.0, dtime=1.0)
+    >>> d2WdCdC = tr.hessian(viscoelastic, ntrax=1)(C, mu=1.0, eta=1.0, dtime=1.0)
+    >>>
+    >>> dWdC.shape
+    (3, 3, 8)
+
+    >>> d2WdCdC.shape
+    (3, 3, 3, 3, 8)
+
+    """
+
+    if not isinstance(A, Tensor):
+        return A
+
+    return Tensor(x=f(A), δx=ZERO, Δx=Δ(A), Δδx=ZERO, ntrax=A.ntrax, ndual=A.ndual)
 
 
 def ravel(A, order="C"):
