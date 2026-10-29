@@ -1,7 +1,7 @@
 from .._tensor import broadcast_to
 from .._tensor import dual_to_real
 from .._tensor import dual_to_real as dual2real
-from .._tensor import ravel, real_to_dual, reshape, squeeze
+from .._tensor import no_variation, ravel, real_to_dual, reshape, squeeze
 from . import _math_array as base
 from . import linalg, special
 from ._math_tensor import (
@@ -62,6 +62,7 @@ __all__ = [
     "matmul",
     "maximum",
     "minimum",
+    "no_variation",
     "ravel",
     "repeat",
     "reshape",

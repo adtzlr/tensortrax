@@ -15,7 +15,7 @@ from ._evaluate import (
     take,
 )
 from ._helpers import Δ, Δδ, f, δ
-from ._tensor import Tensor
+from ._tensor import ZERO, Tensor
 
 __all__ = [
     "__version__",
@@ -33,4 +33,5 @@ __all__ = [
     "f",
     "δ",
     "Tensor",
+    "ZERO",
 ]
